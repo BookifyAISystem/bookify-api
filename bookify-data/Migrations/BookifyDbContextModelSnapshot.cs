@@ -51,8 +51,8 @@ namespace bookify_data.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
@@ -130,10 +130,10 @@ namespace bookify_data.Migrations
                     b.Property<DateTime>("LastEdited")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Price")
+                    b.Property<int?>("Price")
                         .HasColumnType("int");
 
-                    b.Property<int>("PriceEbook")
+                    b.Property<int?>("PriceEbook")
                         .HasColumnType("int");
 
                     b.Property<int>("PromotionId")
@@ -142,8 +142,8 @@ namespace bookify_data.Migrations
                     b.Property<int>("PulishYear")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("BookId");
 
@@ -304,10 +304,10 @@ namespace bookify_data.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
-                    b.Property<int>("Toltal")
+                    b.Property<int>("Total")
                         .HasColumnType("int");
 
                     b.Property<int>("VoucherId")
@@ -423,8 +423,8 @@ namespace bookify_data.Migrations
                     b.Property<string>("RoleName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("RoleId");
 

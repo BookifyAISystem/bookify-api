@@ -9,9 +9,9 @@ namespace bookify_data.Entities
 	public class Order
 	{
 		public int OrderId { get; set; }
-		public int Toltal { get; set; } // DB ghi là "toltal", có thể sửa thành "total" nếu muốn
+		public int Total { get; set; } // DB ghi là "toltal", có thể sửa thành "total" nếu muốn
 		public DateTime CreateDate { get; set; }
-		public bool Status { get; set; }
+		public int Status { get; set; }
 		// Cột "cancel reason" có dấu cách, nên có thể sửa lại trong DB cho chuẩn.
 		public string? CancelReason { get; set; }
 

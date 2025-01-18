@@ -12,8 +12,8 @@ namespace bookify_data.Entities
 		public string? BookName { get; set; }
 		public string? BookImage { get; set; }
 		public string? BookType { get; set; }
-		public int Price { get; set; }
-		public int PriceEbook { get; set; }
+		public int? Price { get; set; }
+		public int? PriceEbook { get; set; }
 		public string? Description { get; set; }
 		public string? BookContent { get; set; }
 
@@ -22,7 +22,7 @@ namespace bookify_data.Entities
 
 		public DateTime CreateDate { get; set; }
 		public DateTime LastEdited { get; set; }
-		public bool Status { get; set; }
+		public int Status { get; set; }
 
 		public int AuthorId { get; set; }
 		public int CategoryId { get; set; }

@@ -19,7 +19,7 @@ namespace bookify_api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             // Load appsettings.json configuration
-            builder.Services.AddDbContext<BookifyDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BookifyDb")));
+            builder.Services.AddDbContext<BookifyDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BookifyDb"),b => b.MigrationsAssembly("bookify-data")));
 			builder.Services
 					.AddRepository() 
 					.AddServices();

@@ -13,7 +13,7 @@ namespace bookify_data.Entities
 		public string? RoleName { get; set; }
 		public DateTime CreateDate { get; set; }
 		public DateTime LastEdited { get; set; }
-		public bool Status { get; set; }
+		public int Status { get; set; }
 
 		// Navigation property
 		public List<Account> Accounts { get; set; } = new List<Account>();
