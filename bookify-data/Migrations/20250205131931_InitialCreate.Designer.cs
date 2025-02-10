@@ -12,7 +12,7 @@ using bookify_data.Data;
 namespace bookify_data.Migrations
 {
     [DbContext(typeof(BookifyDbContext))]
-    [Migration("20250118005219_InitialCreate")]
+    [Migration("20250205131931_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
