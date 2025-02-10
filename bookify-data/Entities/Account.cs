@@ -11,6 +11,7 @@ namespace bookify_data.Entities
 		public int AccountId { get; set; }
 		public string? Username { get; set; }
 		public string? Password { get; set; }
+		public string? PasswordSalt { get; set; }
 		public string? DisplayName { get; set; }
 		public string? Email { get; set; }
 		public string? Phone { get; set; }
@@ -18,6 +19,7 @@ namespace bookify_data.Entities
 		public DateTime LastEdited { get; set; }
 		public int Status { get; set; }
 		public int RoleId { get; set; }
+		public string? Avatar { get; set; }
 
 		// Navigation properties
 		public Role? Role { get; set; }
