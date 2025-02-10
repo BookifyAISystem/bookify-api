@@ -10,10 +10,8 @@ namespace bookify_data.Data
 {
 	public class BookifyDbContext : DbContext
 	{
-		public BookifyDbContext()
-		{
+		public BookifyDbContext() { }
 
-		}
 		public BookifyDbContext(DbContextOptions<BookifyDbContext> dbContextOptions) : base(dbContextOptions)
 		{
 
