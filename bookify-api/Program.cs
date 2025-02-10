@@ -56,7 +56,6 @@ namespace bookify_api
 			builder.Services.AddScoped<ICacheService, CacheService>();
 
 			#region configure jwt authentication
-			var key = Encoding.ASCII.GetBytes(AppSettings.Secret);
 			builder.Services.AddHttpContextAccessor();
 
 			// services.addi<IdentityUser>();

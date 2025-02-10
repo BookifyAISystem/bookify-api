@@ -106,7 +106,7 @@ namespace bookify_data.Repository
 					Email = registerDTO.Email,
 					/*ReferralCode = GenerateReferralCode(),*/
 					/*DOB = registerDTO.DOB,*/
-					RoleId = 2,
+					RoleId = 1,
 					CreateDate = registerDTO.CreatedDate,
 					/*Status = registerDTO.Status,*/
 				};
