@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace bookify_data.Entities
+namespace bookify_data.Model.OrderModel
 {
-	public class Order
-	{
+    public class AddOrderDTO
+    {
+
         [Column("order_id")]
         public int OrderId { get; set; }
 
@@ -18,10 +19,6 @@ namespace bookify_data.Entities
         [Column("create_date")]
         public DateTime CreateDate { get; set; }
 
-        [Column("status")]
-        public int Status { get; set; }
-        // Cột "cancel reason" có dấu cách, nên có thể sửa lại trong DB cho chuẩn.
-
         [Column("cancel_reason")]
         public string? CancelReason { get; set; }
 
@@ -30,11 +27,5 @@ namespace bookify_data.Entities
 
         [Column("voucher_id")]
         public int VoucherId { get; set; }
-
-		// Navigation properties
-		public Customer? Customer { get; set; }
-		public Voucher? Voucher { get; set; }
-		public List<Payment> Payments { get; set; } = new List<Payment>();
-		public List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
-	}
+    }
 }
