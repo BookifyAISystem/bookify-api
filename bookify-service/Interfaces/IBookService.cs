@@ -1,7 +1,7 @@
 ﻿using bookify_api.DTOs.BookDTO;
 using Microsoft.AspNetCore.Http;
 
-namespace bookify_api.Services
+namespace bookify_service.Interfaces
 {
     public interface IBookService
     {

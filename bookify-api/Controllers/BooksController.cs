@@ -1,7 +1,8 @@
 ﻿using bookify_api.DTOs.BookDTO;
-using bookify_api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using bookify_service.Interfaces;
+using bookify_api.Validators;
 
 namespace bookify_api.Controllers
 {
@@ -10,10 +11,12 @@ namespace bookify_api.Controllers
     public class BookController : ControllerBase
     {
         private readonly IBookService _bookService;
+        private readonly BookValidator _bookValidator;
 
-        public BookController(IBookService bookService)
+        public BookController(IBookService bookService, BookValidator bookValidator)
         {
             _bookService = bookService;
+            _bookValidator = bookValidator;
         }
 
         [HttpGet]
@@ -24,21 +27,48 @@ namespace bookify_api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<GetBookDTO>> GetBookById(int id)
+        public async Task<ActionResult<GetBookDTO>> GetBookById(int? id)
         {
-            var book = await _bookService.GetBookByIdAsync(id);
-            if (book == null)
+            if (!id.HasValue || id <= 0)
             {
-                return NotFound();
+                return BadRequest(new { message = "Invalid or missing book ID." });
             }
-            return Ok(book);
+
+            try
+            {
+                var book = await _bookService.GetBookByIdAsync(id.Value);
+                if (book == null)
+                {
+                    return NotFound(new { message = "Book not found." });
+                }
+                return Ok(book);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult> AddBook([FromForm] AddBookDTO bookDto, IFormFile? imageFile)
         {
-            await _bookService.AddBookAsync(bookDto, imageFile);
-            return CreatedAtAction(nameof(GetBookById), new { id = bookDto }, bookDto);
+            try
+            {
+                // Validate data using BookValidator
+                await _bookValidator.ValidateAsync(bookDto);
+
+                // Call service to add book
+                await _bookService.AddBookAsync(bookDto, imageFile);
+                return CreatedAtAction(nameof(GetBookById), new { id = bookDto }, bookDto);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
         }
 
         [HttpPut("{id}")]
@@ -46,10 +76,26 @@ namespace bookify_api.Controllers
         {
             if (id != bookDto.BookId)
             {
-                return BadRequest();
+                return BadRequest(new { message = "Book ID mismatch." });
             }
-            await _bookService.UpdateBookAsync(bookDto, imageFile);
-            return NoContent();
+
+            try
+            {
+                // Validate data using BookValidator
+                await _bookValidator.ValidateAsync(bookDto);
+
+                // Call service to update book
+                await _bookService.UpdateBookAsync(bookDto, imageFile);
+                return NoContent();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]

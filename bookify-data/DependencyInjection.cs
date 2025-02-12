@@ -1,4 +1,7 @@
 ﻿using bookify_data.Data;
+using bookify_data.Helper;
+using bookify_data.Interfaces;
+using bookify_data.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -12,7 +15,11 @@ namespace bookify_data
 	{
 		public static IServiceCollection AddRepository(this IServiceCollection service)
 		{
+            service.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork));
 			service.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+			service.AddTransient<IAuthenRepository, AuthenRepository>();
+
+			service.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
 			return service;
 		}
 	}
