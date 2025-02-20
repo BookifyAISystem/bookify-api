@@ -20,7 +20,7 @@ namespace bookify_service.Services
             _roleRepository = roleRepository;
         }
 
-        public async Task<List<RoleModel>> GetAllAsync()
+        public async Task<IEnumerable<RoleModel>> GetAllAsync()
         {
             var roles = await _roleRepository.GetAllAsync();
             return roles.Select(r => new RoleModel
@@ -66,8 +66,8 @@ namespace bookify_service.Services
         public async Task<Role> CreateAsync(string name, int status)
         {
             // Check if RoleName already exists
-            bool exists = await _roleRepository.ExistsByNameAsync(name);
-            if (exists)
+            var existingRole = await _roleRepository.GetByNameAsync(name);
+            if (existingRole != null && existingRole.Status != 0)
             {
                 throw new Exception("Role name already exists.");
             }
@@ -113,6 +113,18 @@ namespace bookify_service.Services
             if (role == null) return false;
 
             role.Status = 0;
+            role.LastEdited = DateTime.UtcNow;
+
+            await _roleRepository.UpdateAsync(role);
+            return true;
+        }
+
+        public async Task<bool> ChangeStatus(int id, int status)
+        {
+            var role = await _roleRepository.GetByIdAsync(id);
+            if (role == null) return false;
+
+            role.Status = status;
             role.LastEdited = DateTime.UtcNow;
 
             await _roleRepository.UpdateAsync(role);

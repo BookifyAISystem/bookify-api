@@ -87,7 +87,19 @@ namespace bookify_api.Controllers
         {
             bool deleted = await _roleService.DeleteAsync(id);
             if (!deleted) return NotFound();
-            return NoContent();
+            return Ok();
+        }
+
+        [HttpPatch("{id}/change-status")]
+        public async Task<ActionResult> ChangeStatus(int id, [FromBody] RoleUpdateRequest request)
+        {
+            if (request == null || request.Status == 0)
+            {
+                return BadRequest("Invalid status.");
+            }
+            bool changed = await _roleService.ChangeStatus(id, request.Status);
+            if (!changed) return NotFound();
+            return Ok();
         }
 
         public class RoleCreateRequest

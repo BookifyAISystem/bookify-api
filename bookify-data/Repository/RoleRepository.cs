@@ -19,9 +19,10 @@ namespace bookify_data.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<List<Role>> GetAllAsync()
+        public async Task<IEnumerable<Role>> GetAllAsync()
         {
             return await _dbContext.Roles
+                .Where(r => r.Status != 0)
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -29,6 +30,7 @@ namespace bookify_data.Repository
         public async Task<Role?> GetByIdAsync(int id)
         {
             return await _dbContext.Roles
+                .Where(r => r.Status != 0)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(r => r.RoleId == id);
         }
@@ -36,6 +38,7 @@ namespace bookify_data.Repository
         public async Task<Role?> GetByNameAsync(string name)
         {
             return await _dbContext.Roles
+                .Where(r => r.Status != 0)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(r => r.RoleName == name);
         }
