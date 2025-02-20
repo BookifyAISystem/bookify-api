@@ -14,7 +14,9 @@ namespace bookify_data.Entities
 		public DateTime LastEdited { get; set; }
 		public int Status { get; set; }
 
-		// Navigation property
-		public List<Book> Books { get; set; } = new List<Book>();
+		// Navigation properties
+		public List<BookCategory> BookCategories { get; set; } = new List<BookCategory>();
+		public List<News> NewsList { get; set; } = new List<News>();
 	}
+
 }

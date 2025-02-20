@@ -8,12 +8,16 @@ namespace bookify_data.Entities
 {
 	public class WishlistDetail
 	{
-		public int WishlistdetailId { get; set; }
+		public int WishlistDetailId { get; set; }
 		public int BookId { get; set; }
 		public int WishlistId { get; set; }
+		public DateTime CreatedDate { get; set; }
+		public DateTime LastEdited { get; set; }
+		public int Status { get; set; }
 
 		// Navigation properties
-		public Book? Book { get; set; }
 		public Wishlist? Wishlist { get; set; }
+		public Book? Book { get; set; }
 	}
+
 }

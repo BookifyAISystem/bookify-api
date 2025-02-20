@@ -6,19 +6,18 @@ using System.Threading.Tasks;
 
 namespace bookify_data.Entities
 {
-	public class Payment
+	public class BookCategory
 	{
-		public int PaymentId { get; set; }
-		public int Method { get; set; }
-		public DateTime PaymentDate { get; set; }
-		public int Amount { get; set; }
-		public int OrderId { get; set; }
+		public int BookCategoryId { get; set; } // Đổi tên cho dễ hiểu
 		public DateTime CreatedDate { get; set; }
 		public DateTime LastEdited { get; set; }
 		public int Status { get; set; }
+		public int CategoryId { get; set; }
+		public int BookId { get; set; }
 
-		// Navigation property
-		public Order? Order { get; set; }
+		// Navigation properties
+		public Category? Category { get; set; }
+		public Book? Book { get; set; }
 	}
 
 }

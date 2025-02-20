@@ -35,10 +35,10 @@ namespace bookify_data.Repository
 		//User UserCurrent();
 		//bool CreateUserAdminCompany(Company company);
 		Task<Account> CheckForgotPass(string url);
-		bool CheckPassword(Account user, AuthenticateRequest request);
-		bool ChangePassword(Account user, string password);
+		/*bool CheckPassword(Account user, AuthenticateRequest request);
+		bool ChangePassword(Account user, string password);*/
 
-		Task<Account> Register(RegisterRequest model);
+		/*Task<Account> Register(RegisterRequest model);*/
 		Task UpdateCustomerInStore(decimal userId, string phone);
 		Task UpdateAvatar(decimal userId, string avatar, string avatarThumb);
 		string CreatePassword(string password, string passwordSalt);
@@ -230,11 +230,11 @@ namespace bookify_data.Repository
 		/// <summary>
 		/// Kiểm tra mật khẩu của user so với mật khẩu nhập vào.
 		/// </summary>
-		public bool CheckPassword(Account user, AuthenticateRequest request)
+		/*public bool CheckPassword(Account user, AuthenticateRequest request)
 		{
 			var hashedPassword = CreatePassword(request.Password, user.PasswordSalt);
 			return user.Password == hashedPassword;
-		}
+		}*/
 		private RefreshToken RefreshTokenDecrypt(string refreshToken)
 		{
 			using (var rngCryptoServiceProvider = new RNGCryptoServiceProvider())
@@ -375,19 +375,19 @@ namespace bookify_data.Repository
 		/// <summary>
 		/// Thay đổi mật khẩu cho người dùng.
 		/// </summary>
-		public bool ChangePassword(Account user, string password)
+		/*public bool ChangePassword(Account user, string password)
 		{
 			user.PasswordSalt = Guid.NewGuid().ToString();
 			user.Password = CreatePassword(password, user.PasswordSalt);
 			Updates(user); // Giả sử phương thức này cập nhật user vào database
 			return true;
-		}
+		}*/
 
 		/// <summary>
 		/// Đăng ký tài khoản mới.
 		/// Sử dụng AutoMapper để chuyển đổi từ RegisterRequest sang Account.
 		/// </summary>
-		public async Task<Account> Register(RegisterRequest model)
+		/*public async Task<Account> Register(RegisterRequest model)
 		{
 			// Ánh xạ RegisterRequest sang đối tượng Account
 			Account user = _mapper.Map<Account>(model);
@@ -396,10 +396,10 @@ namespace bookify_data.Repository
 			user.PasswordSalt = Guid.NewGuid().ToString();
 			user.Password = CreatePassword(model.Password, user.PasswordSalt);
 
-			/*user.AccountId = Inserts();*/
+			*//*user.AccountId = Inserts();*//*
 
 			return await Task.FromResult(user);
-		}
+		}*/
 
 		/// <summary>
 		/// Cập nhật thông tin khách hàng trong cửa hàng.

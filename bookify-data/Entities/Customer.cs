@@ -9,13 +9,20 @@ namespace bookify_data.Entities
 	public class Customer
 	{
 		public int CustomerId { get; set; }
-		public int AccountId { get; set; } 
+		public int? AccountId { get; set; } // Có thể null nếu không bắt buộc
+		public DateTime CreatedDate { get; set; }
+		public DateTime LastEdited { get; set; }
+		public int Status { get; set; }
 
 		// Navigation properties
 		public Account? Account { get; set; }
+
+		public List<Bookshelf> Bookshelves { get; set; } = new List<Bookshelf>();
 		public List<Order> Orders { get; set; } = new List<Order>();
-		public List<Wishlist> Wishlists { get; set; } = new List<Wishlist>();
-		public List<BookShelf> BookShelves { get; set; } = new List<BookShelf>();
 		public List<Feedback> Feedbacks { get; set; } = new List<Feedback>();
+		public Wishlist? Wishlist { get; set; }
+		public List<Wishlist> Wishlists { get; set; } = new List<Wishlist>();
+
 	}
+
 }
