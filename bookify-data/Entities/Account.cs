@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,18 +12,19 @@ namespace bookify_data.Entities
 		public int AccountId { get; set; }
 		public string? Username { get; set; }
 		public string? Password { get; set; }
-		public string? PasswordSalt { get; set; }
 		public string? DisplayName { get; set; }
 		public string? Email { get; set; }
 		public string? Phone { get; set; }
-		public DateTime CreateDate { get; set; }
+		public DateTime CreatedDate { get; set; }
 		public DateTime LastEdited { get; set; }
 		public int Status { get; set; }
 		public int RoleId { get; set; }
-		public string? Avatar { get; set; }
 
 		// Navigation properties
 		public Role? Role { get; set; }
+		public List<News> NewsList { get; set; } = new List<News>();
+		public List<Note> Notes { get; set; } = new List<Note>();
 		public List<Customer> Customers { get; set; } = new List<Customer>();
 	}
+
 }

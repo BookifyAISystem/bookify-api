@@ -17,5 +17,7 @@ namespace bookify_data.Entities
 
 		// Navigation property
 		public List<Book> Books { get; set; } = new List<Book>();
+		public List<BookAuthor> BookAuthors { get; set; } = new List<BookAuthor>();
 	}
+
 }

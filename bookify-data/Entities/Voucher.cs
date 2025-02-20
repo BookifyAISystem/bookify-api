@@ -15,8 +15,11 @@ namespace bookify_data.Entities
 		public int MaxDiscount { get; set; }
 		public int Quantity { get; set; }
 		public int Status { get; set; }
+		public DateTime CreatedDate { get; set; }
+		public DateTime LastEdited { get; set; }
 
 		// Navigation property
 		public List<Order> Orders { get; set; } = new List<Order>();
 	}
+
 }

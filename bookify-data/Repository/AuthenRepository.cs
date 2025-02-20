@@ -107,7 +107,6 @@ namespace bookify_data.Repository
 					/*ReferralCode = GenerateReferralCode(),*/
 					/*DOB = registerDTO.DOB,*/
 					RoleId = 1,
-					CreateDate = registerDTO.CreatedDate,
 					/*Status = registerDTO.Status,*/
 				};
 				//if (registerDTO.Certification != null)
@@ -199,7 +198,6 @@ namespace bookify_data.Repository
 			new Claim(ClaimTypes.Role, user.RoleId == 1 ? "Admin" : user.RoleId == 2 ? "Instructor" : "Student"),
 			new Claim("RoleId", user.RoleId.ToString() ?? string.Empty),
 			new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
-			new Claim("Avatar", user.Avatar?.ToString() ?? string.Empty),
 			};
 
 

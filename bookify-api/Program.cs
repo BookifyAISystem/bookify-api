@@ -150,8 +150,8 @@ namespace bookify_api
 			var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
+           /* if (app.Environment.IsDevelopment())
+            {*/
                 app.UseSwagger();
 				app.UseSwaggerUI(c =>
 				{
@@ -159,7 +159,7 @@ namespace bookify_api
 					//    c.RoutePrefix = string.Empty;
 					c.InjectJavascript("/swagger/custom-swagger.js");
 				});
-			}
+			/*}*/
 			app.UseAuthentication();
 			app.UseAuthorization();
 			app.UseCors("AllowSpecificOrigins");

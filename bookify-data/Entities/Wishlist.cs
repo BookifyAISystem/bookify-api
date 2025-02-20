@@ -10,9 +10,13 @@ namespace bookify_data.Entities
 	{
 		public int WishlistId { get; set; }
 		public int CustomerId { get; set; }
+		public DateTime CreatedDate { get; set; }
+		public DateTime LastEdited { get; set; }
+		public int Status { get; set; }
 
 		// Navigation properties
 		public Customer? Customer { get; set; }
 		public List<WishlistDetail> WishlistDetails { get; set; } = new List<WishlistDetail>();
 	}
+
 }

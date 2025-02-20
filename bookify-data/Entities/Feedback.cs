@@ -13,9 +13,13 @@ namespace bookify_data.Entities
 		public string? FeedbackContent { get; set; }
 		public int CustomerId { get; set; }
 		public int BookId { get; set; }
+		public DateTime CreatedDate { get; set; }
+		public DateTime LastEdited { get; set; }
+		public int Status { get; set; }
 
 		// Navigation properties
-		public Book? Book { get; set; }
 		public Customer? Customer { get; set; }
+		public Book? Book { get; set; }
 	}
+
 }

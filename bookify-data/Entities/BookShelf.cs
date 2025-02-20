@@ -6,13 +6,18 @@ using System.Threading.Tasks;
 
 namespace bookify_data.Entities
 {
-	public class BookShelf
+	public class Bookshelf
 	{
 		public int BookshelfId { get; set; }
 		public int CustomerId { get; set; }
+		public string? BookShelfName { get; set; }
+		public DateTime CreatedDate { get; set; }
+		public DateTime LastEdited { get; set; }
+		public int Status { get; set; }
 
 		// Navigation properties
 		public Customer? Customer { get; set; }
-		public List<BookShelfDetail> BookShelfDetails { get; set; } = new List<BookShelfDetail>();
+		public List<BookshelfDetail> BookshelfDetails { get; set; } = new List<BookshelfDetail>();
 	}
+
 }
