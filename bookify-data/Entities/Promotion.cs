@@ -14,8 +14,11 @@ namespace bookify_data.Entities
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
 		public int Status { get; set; }
+		public DateTime CreatedDate { get; set; }
+		public DateTime LastEdited { get; set; }
 
 		// Navigation property
 		public List<Book> Books { get; set; } = new List<Book>();
 	}
+
 }

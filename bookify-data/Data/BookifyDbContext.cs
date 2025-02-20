@@ -1,6 +1,7 @@
 ﻿using bookify_data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,41 +17,44 @@ namespace bookify_data.Data
 		{
 
 		}
-		public DbSet<Promotion> Promotions { get; set; }
-		public DbSet<Author> Authors { get; set; }
-		public DbSet<Collection> Collections { get; set; }
-		public DbSet<Category> Categories { get; set; }
-		public DbSet<Book> Books { get; set; }
-		public DbSet<Voucher> Vouchers { get; set; }
 		public DbSet<Role> Roles { get; set; }
 		public DbSet<Account> Accounts { get; set; }
 		public DbSet<Customer> Customers { get; set; }
+		public DbSet<Bookshelf> Bookshelves { get; set; }
+		public DbSet<Promotion> Promotions { get; set; }
+		public DbSet<Book> Books { get; set; }
+		public DbSet<BookshelfDetail> BookshelfDetails { get; set; }
+		public DbSet<News> News { get; set; }
+		public DbSet<Voucher> Vouchers { get; set; }
 		public DbSet<Order> Orders { get; set; }
-		public DbSet<Payment> Payments { get; set; }
 		public DbSet<OrderDetail> OrderDetails { get; set; }
+		public DbSet<Feedback> Feedbacks { get; set; }
 		public DbSet<Wishlist> Wishlists { get; set; }
 		public DbSet<WishlistDetail> WishlistDetails { get; set; }
-		public DbSet<BookShelf> BookShelves { get; set; }
-		public DbSet<BookShelfDetail> BookShelfDetails { get; set; }
-		public DbSet<Feedback> Feedbacks { get; set; }
+		public DbSet<Payment> Payments { get; set; }
+		public DbSet<Author> Authors { get; set; }
+		public DbSet<Category> Categories { get; set; }
+		public DbSet<BookAuthor> BookAuthors { get; set; }
+		public DbSet<BookContentVersion> BookContentVersions { get; set; }
+		public DbSet<BookCategory> BookCategories { get; set; }
+		public DbSet<Note> Notes { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			// ------------------------------
-			//  BẢNG Promotions
+			// BẢNG Promotion
 			// ------------------------------
 			modelBuilder.Entity<Promotion>(entity =>
 			{
-				entity.ToTable("Promotions");
+				entity.ToTable("Promotion");
 				entity.HasKey(e => e.PromotionId);
-
-				// Nếu muốn mapping chi tiết cột:
-				// entity.Property(e => e.PromotionId).HasColumnName("promotion_id");
-				// entity.Property(e => e.Content).HasColumnName("content").HasColumnType("nvarchar(10001000)");
-				// ...
+				// Nếu cần mapping chi tiết các cột:
+				// entity.Property(e => e.Content)
+				//       .HasColumnName("content")
+				//       .HasColumnType("nvarchar(1000)");
 			});
 
 			// ------------------------------
-			//  BẢNG Author
+			// BẢNG Author
 			// ------------------------------
 			modelBuilder.Entity<Author>(entity =>
 			{
@@ -59,58 +63,115 @@ namespace bookify_data.Data
 			});
 
 			// ------------------------------
-			//  BẢNG Collections
-			// ------------------------------
-			modelBuilder.Entity<Collection>(entity =>
-			{
-				entity.ToTable("Collections");
-				entity.HasKey(e => e.CollectionId);
-			});
-
-			// ------------------------------
-			//  BẢNG Categories
+			// BẢNG Category
 			// ------------------------------
 			modelBuilder.Entity<Category>(entity =>
 			{
-				entity.ToTable("Categories");
+				entity.ToTable("Category");
 				entity.HasKey(e => e.CategoryId);
 			});
 
 			// ------------------------------
-			//  BẢNG Book
+			// BẢNG Book
 			// ------------------------------
 			modelBuilder.Entity<Book>(entity =>
 			{
 				entity.ToTable("Book");
 				entity.HasKey(e => e.BookId);
 
-				// Khai báo FK: Book -> Promotions (promotion_id)
+				// FK: Book -> Promotion (promotionId)
 				entity.HasOne(e => e.Promotion)
 					  .WithMany(p => p.Books)
 					  .HasForeignKey(e => e.PromotionId)
-					  .HasConstraintName("FK_Book.promotion_id");
+					  .HasConstraintName("FK_Book_promotionId");
 
-				// Khai báo FK: Book -> Author (author_id)
-				entity.HasOne(e => e.Author)
-					  .WithMany(a => a.Books)
-					  .HasForeignKey(e => e.AuthorId)
-					  .HasConstraintName("FK_Book.author_id");
-
-				// Khai báo FK: Book -> Collections (collection_id)
-				entity.HasOne(e => e.Collection)
-					  .WithMany(c => c.Books)
-					  .HasForeignKey(e => e.CollectionId)
-					  .HasConstraintName("FK_Book.collection_id");
-
-				// Khai báo FK: Book -> Categories (category_id)
-				entity.HasOne(e => e.Category)
-					  .WithMany(cat => cat.Books)
-					  .HasForeignKey(e => e.CategoryId)
-					  .HasConstraintName("FK_Book.category_id");
+				// Lưu ý: Mặc dù Book có cột categoryId, nhưng trong DB không có ràng buộc FK trực tiếp.
+				// Các quan hệ với Author, Collection,... được thể hiện qua các bảng phụ (BookAuthor, v.v).
 			});
 
 			// ------------------------------
-			//  BẢNG Voucher
+			// BẢNG Account
+			// ------------------------------
+			modelBuilder.Entity<Account>(entity =>
+			{
+				entity.ToTable("Account");
+				entity.HasKey(e => e.AccountId);
+
+				// FK: Account -> Role (roleId)
+				entity.HasOne(a => a.Role)
+					  .WithMany(r => r.Accounts)
+					  .HasForeignKey(a => a.RoleId)
+					  .HasConstraintName("FK_Account_roleId");
+			});
+
+			// ------------------------------
+			// BẢNG Customer
+			// ------------------------------
+			modelBuilder.Entity<Customer>(entity =>
+			{
+				entity.ToTable("Customer");
+				entity.HasKey(e => e.CustomerId);
+
+				// Nếu muốn cấu hình FK tới Account (mặc dù DB ban đầu không định nghĩa ràng buộc)
+				entity.HasOne(c => c.Account)
+					  .WithMany(a => a.Customers)
+					  .HasForeignKey(c => c.AccountId)
+					  .HasConstraintName("FK_Customer_accountId");
+			});
+
+			// ------------------------------
+			// BẢNG Bookshelf
+			// ------------------------------
+			modelBuilder.Entity<Bookshelf>(entity =>
+			{
+				entity.ToTable("Bookshelf");
+				entity.HasKey(e => e.BookshelfId);
+
+				// FK: Bookshelf -> Customer (customerId)
+				entity.HasOne(bs => bs.Customer)
+					  .WithMany(c => c.Bookshelves)
+					  .HasForeignKey(bs => bs.CustomerId)
+					  .HasConstraintName("FK_Bookshelf_customerId");
+			});
+
+			// ------------------------------
+			// BẢNG BookshelfDetail
+			// ------------------------------
+			modelBuilder.Entity<BookshelfDetail>(entity =>
+			{
+				entity.ToTable("BookshelfDetail");
+				entity.HasKey(e => e.BookshelfDetailId);
+
+				// FK: BookshelfDetail -> Bookshelf (bookshelfId)
+				entity.HasOne(bsd => bsd.Bookshelf)
+					  .WithMany(bs => bs.BookshelfDetails)
+					  .HasForeignKey(bsd => bsd.BookshelfId)
+					  .HasConstraintName("FK_BookshelfDetail_bookshelfId");
+
+				// FK: BookshelfDetail -> Book (bookId)
+				entity.HasOne(bsd => bsd.Book)
+					  .WithMany(b => b.BookshelfDetails)
+					  .HasForeignKey(bsd => bsd.BookId)
+					  .HasConstraintName("FK_BookshelfDetail_bookId");
+			});
+
+			// ------------------------------
+			// BẢNG News
+			// ------------------------------
+			modelBuilder.Entity<News>(entity =>
+			{
+				entity.ToTable("News");
+				entity.HasKey(e => e.NewsId);
+
+				// FK: News -> Account (accountId)
+				entity.HasOne(n => n.Account)
+					  .WithMany(a => a.NewsList)
+					  .HasForeignKey(n => n.AccountId)
+					  .HasConstraintName("FK_News_accountId");
+			});
+
+			// ------------------------------
+			// BẢNG Voucher
 			// ------------------------------
 			modelBuilder.Entity<Voucher>(entity =>
 			{
@@ -119,195 +180,195 @@ namespace bookify_data.Data
 			});
 
 			// ------------------------------
-			//  BẢNG Role
-			// ------------------------------
-			modelBuilder.Entity<Role>(entity =>
-			{
-				entity.ToTable("Role");
-				entity.HasKey(e => e.RoleId);
-			});
-
-			// ------------------------------
-			//  BẢNG Account
-			// ------------------------------
-			modelBuilder.Entity<Account>(entity =>
-			{
-				entity.ToTable("Account");
-				entity.HasKey(e => e.AccountId);
-
-				// Khai báo FK: Account -> Role (role_id)
-				entity.HasOne(a => a.Role)
-					  .WithMany(r => r.Accounts)
-					  .HasForeignKey(a => a.RoleId)
-					  .HasConstraintName("FK_Account.role_id");
-			});
-
-			// ------------------------------
-			//  BẢNG Customer
-			// ------------------------------
-			modelBuilder.Entity<Customer>(entity =>
-			{
-				entity.ToTable("Customer");
-				entity.HasKey(e => e.CustomerId);
-
-				// FK: Customer -> Account (acount_id)
-				entity.HasOne(c => c.Account)
-					  .WithMany(a => a.Customers)
-					  .HasForeignKey(c => c.AccountId)
-					  .HasConstraintName("FK_Customer.acount_id");
-			});
-
-			// ------------------------------
-			//  BẢNG Order
+			// BẢNG Order
 			// ------------------------------
 			modelBuilder.Entity<Order>(entity =>
 			{
 				entity.ToTable("Order");
 				entity.HasKey(e => e.OrderId);
 
-				// FK: Order -> Voucher (voucher_id)
+				// FK: Order -> Voucher (voucherId)
 				entity.HasOne(o => o.Voucher)
 					  .WithMany(v => v.Orders)
 					  .HasForeignKey(o => o.VoucherId)
-					  .HasConstraintName("FK_Order.voucher_id");
+					  .HasConstraintName("FK_Order_voucherId");
 
-				// FK: Order -> Customer (customer_id)
+				// FK: Order -> Customer (customerId)
 				entity.HasOne(o => o.Customer)
 					  .WithMany(c => c.Orders)
 					  .HasForeignKey(o => o.CustomerId)
-					  .HasConstraintName("FK_Order.customer_id");
+					  .HasConstraintName("FK_Order_customerId");
 			});
 
 			// ------------------------------
-			//  BẢNG Payments
-			// ------------------------------
-			modelBuilder.Entity<Payment>(entity =>
-			{
-				entity.ToTable("Payments");
-				entity.HasKey(e => e.PaymentId);
-
-				// FK: Payment -> Order (order_id)
-				entity.HasOne(p => p.Order)
-					  .WithMany(o => o.Payments)
-					  .HasForeignKey(p => p.OrderId)
-					  .HasConstraintName("FK_Payments.order_id");
-			});
-
-			// ------------------------------
-			//  BẢNG OrderDetails
+			// BẢNG OrderDetail
 			// ------------------------------
 			modelBuilder.Entity<OrderDetail>(entity =>
 			{
-				entity.ToTable("OrderDetails");
-				entity.HasKey(e => e.OrderdetailId);
+				entity.ToTable("OrderDetail");
+				entity.HasKey(e => e.OrderDetailId);
 
-				// FK: OrderDetail -> Order (order_id)
+				// FK: OrderDetail -> Order (orderId)
 				entity.HasOne(od => od.Order)
 					  .WithMany(o => o.OrderDetails)
 					  .HasForeignKey(od => od.OrderId)
-					  .HasConstraintName("FK_OrderDetails.order_id");
+					  .HasConstraintName("FK_OrderDetail_orderId");
 
-				// FK: OrderDetail -> Book (book_id)
+				// FK: OrderDetail -> Book (bookId)
 				entity.HasOne(od => od.Book)
 					  .WithMany(b => b.OrderDetails)
 					  .HasForeignKey(od => od.BookId)
-					  .HasConstraintName("FK_OrderDetails.book_id");
+					  .HasConstraintName("FK_OrderDetail_bookId");
 			});
 
 			// ------------------------------
-			//  BẢNG Wishlists
+			// BẢNG Feedback
+			// ------------------------------
+			modelBuilder.Entity<Feedback>(entity =>
+			{
+				entity.ToTable("Feedback");
+				entity.HasKey(e => e.FeedbackId);
+
+				// FK: Feedback -> Book (bookId)
+				entity.HasOne(f => f.Book)
+					  .WithMany(b => b.Feedbacks)
+					  .HasForeignKey(f => f.BookId)
+					  .HasConstraintName("FK_Feedback_bookId");
+
+				// FK: Feedback -> Customer (customerId)
+				entity.HasOne(f => f.Customer)
+					  .WithMany(c => c.Feedbacks)
+					  .HasForeignKey(f => f.CustomerId)
+					  .HasConstraintName("FK_Feedback_customerId");
+			});
+
+			// ------------------------------
+			// BẢNG Wishlist
 			// ------------------------------
 			modelBuilder.Entity<Wishlist>(entity =>
 			{
-				entity.ToTable("Wishlists");
+				entity.ToTable("Wishlist");
 				entity.HasKey(e => e.WishlistId);
 
-				// FK: Wishlist -> Customer (customer_id)
+				// FK: Wishlist -> Customer (customerId)
 				entity.HasOne(w => w.Customer)
 					  .WithMany(c => c.Wishlists)
 					  .HasForeignKey(w => w.CustomerId)
-					  .HasConstraintName("FK_Wishlists.customer_id");
+					  .HasConstraintName("FK_Wishlist_customerId");
 			});
 
 			// ------------------------------
-			//  BẢNG WishlistDetail
+			// BẢNG WishlistDetail
 			// ------------------------------
 			modelBuilder.Entity<WishlistDetail>(entity =>
 			{
 				entity.ToTable("WishlistDetail");
-				entity.HasKey(e => e.WishlistdetailId);
+				entity.HasKey(e => e.WishlistDetailId);
 
-				// FK: WishlistDetail -> Wishlist (wishlist_id)
+				// FK: WishlistDetail -> Wishlist (wishlistId)
 				entity.HasOne(wd => wd.Wishlist)
 					  .WithMany(w => w.WishlistDetails)
 					  .HasForeignKey(wd => wd.WishlistId)
-					  .HasConstraintName("FK_WishlistDetail.wishlist_id");
+					  .HasConstraintName("FK_WishlistDetail_wishlistId");
 
-				// FK: WishlistDetail -> Book (book_id)
+				// FK: WishlistDetail -> Book (bookId)
 				entity.HasOne(wd => wd.Book)
 					  .WithMany(b => b.WishlistDetails)
 					  .HasForeignKey(wd => wd.BookId)
-					  .HasConstraintName("FK_WishlistDetail.book_id");
+					  .HasConstraintName("FK_WishlistDetail_bookId");
 			});
 
 			// ------------------------------
-			//  BẢNG BookShelf
+			// BẢNG Payment
 			// ------------------------------
-			modelBuilder.Entity<BookShelf>(entity =>
+			modelBuilder.Entity<Payment>(entity =>
 			{
-				entity.ToTable("BookShelf");
-				entity.HasKey(e => e.BookshelfId);
+				entity.ToTable("Payment");
+				entity.HasKey(e => e.PaymentId);
 
-				// FK: BookShelf -> Customer (customer_id)
-				entity.HasOne(bs => bs.Customer)
-					  .WithMany(c => c.BookShelves)
-					  .HasForeignKey(bs => bs.CustomerId)
-					  .HasConstraintName("FK_BookShelf.customer_id");
+				// FK: Payment -> Order (orderId)
+				entity.HasOne(p => p.Order)
+					  .WithMany(o => o.Payments)
+					  .HasForeignKey(p => p.OrderId)
+					  .HasConstraintName("FK_Payment_orderId");
 			});
 
 			// ------------------------------
-			//  BẢNG BookShelfDetail
+			// BẢNG Note
 			// ------------------------------
-			modelBuilder.Entity<BookShelfDetail>(entity =>
+			modelBuilder.Entity<Note>(entity =>
 			{
-				entity.ToTable("BookShelfDetail");
-				entity.HasKey(e => e.BookshelfdetailId);
+				entity.ToTable("Note");
+				entity.HasKey(e => e.NoteId);
 
-				// FK: BookShelfDetail -> BookShelf (bookshelf_id)
-				entity.HasOne(bsd => bsd.BookShelf)
-					  .WithMany(bs => bs.BookShelfDetails)
-					  .HasForeignKey(bsd => bsd.BookshelfId)
-					  .HasConstraintName("FK_BookShelfDetail.bookshelf_id");
-
-				// FK: BookShelfDetail -> Book (book_id)
-				entity.HasOne(bsd => bsd.Book)
-					  .WithMany(b => b.BookShelfDetails)
-					  .HasForeignKey(bsd => bsd.BookId)
-					  .HasConstraintName("FK_BookShelfDetail.book_id");
+				// FK: Note -> Account (accountId)
+				entity.HasOne(n => n.Account)
+					  .WithMany(a => a.Notes)
+					  .HasForeignKey(n => n.AccountId)
+					  .HasConstraintName("FK_Note_accountId");
 			});
 
 			// ------------------------------
-			//  BẢNG Feedbacks
+			// BẢNG BookAuthor
 			// ------------------------------
-			modelBuilder.Entity<Feedback>(entity =>
+			modelBuilder.Entity<BookAuthor>(entity =>
 			{
-				entity.ToTable("Feedbacks");
-				entity.HasKey(e => e.FeedbackId);
+				entity.ToTable("BookAuthor");
+				entity.HasKey(e => e.BookAuthorId);
 
-				// FK: Feedback -> Book (book_id)
-				entity.HasOne(f => f.Book)
-					  .WithMany(b => b.Feedbacks)
-					  .HasForeignKey(f => f.BookId)
-					  .HasConstraintName("FK_Feedbacks.book_id");
+				// FK: BookAuthor -> Book (bookId)
+				entity.HasOne(ba => ba.Book)
+					  .WithMany(b => b.BookAuthors)
+					  .HasForeignKey(ba => ba.BookId)
+					  .HasConstraintName("FK_BookAuthor_bookId");
 
-				// FK: Feedback -> Customer (customer_id)
-				entity.HasOne(f => f.Customer)
-					  .WithMany(c => c.Feedbacks)
-					  .HasForeignKey(f => f.CustomerId)
-					  .HasConstraintName("FK_Feedbacks.customer_id");
+				// FK: BookAuthor -> Author (authorId)
+				entity.HasOne(ba => ba.Author)
+					  .WithMany(a => a.BookAuthors)
+					  .HasForeignKey(ba => ba.AuthorId)
+					  .HasConstraintName("FK_BookAuthor_authorId");
+			});
+
+			// ------------------------------
+			// BẢNG BookContentVersion
+			// ------------------------------
+			modelBuilder.Entity<BookContentVersion>(entity =>
+			{
+				entity.ToTable("BookContentVersion");
+				entity.HasKey(e => e.BookContentVersionId);
+
+				// FK: BookContentVersion -> Book (bookId)
+				entity.HasOne(bcv => bcv.Book)
+					  .WithMany(b => b.BookContentVersions)
+					  .HasForeignKey(bcv => bcv.BookId)
+					  .HasConstraintName("FK_BookContentVersion_bookId");
+			});
+
+			// ------------------------------
+			// BẢNG BookCategory
+			// ------------------------------
+			modelBuilder.Entity<BookCategory>(entity =>
+			{
+				entity.ToTable("BookCategory");
+				// Nếu tên cột trong DB là "bookCatagoryId" thì chỉnh sửa key tại đây
+				entity.HasKey(e => e.BookCategoryId);
+
+				// FK: BookCategory -> Category (categoryId)
+				entity.HasOne(bc => bc.Category)
+					  .WithMany(c => c.BookCategories)
+					  .HasForeignKey(bc => bc.CategoryId)
+					  .HasConstraintName("FK_BookCategory_categoryId");
+
+				// FK: BookCategory -> Book (bookId)
+				entity.HasOne(bc => bc.Book)
+					  .WithMany(b => b.BookCategories)
+					  .HasForeignKey(bc => bc.BookId)
+					  .HasConstraintName("FK_BookCategory_bookId");
 			});
 
 			base.OnModelCreating(modelBuilder);
 		}
+
+
 	}
 }
