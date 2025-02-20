@@ -10,12 +10,13 @@ namespace bookify_service.Interfaces
 {
     public interface IRoleService
     {
-        Task<List<RoleModel>> GetAllAsync();
+        Task<IEnumerable<RoleModel>> GetAllAsync();
         Task<RoleModel?> GetByIdAsync(int id);
         Task<RoleModel?> GetByNameAsync(string name);
         Task<Role> CreateAsync(string name, int status);
         Task<Role> UpdateAsync(int id, string name, int status);
         Task<bool> DeleteAsync(int id);
+        Task<bool> ChangeStatus(int id, int status);
     }
 
 }

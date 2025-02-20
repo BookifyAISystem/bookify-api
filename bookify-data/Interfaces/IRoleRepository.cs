@@ -9,7 +9,7 @@ namespace bookify_data.Interfaces
 {
     public interface IRoleRepository
     {
-        Task<List<Role>> GetAllAsync();
+        Task<IEnumerable<Role>> GetAllAsync();
         Task<Role?> GetByIdAsync(int id);
         Task<Role?> GetByNameAsync(string name);
         Task AddAsync(Role role);
