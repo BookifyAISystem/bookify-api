@@ -61,6 +61,8 @@ namespace bookify_api
             builder.Services.AddScoped<IRoleService, RoleService>();
 			builder.Services.AddScoped<INoteRepository, NoteRepository>();
             builder.Services.AddScoped<INoteService, NoteService>();
+            builder.Services.AddScoped<INewsRepository, NewsRepository>();
+            builder.Services.AddScoped<INewsService, NewsService>();
 
 
             #region configure jwt authentication

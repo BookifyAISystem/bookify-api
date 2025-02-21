@@ -13,7 +13,6 @@ namespace bookify_data.Entities
 		public string? Content { get; set; }
 		public string? Summary { get; set; }
 		public string? ImageUrl { get; set; }
-		public int CategoryId { get; set; }
 		public int Views { get; set; }
 		public DateTime PublishAt { get; set; }
 		public int AccountId { get; set; }
