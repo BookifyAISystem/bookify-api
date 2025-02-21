@@ -22,16 +22,18 @@ namespace bookify_data.Repository
 	{
 		private readonly IConfiguration _configuration;
 		private readonly BookifyDbContext _dbcontext;
-		/*private readonly IEmailSender emailSender;*/
+		private readonly IRoleRepository _roleRepository;
+        /*private readonly IEmailSender emailSender;*/
 
-		public AuthenRepository(IConfiguration configuration, BookifyDbContext dbcontext
-			/*, IEmailSender emailSender*/
-			)
+        public AuthenRepository(IConfiguration configuration, BookifyDbContext dbcontext, IRoleRepository roleRepository
+            /*, IEmailSender emailSender*/
+            )
 		{
 			_configuration = configuration;
 			_dbcontext = dbcontext;
-		/*	this.emailSender = emailSender;*/
-		}
+            _roleRepository = roleRepository;
+            /*	this.emailSender = emailSender;*/
+        }
 
 		public async Task<string> Login(LoginModel model)
 		{
@@ -94,10 +96,14 @@ namespace bookify_data.Repository
 				{
 					return "Phone number already exists";
 				}
+				var roleUser = await _roleRepository.GetByNameAsync("User");
+				if (roleUser == null)
+				{
+                    return "Role User not found";
+                }
+				int id = roleUser.RoleId;
 
-
-
-				var newUser = new Account
+                var newUser = new Account
 				{
 					Username = registerDTO.UserName,
 					DisplayName = registerDTO.FullName,
@@ -106,7 +112,7 @@ namespace bookify_data.Repository
 					Email = registerDTO.Email,
 					/*ReferralCode = GenerateReferralCode(),*/
 					/*DOB = registerDTO.DOB,*/
-					RoleId = 1,
+                    RoleId = id,
 					/*Status = registerDTO.Status,*/
 				};
 				//if (registerDTO.Certification != null)

@@ -13,10 +13,12 @@ namespace bookify_service.Services
     public class NoteService : INoteService
     {
         private readonly INoteRepository _noteRepository;
+        private readonly IRoleRepository _roleRepository;
 
-        public NoteService(INoteRepository noteRepository)
+        public NoteService(INoteRepository noteRepository, IRoleRepository roleRepository)
         {
             _noteRepository = noteRepository;
+            _roleRepository = roleRepository;
         }
 
         public async Task<IEnumerable<NoteModel>> GetAllAsync()
@@ -71,6 +73,11 @@ namespace bookify_service.Services
             //if (existAccount == null)
             //{
             //    throw new Exception("Account not found.");
+            //}
+            //var roleUser = await _roleRepository.GetByNameAsync("User");
+            //if (existAccount.Role == roleUser)
+            //{
+            //    throw new Exception("Account is not allowed to create note.");
             //}
 
             var note = new Note
