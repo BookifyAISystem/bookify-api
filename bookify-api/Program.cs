@@ -1,4 +1,4 @@
-
+﻿
 using bookify_data;
 using bookify_data.Data;
 using bookify_data.Helper;
@@ -157,7 +157,20 @@ namespace bookify_api
 
 				
 			});
-			var app = builder.Build();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173") 
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
+
+
+            var app = builder.Build();
 
             // Configure the HTTP request pipeline.
            /* if (app.Environment.IsDevelopment())
@@ -172,7 +185,10 @@ namespace bookify_api
 			/*}*/
 			app.UseAuthentication();
 			app.UseAuthorization();
-			//app.UseCors("AllowSpecificOrigins");
+            //app.UseCors("AllowSpecificOrigins");
+
+
+
             app.UseCors("AllowAll");
 
             app.UseHttpsRedirection();
