@@ -90,14 +90,11 @@ namespace bookify_api.Controllers
             return Ok();
         }
 
-        [HttpPatch("{id}/change-status")]
-        public async Task<ActionResult> ChangeStatus(int id, [FromBody] RoleUpdateRequest request)
+        [HttpPatch("change-status/{id}")]
+        public async Task<ActionResult> ChangeStatus(int id, [FromBody] int status)
         {
-            if (request == null || request.Status == 0)
-            {
-                return BadRequest("Invalid status.");
-            }
-            bool changed = await _roleService.ChangeStatus(id, request.Status);
+
+            bool changed = await _roleService.ChangeStatus(id, status);
             if (!changed) return NotFound();
             return Ok();
         }
