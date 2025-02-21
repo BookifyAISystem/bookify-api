@@ -2,9 +2,12 @@
 using bookify_data;
 using bookify_data.Data;
 using bookify_data.Helper;
+using bookify_data.Interfaces;
 using bookify_data.Model;
 using bookify_data.Repository;
 using bookify_service;
+using bookify_service.Interfaces;
+using bookify_service.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +36,7 @@ namespace bookify_api
 			builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 			builder.Configuration.AddJsonFile("appsettings.json"); 
 			AppSettings.Configure(builder.Configuration);
-			string connectionString = builder.Configuration.GetConnectionString("BookifyDb");
+			string connectionString = builder.Configuration.GetConnectionString("BookifyDbLocal");
 
 			if (string.IsNullOrEmpty(connectionString))
 			{
@@ -54,9 +57,14 @@ namespace bookify_api
 			builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 			builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
 			builder.Services.AddScoped<ICacheService, CacheService>();
+            builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+            builder.Services.AddScoped<IRoleService, RoleService>();
+			builder.Services.AddScoped<INoteRepository, NoteRepository>();
+            builder.Services.AddScoped<INoteService, NoteService>();
 
-			#region configure jwt authentication
-			builder.Services.AddHttpContextAccessor();
+
+            #region configure jwt authentication
+            builder.Services.AddHttpContextAccessor();
 
 			// services.addi<IdentityUser>();
 			builder.Services.AddAuthentication(options =>
@@ -162,9 +170,10 @@ namespace bookify_api
 			/*}*/
 			app.UseAuthentication();
 			app.UseAuthorization();
-			app.UseCors("AllowSpecificOrigins");
+			//app.UseCors("AllowSpecificOrigins");
+            app.UseCors("AllowAll");
 
-			app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseAuthorization();
 

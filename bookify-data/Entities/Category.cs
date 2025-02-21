@@ -16,7 +16,6 @@ namespace bookify_data.Entities
 
 		// Navigation properties
 		public List<BookCategory> BookCategories { get; set; } = new List<BookCategory>();
-		public List<News> NewsList { get; set; } = new List<News>();
 	}
 
 }
