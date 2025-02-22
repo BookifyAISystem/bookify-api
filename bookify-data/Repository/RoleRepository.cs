@@ -58,7 +58,7 @@ namespace bookify_data.Repository
         public async Task<bool> ExistsByNameAsync(string name, int? excludeId = null)
         {
             return await _dbContext.Roles
-                .AnyAsync(r => r.RoleName == name && (!excludeId.HasValue || r.RoleId != excludeId.Value));
+                .AnyAsync(r => r.RoleName == name && (!excludeId.HasValue || r.RoleId != excludeId.Value) && r.Status != 0);
         }
     }
 }
