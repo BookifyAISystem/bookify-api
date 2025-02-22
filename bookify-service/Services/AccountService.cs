@@ -1,5 +1,6 @@
 ﻿using bookify_data.Entities;
 using bookify_data.Interfaces;
+using bookify_data.Model;
 using bookify_service.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -63,6 +64,26 @@ namespace bookify_service.Services
 			// 4) Thực hiện Soft Delete
 			await _accountRepository.DeleteAccountAsync(account);
 			return true;
+		}
+		public async Task<PagedResult<Account>> GetAccountsAsync(AccountQueryParameters parameters)
+		{
+			// Gọi repository để lấy dữ liệu + totalCount
+			var (items, totalCount) = await _accountRepository.GetPagedAccountsAsync(parameters);
+
+			// Tính toán totalPages
+			int totalPages = (int)Math.Ceiling((double)totalCount / parameters.PageSize);
+
+			// Đóng gói kết quả
+			var result = new PagedResult<Account>
+			{
+				Items = items.ToList(),
+				TotalCount = totalCount,
+				Page = parameters.Page,
+				PageSize = parameters.PageSize,
+				TotalPages = totalPages
+			};
+
+			return result;
 		}
 	}
 
