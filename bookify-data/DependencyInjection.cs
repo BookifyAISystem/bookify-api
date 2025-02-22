@@ -18,6 +18,7 @@ namespace bookify_data
             service.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork));
 			service.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 			service.AddTransient<IAuthenRepository, AuthenRepository>();
+			service.AddTransient<IAccountRepository, AccountRepository>();
 
 			service.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
 			return service;
