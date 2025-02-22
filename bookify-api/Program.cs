@@ -1,10 +1,13 @@
-
+﻿
 using bookify_data;
 using bookify_data.Data;
 using bookify_data.Helper;
+using bookify_data.Interfaces;
 using bookify_data.Model;
 using bookify_data.Repository;
 using bookify_service;
+using bookify_service.Interfaces;
+using bookify_service.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +36,7 @@ namespace bookify_api
 			builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 			builder.Configuration.AddJsonFile("appsettings.json"); 
 			AppSettings.Configure(builder.Configuration);
-			string connectionString = builder.Configuration.GetConnectionString("BookifyDbLocal");
+			string connectionString = builder.Configuration.GetConnectionString("BookifyDb");
 
 			if (string.IsNullOrEmpty(connectionString))
 			{
@@ -54,9 +57,16 @@ namespace bookify_api
 			builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 			builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
 			builder.Services.AddScoped<ICacheService, CacheService>();
+            builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+            builder.Services.AddScoped<IRoleService, RoleService>();
+			builder.Services.AddScoped<INoteRepository, NoteRepository>();
+            builder.Services.AddScoped<INoteService, NoteService>();
+            builder.Services.AddScoped<INewsRepository, NewsRepository>();
+            builder.Services.AddScoped<INewsService, NewsService>();
 
-			#region configure jwt authentication
-			builder.Services.AddHttpContextAccessor();
+
+            #region configure jwt authentication
+            builder.Services.AddHttpContextAccessor();
 
 			// services.addi<IdentityUser>();
 			builder.Services.AddAuthentication(options =>
@@ -147,7 +157,20 @@ namespace bookify_api
 
 				
 			});
-			var app = builder.Build();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173") 
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
+
+
+            var app = builder.Build();
 
             // Configure the HTTP request pipeline.
            /* if (app.Environment.IsDevelopment())
@@ -162,9 +185,13 @@ namespace bookify_api
 			/*}*/
 			app.UseAuthentication();
 			app.UseAuthorization();
-			app.UseCors("AllowSpecificOrigins");
+            //app.UseCors("AllowSpecificOrigins");
 
-			app.UseHttpsRedirection();
+
+
+            app.UseCors("AllowAll");
+
+            app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
