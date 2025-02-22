@@ -14,6 +14,7 @@ namespace bookify_service
 		public static IServiceCollection AddServices(this IServiceCollection service)
 		{
 			service.AddTransient<IAuthenServices, AuthenServices>();
+			service.AddTransient<IAccountService, AccountService>();
 
 			return service;
 		}
