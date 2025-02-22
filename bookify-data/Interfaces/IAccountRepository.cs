@@ -1,4 +1,5 @@
 ﻿using bookify_data.Entities;
+using bookify_data.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,7 @@ namespace bookify_data.Interfaces
 		Task UpdateAccountAsync(Account account); 
 		Task<Account?> GetAccountByIdWithReferencesAsync(int accountId);
 		Task DeleteAccountAsync(Account account);
+		Task<(IEnumerable<Account> Items, int TotalCount)> GetPagedAccountsAsync(AccountQueryParameters parameters);
+
 	}
 }

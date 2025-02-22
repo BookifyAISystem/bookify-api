@@ -1,6 +1,7 @@
 ﻿using bookify_data.Data;
 using bookify_data.Entities;
 using bookify_data.Interfaces;
+using bookify_data.Model;
 using Microsoft.EntityFrameworkCore;
 
 public class AccountRepository : IAccountRepository
@@ -42,5 +43,46 @@ public class AccountRepository : IAccountRepository
 
 		_context.Accounts.Update(account);
 		await _context.SaveChangesAsync();
+	}
+	public async Task<(IEnumerable<Account> Items, int TotalCount)> GetPagedAccountsAsync(AccountQueryParameters parameters)
+	{
+		// Bắt đầu query
+		IQueryable<Account> query = _context.Accounts.AsQueryable();
+
+		// 1) Tìm kiếm (Username, DisplayName, Email)
+		if (!string.IsNullOrEmpty(parameters.Search))
+		{
+			string search = parameters.Search.Trim();
+			query = query.Where(a =>
+				a.Username.Contains(search) ||
+				a.DisplayName.Contains(search) ||
+				a.Email.Contains(search));
+		}
+
+		// 2) Lọc theo Status
+		if (parameters.Status.HasValue)
+		{
+			query = query.Where(a => a.Status == parameters.Status.Value);
+		}
+
+		// 3) Lọc theo RoleId
+		if (parameters.RoleId.HasValue)
+		{
+			query = query.Where(a => a.RoleId == parameters.RoleId.Value);
+		}
+
+		// 4) Đếm tổng số bản ghi (sau khi lọc)
+		int totalCount = await query.CountAsync();
+
+		// 5) Áp dụng phân trang
+		int skip = (parameters.Page - 1) * parameters.PageSize;
+		var items = await query
+			.OrderByDescending(a => a.CreatedDate) // Sắp xếp theo CreatedDate giảm dần
+			.Skip(skip)
+			.Take(parameters.PageSize)
+			.ToListAsync();
+
+		// Trả về (Items, TotalCount)
+		return (items, totalCount);
 	}
 }
