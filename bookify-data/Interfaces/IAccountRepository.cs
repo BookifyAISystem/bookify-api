@@ -10,6 +10,8 @@ namespace bookify_data.Interfaces
 	public interface IAccountRepository
 	{
 		Task<Account?> GetAccountByIdAsync(int accountId);
-		Task UpdateAccountAsync(Account account);
+		Task UpdateAccountAsync(Account account); 
+		Task<Account?> GetAccountByIdWithReferencesAsync(int accountId);
+		Task DeleteAccountAsync(Account account);
 	}
 }

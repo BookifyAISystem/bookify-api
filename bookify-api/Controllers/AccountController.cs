@@ -43,4 +43,26 @@ public class AccountController : ControllerBase
 
 		return NoContent(); 
 	}
+	[HttpGet("{id}")]
+	public async Task<IActionResult> GetAccount(int id)
+	{
+		var account = await _accountService.GetAccountWithReferencesAsync(id);
+		if (account == null)
+			return NotFound();
+
+		return Ok(account);
+	}
+
+	// DELETE: api/Account/5  (thực hiện soft delete)
+	[HttpDelete("{id}")]
+	public async Task<IActionResult> DeleteAccount(int id)
+	{
+		bool result = await _accountService.DeleteAccountAsync(id);
+		if (!result)
+		{
+			return NotFound("Account không tồn tại hoặc không thể xóa.");
+		}
+
+		return NoContent(); // 204
+	}
 }

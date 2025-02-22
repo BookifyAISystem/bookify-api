@@ -11,5 +11,7 @@ namespace bookify_service.Interfaces
 	{
 		Task<Account?> GetAccountByIdAsync(int accountId);
 		Task UpdateAccountAsync(Account account);
+		Task<Account?> GetAccountWithReferencesAsync(int accountId);
+		Task<bool> DeleteAccountAsync(int accountId);
 	}
 }
