@@ -152,27 +152,18 @@ namespace bookify_service.Services
 
         public async Task DeleteBookAsync(int bookId)
         {
-            try
+            var book = await _bookRepository.GetBookByIdAsync(bookId);
+            if (book == null)
             {
-                var book = await _bookRepository.GetBookByIdAsync(bookId);
-                if (book == null)
-                {
-                    throw new KeyNotFoundException($"Book với ID {bookId} không tồn tại.");
-                }
-
-                // Xóa ảnh trên S3 nếu có
-                if (!string.IsNullOrEmpty(book.BookImage))
-                {
-                    await _amazonS3Service.DeleteFileAsync(book.BookImage);
-                }
-
-                await _bookRepository.DeleteBookAsync(bookId);
-                await _bookRepository.SaveChangesAsync();
+                throw new KeyNotFoundException($"Book với ID {bookId} không tồn tại.");
             }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi xóa sách khỏi database", ex);
-            }
+
+            // Xóa mềm bằng cách đặt Status = 0
+            book.Status = 0;
+            book.LastEdited = DateTime.UtcNow;
+
+            await _bookRepository.UpdateBookAsync(book);
         }
+
     }
 }

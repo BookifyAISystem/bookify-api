@@ -100,16 +100,14 @@ namespace bookify_api.Controllers
             }
         }
 
-        /// <summary>
-        /// Xóa sách và xóa luôn ảnh trên AWS S3.
-        /// </summary>
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
             try
             {
                 await _bookService.DeleteBookAsync(id);
-                return Ok(new { message = "Book deleted successfully!" });
+                return Ok(new { message = "Book deleted successfully (soft delete)!" });
             }
             catch (KeyNotFoundException ex)
             {
@@ -120,5 +118,6 @@ namespace bookify_api.Controllers
                 return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
             }
         }
+
     }
 }

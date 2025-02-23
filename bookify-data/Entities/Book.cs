@@ -19,7 +19,7 @@ namespace bookify_data.Entities
 		public int PublishYear { get; set; }
 		public DateTime CreatedDate { get; set; }
 		public DateTime LastEdited { get; set; }
-		public int Status { get; set; }
+		public int Status { get; set; } = 1;
 		public int? AuthorId { get; set; }
 		public int? ParentBookId { get; set; }
 		public int? CategoryId { get; set; }
