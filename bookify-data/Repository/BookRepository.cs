@@ -19,8 +19,11 @@ namespace bookify_data.Repository
 
         public async Task<IEnumerable<Book>> GetAllBooksAsync()
         {
-            return await _context.Books.ToListAsync();
+            return await _context.Books
+                .Where(b => b.Status == 1) // Chỉ lấy sách chưa bị xóa
+                .ToListAsync();
         }
+
 
         public async Task<Book?> GetBookByIdAsync(int bookId)
         {
@@ -42,12 +45,17 @@ namespace bookify_data.Repository
         public async Task DeleteBookAsync(int bookId)
         {
             var book = await _context.Books.FindAsync(bookId);
-            if (book != null)
+            if (book == null)
             {
-                _context.Books.Remove(book);
-                await _context.SaveChangesAsync();
+                throw new KeyNotFoundException($"Book với ID {bookId} không tồn tại.");
             }
+
+            book.Status = 0; // Đánh dấu sách là đã bị xóa thay vì xóa khỏi DB
+            book.LastEdited = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
         }
+
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
