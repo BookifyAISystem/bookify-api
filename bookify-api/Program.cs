@@ -70,6 +70,10 @@ namespace bookify_api
 			builder.Services.AddScoped<IBookRepository, BookRepository>();
 			builder.Services.AddScoped<IBookService, BookService>();
             builder.Services.AddSingleton<AmazonS3Service>(); // Lưu trữ ảnh trên AWS S3
+            builder.Services.AddScoped<IBookshelfRepository, BookshelfRepository>();
+            builder.Services.AddScoped<IBookshelfService, BookshelfService>();
+			builder.Services.AddScoped<IBookshelfDetailRepository, BookshelfDetailRepository>();
+			builder.Services.AddScoped<IBookshelfDetailService, BookshelfDetailService>();
 
 
 
