@@ -53,7 +53,7 @@ namespace bookify_api.Controllers
         }
 
         [HttpDelete("{id}")] 
-        public async Task<ActionResult> DeleteOrderDetail(int id)
+        public async Task<ActionResult> DeleteOrderDetail(int id )    
         {
             bool isDeleted = await _orderDetailService.DeleteOrderDetailAsync(id);
             if (!isDeleted)
