@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using bookify_data.Model.OrderModel;
+using bookify_data.Model;
 
 namespace bookify_data.Interfaces
 {

@@ -1,7 +1,7 @@
 ﻿using bookify_data.Entities;
 using bookify_data.Interfaces;
 using bookify_data.Repository;
-using bookify_data.Model.OrderModel;
+using bookify_data.Model;
 using bookify_service.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System;

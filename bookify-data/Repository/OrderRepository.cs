@@ -1,5 +1,5 @@
 ﻿using bookify_data.Data;
-using bookify_data.Model.OrderModel;
+using bookify_data.Model;
 using Microsoft.EntityFrameworkCore;
 using bookify_data.Entities;
 using System;
