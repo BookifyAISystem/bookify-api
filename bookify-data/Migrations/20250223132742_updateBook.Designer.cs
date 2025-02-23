@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using bookify_data.Data;
 
@@ -11,9 +12,11 @@ using bookify_data.Data;
 namespace bookify_data.Migrations
 {
     [DbContext(typeof(BookifyDbContext))]
-    partial class BookifyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250223132742_updateBook")]
+    partial class updateBook
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,7 +118,7 @@ namespace bookify_data.Migrations
                     b.Property<string>("BookType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
@@ -136,7 +139,7 @@ namespace bookify_data.Migrations
                     b.Property<int>("PriceEbook")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PromotionId")
+                    b.Property<int>("PromotionId")
                         .HasColumnType("int");
 
                     b.Property<int>("PublishYear")
@@ -780,6 +783,8 @@ namespace bookify_data.Migrations
                     b.HasOne("bookify_data.Entities.Promotion", "Promotion")
                         .WithMany("Books")
                         .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("FK_Book_promotionId");
 
                     b.Navigation("Author");
