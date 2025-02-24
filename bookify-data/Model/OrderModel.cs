@@ -1,4 +1,5 @@
-﻿using System;
+﻿using bookify_data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,10 +13,11 @@ namespace bookify_data.Model
         public int Total { get; set; }
         public string? CancelReason { get; set; }
         public int CustomerId { get; set; }
-        public int VoucherId { get; set; }
+        public int? VoucherId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastEdited { get; set; }
-        public int Status { get; set; }
+        public int Status { get; set; } // 1 - active , 0 - canceled , 2 - completed
+        public List<GetOrderDetailDTO> OrderDetails { get; set; }
 
     }
 
@@ -23,18 +25,19 @@ namespace bookify_data.Model
 
     public class AddOrderDTO
     {
-        public int Total { get; set; }
         public int CustomerId { get; set; }
-        public int VoucherId { get; set; }
+        public int? VoucherId { get; set; }
+        public List<AddOrderDetailDTO> OrderDetails { get; set; }
     }
     public class UpdateOrderDTO
     {
 
-        public int Total { get; set; }
-        public int CustomerId { get; set; }
-        public int VoucherId { get; set; }
+        public int Status { get; set; }
+        public string? CancelReason { get; set; }
 
     }
+
+   
     
     
 }

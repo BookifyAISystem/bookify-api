@@ -29,9 +29,7 @@ namespace bookify_data.Repository
         }
         public async Task<bool> InsertAsync(Voucher voucher)
         {
-            voucher.CreatedDate = DateTime.UtcNow;
-            voucher.LastEdited = DateTime.UtcNow;
-            voucher.Status = 1;
+            
             await _context.Vouchers.AddAsync(voucher);
             return await _context.SaveChangesAsync() > 0;
 

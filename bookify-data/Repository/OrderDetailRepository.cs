@@ -34,8 +34,6 @@ namespace bookify_data.Repository
         }
         public async Task<bool> InsertAsync(OrderDetail orderDetail)
         {
-            orderDetail.CreatedDate = DateTime.UtcNow;
-            orderDetail.LastEdited = DateTime.UtcNow;
             await _context.OrderDetails.AddAsync(orderDetail);
             return await _context.SaveChangesAsync() > 0;
         }
