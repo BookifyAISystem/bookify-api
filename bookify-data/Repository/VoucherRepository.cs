@@ -31,6 +31,7 @@ namespace bookify_data.Repository
         {
             voucher.CreatedDate = DateTime.UtcNow;
             voucher.LastEdited = DateTime.UtcNow;
+            voucher.Status = 1;
             await _context.Vouchers.AddAsync(voucher);
             return await _context.SaveChangesAsync() > 0;
 

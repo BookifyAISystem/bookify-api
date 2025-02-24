@@ -25,7 +25,6 @@ namespace bookify_data.Model
 
     public class AddVoucherDTO
     {
-        public int VoucherId { get; set; }
         public string? VoucherCode { get; set; }
         public int Discount { get; set; }
         public int MinAmount { get; set; }

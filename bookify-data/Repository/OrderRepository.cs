@@ -40,6 +40,7 @@ namespace bookify_data.Repository
         {
             order.CreatedDate = DateTime.UtcNow;
             order.LastEdited = DateTime.UtcNow;
+            order.Status = 1;
             await _context.Orders.AddAsync(order);
             return await _context.SaveChangesAsync() > 0;
         }
