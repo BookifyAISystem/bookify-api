@@ -12,6 +12,7 @@ namespace bookify_data.Interfaces
         Task UpdateBookAsync(Book book);
         Task DeleteBookAsync(int bookId);
         Task SaveChangesAsync();
+        IQueryable<Book> QueryBooks();
 
     }
 }

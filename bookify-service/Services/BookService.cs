@@ -3,6 +3,7 @@ using bookify_data.Entities;
 using bookify_data.Interfaces;
 using bookify_service.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,25 +23,29 @@ namespace bookify_service.Services
             _amazonS3Service = amazonS3Service;
         }
 
-        public async Task<IEnumerable<GetBookDTO>> GetAllBooksAsync()
+        public async Task<(IEnumerable<GetBookDTO>, int)> GetAllBooksAsync(int pageNumber, int pageSize = 12)
         {
-            try
-            {
-                var books = await _bookRepository.GetAllBooksAsync();
-                return books.Select(book => new GetBookDTO
+            var queryBooks = _bookRepository.QueryBooks()
+                .Where(book => book.Status == 1); 
+
+            int totalCount = await queryBooks.CountAsync(); 
+
+            var books = await queryBooks
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(book => new GetBookDTO
                 {
                     BookId = book.BookId,
                     BookName = book.BookName,
-                    BookImage = book.BookImage, // Trả về URL ảnh từ AWS S3
+                    BookImage = book.BookImage,
                     Price = book.Price,
                     PublishYear = book.PublishYear
-                }).ToList();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi lấy danh sách sách từ database", ex);
-            }
+                })
+                .ToListAsync();
+
+            return (books, totalCount);
         }
+
 
         public async Task<GetBookDTO?> GetBookByIdAsync(int bookId)
         {
@@ -163,6 +168,39 @@ namespace bookify_service.Services
             book.LastEdited = DateTime.UtcNow;
 
             await _bookRepository.UpdateBookAsync(book);
+        }
+        
+        public async Task<(IEnumerable<GetBookDTO>, int)> SearchBooksAsync(string query, int pageNumber, int pageSize = 12)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                throw new ArgumentException("Search query cannot be empty.");
+            }
+
+            var normalizedQuery = query.Trim().ToLower();
+
+            var queryBooks = _bookRepository.QueryBooks()
+                .Where(book =>
+                    book.Status == 1 &&
+                    book.BookName.ToLower().Contains(normalizedQuery) ||
+                    book.Description.ToLower().Contains(normalizedQuery));
+
+            int totalCount = await queryBooks.CountAsync(); // Tổng số kết quả
+
+            var books = await queryBooks
+                .Skip((pageNumber - 1) * pageSize) // Phân trang
+                .Take(pageSize)
+                .Select(book => new GetBookDTO
+                {
+                    BookId = book.BookId,
+                    BookName = book.BookName,
+                    BookImage = book.BookImage,
+                    Price = book.Price,
+                    PublishYear = book.PublishYear
+                })
+                .ToListAsync();
+
+            return (books, totalCount);
         }
 
     }

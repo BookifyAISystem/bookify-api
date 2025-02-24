@@ -20,13 +20,30 @@ namespace bookify_api.Controllers
 
         /// <summary>
         /// Lấy danh sách tất cả sách.
-        /// </summary>
+        /// </summary>      
         [HttpGet]
-        public async Task<IActionResult> GetAllBooks()
+        public async Task<IActionResult> GetAllBooks(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 12)
         {
-            var books = await _bookService.GetAllBooksAsync();
-            return Ok(books);
+            try
+            {
+                var (books, totalCount) = await _bookService.GetAllBooksAsync(pageNumber, pageSize);
+
+                return Ok(new
+                {
+                    totalItems = totalCount,
+                    totalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+                    currentPage = pageNumber,
+                    books
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
+            }
         }
+
 
         /// <summary>
         /// Lấy chi tiết sách theo ID.
@@ -118,6 +135,35 @@ namespace bookify_api.Controllers
                 return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
             }
         }
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchBooks(
+            [FromQuery] string query,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 12) // Mặc định 12 sách mỗi trang
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(query))
+                {
+                    return BadRequest(new { message = "Query cannot be empty." });
+                }
+
+                var (books, totalCount) = await _bookService.SearchBooksAsync(query, pageNumber, pageSize);
+
+                return Ok(new
+                {
+                    totalItems = totalCount,
+                    totalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+                    currentPage = pageNumber,
+                    books
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
+            }
+        }
+
 
     }
 }

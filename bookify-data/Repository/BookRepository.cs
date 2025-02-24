@@ -60,5 +60,9 @@ namespace bookify_data.Repository
         {
             await _context.SaveChangesAsync();
         }
+        public IQueryable<Book> QueryBooks()
+        {
+            return _context.Books.AsQueryable();
+        }
     }
 }
