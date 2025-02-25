@@ -16,7 +16,7 @@ namespace bookify_data.Entities
 		public int Status { get; set; }
 
 		// Navigation properties
-		public Customer? Customer { get; set; }
+		public Account? Account { get; set; }
 		public List<BookshelfDetail> BookshelfDetails { get; set; } = new List<BookshelfDetail>();
 	}
 

@@ -28,7 +28,6 @@ public class AccountRepository : IAccountRepository
 	public async Task<Account?> GetAccountByIdWithReferencesAsync(int accountId)
 	{
 		return await _context.Accounts
-			.Include(a => a.Customers)
 			.Include(a => a.NewsList)
 			.Include(a => a.Notes)
 			// .Include(a => a.Staff)   // Nếu bạn có Staff

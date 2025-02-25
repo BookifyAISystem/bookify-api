@@ -36,7 +36,7 @@ namespace bookify_api
 			builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 			builder.Configuration.AddJsonFile("appsettings.json"); 
 			AppSettings.Configure(builder.Configuration);
-			string connectionString = builder.Configuration.GetConnectionString("BookifyDb");
+			string connectionString = builder.Configuration.GetConnectionString("BookifyDbLocal");
 
 			if (string.IsNullOrEmpty(connectionString))
 			{

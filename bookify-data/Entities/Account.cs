@@ -21,10 +21,16 @@ namespace bookify_data.Entities
 		public int RoleId { get; set; }
 
 		// Navigation properties
+
+		public List<Bookshelf> Bookshelves { get; set; } = new List<Bookshelf>();
+		public List<Order> Orders { get; set; } = new List<Order>();
+		public List<Feedback> Feedbacks { get; set; } = new List<Feedback>();
+		public Wishlist? Wishlist { get; set; }
+		public List<Wishlist> Wishlists { get; set; } = new List<Wishlist>();
+		// Navigation properties
 		public Role? Role { get; set; }
 		public List<News> NewsList { get; set; } = new List<News>();
 		public List<Note> Notes { get; set; } = new List<Note>();
-		public List<Customer> Customers { get; set; } = new List<Customer>();
 	}
 
 }

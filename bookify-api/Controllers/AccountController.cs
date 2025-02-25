@@ -46,7 +46,7 @@ public class AccountController : ControllerBase
 		return NoContent(); 
 	}
 	[HttpGet]
-	[Route("deleteAccount")]
+	[Route("getAccont")]
 
 	public async Task<IActionResult> GetAccount(int id)
 	{
