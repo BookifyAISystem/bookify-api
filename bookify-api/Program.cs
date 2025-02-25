@@ -16,6 +16,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
+using Amazon.S3;
+using Microsoft.AspNetCore.Builder;
+
 namespace bookify_api
 {
     public class Program
@@ -24,9 +27,10 @@ namespace bookify_api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-			// Add services to the container.
+            // Add services to the container.
+            builder.Services.Configure<AwsOptions>(builder.Configuration.GetSection("AWS"));
 
-			builder.Services.AddControllers();
+            builder.Services.AddControllers();
 			builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -63,6 +67,14 @@ namespace bookify_api
             builder.Services.AddScoped<INoteService, NoteService>();
             builder.Services.AddScoped<INewsRepository, NewsRepository>();
             builder.Services.AddScoped<INewsService, NewsService>();
+			builder.Services.AddScoped<IBookRepository, BookRepository>();
+			builder.Services.AddScoped<IBookService, BookService>();
+            builder.Services.AddSingleton<AmazonS3Service>(); // Lưu trữ ảnh trên AWS S3
+            builder.Services.AddScoped<IBookshelfRepository, BookshelfRepository>();
+            builder.Services.AddScoped<IBookshelfService, BookshelfService>();
+			builder.Services.AddScoped<IBookshelfDetailRepository, BookshelfDetailRepository>();
+			builder.Services.AddScoped<IBookshelfDetailService, BookshelfDetailService>();
+
 
 
             #region configure jwt authentication

@@ -12,7 +12,7 @@ namespace bookify_data.Entities
 		public int Total { get; set; }
 		public string? CancelReason { get; set; }
 		public int CustomerId { get; set; }
-		public int VoucherId { get; set; }
+		public int? VoucherId { get; set; }
 		public DateTime CreatedDate { get; set; }
 		public DateTime LastEdited { get; set; }
 		public int Status { get; set; }

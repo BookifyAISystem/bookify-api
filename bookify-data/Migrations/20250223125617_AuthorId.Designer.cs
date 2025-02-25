@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using bookify_data.Data;
 
@@ -11,9 +12,11 @@ using bookify_data.Data;
 namespace bookify_data.Migrations
 {
     [DbContext(typeof(BookifyDbContext))]
-    partial class BookifyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250223125617_AuthorId")]
+    partial class AuthorId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,14 +60,9 @@ namespace bookify_data.Migrations
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("WishlistId")
-                        .HasColumnType("int");
-
                     b.HasKey("AccountId");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("WishlistId");
 
                     b.ToTable("Account", (string)null);
                 });
@@ -105,7 +103,7 @@ namespace bookify_data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookId"));
 
-                    b.Property<int?>("AuthorId")
+                    b.Property<int>("AuthorId")
                         .HasColumnType("int");
 
                     b.Property<string>("BookContent")
@@ -120,7 +118,7 @@ namespace bookify_data.Migrations
                     b.Property<string>("BookType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
@@ -141,7 +139,7 @@ namespace bookify_data.Migrations
                     b.Property<int>("PriceEbook")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PromotionId")
+                    b.Property<int>("PromotionId")
                         .HasColumnType("int");
 
                     b.Property<int>("PublishYear")
@@ -343,6 +341,33 @@ namespace bookify_data.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Category", (string)null);
+                });
+
+            modelBuilder.Entity("bookify_data.Entities.Customer", b =>
+                {
+                    b.Property<int>("CustomerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"));
+
+                    b.Property<int?>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastEdited")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("CustomerId");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("Customer", (string)null);
                 });
 
             modelBuilder.Entity("bookify_data.Entities.Feedback", b =>
@@ -680,6 +705,9 @@ namespace bookify_data.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CustomerId1")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("LastEdited")
                         .HasColumnType("datetime2");
 
@@ -689,6 +717,10 @@ namespace bookify_data.Migrations
                     b.HasKey("WishlistId");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("CustomerId1")
+                        .IsUnique()
+                        .HasFilter("[CustomerId1] IS NOT NULL");
 
                     b.ToTable("Wishlist", (string)null);
                 });
@@ -734,21 +766,16 @@ namespace bookify_data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Account_roleId");
 
-                    b.HasOne("bookify_data.Entities.Wishlist", "Wishlist")
-                        .WithMany()
-                        .HasForeignKey("WishlistId");
-
                     b.Navigation("Role");
-
-                    b.Navigation("Wishlist");
                 });
 
             modelBuilder.Entity("bookify_data.Entities.Book", b =>
                 {
-                    b.HasOne("bookify_data.Entities.Author", "Author")
+                    b.HasOne("bookify_data.Entities.Author", null)
                         .WithMany("Books")
                         .HasForeignKey("AuthorId")
-                        .HasConstraintName("FK_Book_authorId");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("bookify_data.Entities.Book", "ParentBook")
                         .WithMany()
@@ -757,9 +784,9 @@ namespace bookify_data.Migrations
                     b.HasOne("bookify_data.Entities.Promotion", "Promotion")
                         .WithMany("Books")
                         .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("FK_Book_promotionId");
-
-                    b.Navigation("Author");
 
                     b.Navigation("ParentBook");
 
@@ -822,14 +849,14 @@ namespace bookify_data.Migrations
 
             modelBuilder.Entity("bookify_data.Entities.Bookshelf", b =>
                 {
-                    b.HasOne("bookify_data.Entities.Account", "Account")
+                    b.HasOne("bookify_data.Entities.Customer", "Customer")
                         .WithMany("Bookshelves")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Bookshelf_customerId");
 
-                    b.Navigation("Account");
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("bookify_data.Entities.BookshelfDetail", b =>
@@ -853,6 +880,16 @@ namespace bookify_data.Migrations
                     b.Navigation("Bookshelf");
                 });
 
+            modelBuilder.Entity("bookify_data.Entities.Customer", b =>
+                {
+                    b.HasOne("bookify_data.Entities.Account", "Account")
+                        .WithMany("Customers")
+                        .HasForeignKey("AccountId")
+                        .HasConstraintName("FK_Customer_accountId");
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("bookify_data.Entities.Feedback", b =>
                 {
                     b.HasOne("bookify_data.Entities.Book", "Book")
@@ -862,16 +899,16 @@ namespace bookify_data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Feedback_bookId");
 
-                    b.HasOne("bookify_data.Entities.Account", "Account")
+                    b.HasOne("bookify_data.Entities.Customer", "Customer")
                         .WithMany("Feedbacks")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Feedback_customerId");
 
-                    b.Navigation("Account");
-
                     b.Navigation("Book");
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("bookify_data.Entities.News", b =>
@@ -900,7 +937,7 @@ namespace bookify_data.Migrations
 
             modelBuilder.Entity("bookify_data.Entities.Order", b =>
                 {
-                    b.HasOne("bookify_data.Entities.Account", "Account")
+                    b.HasOne("bookify_data.Entities.Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -914,7 +951,7 @@ namespace bookify_data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Order_voucherId");
 
-                    b.Navigation("Account");
+                    b.Navigation("Customer");
 
                     b.Navigation("Voucher");
                 });
@@ -954,14 +991,18 @@ namespace bookify_data.Migrations
 
             modelBuilder.Entity("bookify_data.Entities.Wishlist", b =>
                 {
-                    b.HasOne("bookify_data.Entities.Account", "Account")
+                    b.HasOne("bookify_data.Entities.Customer", "Customer")
                         .WithMany("Wishlists")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Wishlist_customerId");
 
-                    b.Navigation("Account");
+                    b.HasOne("bookify_data.Entities.Customer", null)
+                        .WithOne("Wishlist")
+                        .HasForeignKey("bookify_data.Entities.Wishlist", "CustomerId1");
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("bookify_data.Entities.WishlistDetail", b =>
@@ -987,17 +1028,11 @@ namespace bookify_data.Migrations
 
             modelBuilder.Entity("bookify_data.Entities.Account", b =>
                 {
-                    b.Navigation("Bookshelves");
-
-                    b.Navigation("Feedbacks");
+                    b.Navigation("Customers");
 
                     b.Navigation("NewsList");
 
                     b.Navigation("Notes");
-
-                    b.Navigation("Orders");
-
-                    b.Navigation("Wishlists");
                 });
 
             modelBuilder.Entity("bookify_data.Entities.Author", b =>
@@ -1032,6 +1067,19 @@ namespace bookify_data.Migrations
             modelBuilder.Entity("bookify_data.Entities.Category", b =>
                 {
                     b.Navigation("BookCategories");
+                });
+
+            modelBuilder.Entity("bookify_data.Entities.Customer", b =>
+                {
+                    b.Navigation("Bookshelves");
+
+                    b.Navigation("Feedbacks");
+
+                    b.Navigation("Orders");
+
+                    b.Navigation("Wishlist");
+
+                    b.Navigation("Wishlists");
                 });
 
             modelBuilder.Entity("bookify_data.Entities.Order", b =>
