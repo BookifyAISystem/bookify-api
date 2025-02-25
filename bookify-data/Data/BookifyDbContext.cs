@@ -84,6 +84,10 @@ namespace bookify_data.Data
 					  .WithMany(p => p.Books)
 					  .HasForeignKey(e => e.PromotionId)
 					  .HasConstraintName("FK_Book_promotionId");
+				entity.HasOne(e => e.Author)
+					  .WithMany(p => p.Books)
+					  .HasForeignKey(e => e.AuthorId)
+					  .HasConstraintName("FK_Book_authorId");
 
 				// Lưu ý: Mặc dù Book có cột categoryId, nhưng trong DB không có ràng buộc FK trực tiếp.
 				// Các quan hệ với Author, Collection,... được thể hiện qua các bảng phụ (BookAuthor, v.v).
