@@ -191,7 +191,8 @@ namespace bookify_data.Data
 				entity.HasOne(o => o.Voucher)
 					  .WithMany(v => v.Orders)
 					  .HasForeignKey(o => o.VoucherId)
-					  .HasConstraintName("FK_Order_voucherId");
+					  .IsRequired(false)
+                      .HasConstraintName("FK_Order_voucherId");
 
 				// FK: Order -> Customer (customerId)
 				entity.HasOne(o => o.Customer)
