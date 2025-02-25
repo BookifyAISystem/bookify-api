@@ -11,7 +11,7 @@ namespace bookify_data.Entities
 		public int FeedbackId { get; set; }
 		public int Star { get; set; }
 		public string? FeedbackContent { get; set; }
-		public int CustomerId { get; set; }
+		public int AccountId { get; set; }
 		public int BookId { get; set; }
 		public DateTime CreatedDate { get; set; }
 		public DateTime LastEdited { get; set; }

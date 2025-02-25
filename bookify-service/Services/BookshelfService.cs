@@ -25,7 +25,7 @@ namespace bookify_service.Services
             return bookshelves.Select(bs => new GetBookshelfDTO
             {
                 BookshelfId = bs.BookshelfId,
-                CustomerId = bs.CustomerId,
+                AccountId = bs.AccountId,
                 BookShelfName = bs.BookShelfName,
                 CreatedDate = bs.CreatedDate,
                 LastEdited = bs.LastEdited,
@@ -39,7 +39,7 @@ namespace bookify_service.Services
             return bs == null ? null : new GetBookshelfDTO
             {
                 BookshelfId = bs.BookshelfId,
-                CustomerId = bs.CustomerId,
+				AccountId = bs.AccountId,
                 BookShelfName = bs.BookShelfName,
                 CreatedDate = bs.CreatedDate,
                 LastEdited = bs.LastEdited,
@@ -51,7 +51,7 @@ namespace bookify_service.Services
         {
             var bookshelf = new Bookshelf
             {
-                CustomerId = bookshelfDto.CustomerId,
+				AccountId = bookshelfDto.AccountId,
                 BookShelfName = bookshelfDto.BookShelfName,
                 CreatedDate = DateTime.UtcNow,
                 LastEdited = DateTime.UtcNow,

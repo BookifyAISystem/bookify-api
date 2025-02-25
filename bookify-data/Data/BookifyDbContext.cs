@@ -119,8 +119,8 @@ namespace bookify_data.Data
 				// FK: Bookshelf -> Customer (customerId)
 				entity.HasOne(bs => bs.Account)
 					  .WithMany(c => c.Bookshelves)
-					  .HasForeignKey(bs => bs.CustomerId)
-					  .HasConstraintName("FK_Bookshelf_customerId");
+					  .HasForeignKey(bs => bs.AccountId)
+					  .HasConstraintName("FK_Bookshelf_accountId");
 			});
 
 			// ------------------------------
@@ -186,8 +186,8 @@ namespace bookify_data.Data
 				// FK: Order -> Customer (customerId)
 				entity.HasOne(o => o.Account)
 					  .WithMany(c => c.Orders)
-					  .HasForeignKey(o => o.CustomerId)
-					  .HasConstraintName("FK_Order_customerId");
+					  .HasForeignKey(o => o.AccountId)
+					  .HasConstraintName("FK_Order_accountId");
 			});
 
 			// ------------------------------
@@ -228,8 +228,8 @@ namespace bookify_data.Data
 				// FK: Feedback -> Customer (customerId)
 				entity.HasOne(f => f.Account)
 					  .WithMany(c => c.Feedbacks)
-					  .HasForeignKey(f => f.CustomerId)
-					  .HasConstraintName("FK_Feedback_customerId");
+					  .HasForeignKey(f => f.AccountId)
+					  .HasConstraintName("FK_Feedback_accountId");
 			});
 
 			// ------------------------------
@@ -243,8 +243,8 @@ namespace bookify_data.Data
 				// FK: Wishlist -> Customer (customerId)
 				entity.HasOne(w => w.Account)
 					  .WithMany(c => c.Wishlists)
-					  .HasForeignKey(w => w.CustomerId)
-					  .HasConstraintName("FK_Wishlist_customerId");
+					  .HasForeignKey(w => w.AccountId)
+					  .HasConstraintName("FK_Wishlist_accountId");
 			});
 
 			// ------------------------------

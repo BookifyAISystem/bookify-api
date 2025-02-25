@@ -28,10 +28,10 @@ namespace bookify_data.Repository
             return await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
         }
 
-        public async Task<IEnumerable<Order>> GetByCustomerIdAsync(int customerId) 
+        public async Task<IEnumerable<Order>> GetByCustomerIdAsync(int accountId) 
         {
             return await _context.Orders
-                .Where(n => n.CustomerId == customerId && n.Status != 0)
+                .Where(n => n.AccountId == accountId && n.Status != 0)
                 .AsNoTracking()
                 .ToListAsync();
         }

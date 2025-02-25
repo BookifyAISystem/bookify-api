@@ -9,7 +9,7 @@ namespace bookify_data.Entities
 	public class Bookshelf
 	{
 		public int BookshelfId { get; set; }
-		public int CustomerId { get; set; }
+		public int AccountId { get; set; }
 		public string? BookShelfName { get; set; }
 		public DateTime CreatedDate { get; set; }
 		public DateTime LastEdited { get; set; }
