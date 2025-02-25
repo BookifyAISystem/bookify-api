@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using bookify_data.Data;
 
@@ -11,9 +12,11 @@ using bookify_data.Data;
 namespace bookify_data.Migrations
 {
     [DbContext(typeof(BookifyDbContext))]
-    partial class BookifyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250225040504_a")]
+    partial class a
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,9 +60,14 @@ namespace bookify_data.Migrations
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("WishlistId")
+                        .HasColumnType("int");
+
                     b.HasKey("AccountId");
 
                     b.HasIndex("RoleId");
+
+                    b.HasIndex("WishlistId");
 
                     b.ToTable("Account", (string)null);
                 });
@@ -261,14 +269,14 @@ namespace bookify_data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookshelfId"));
 
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
                     b.Property<string>("BookShelfName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("LastEdited")
                         .HasColumnType("datetime2");
@@ -278,7 +286,7 @@ namespace bookify_data.Migrations
 
                     b.HasKey("BookshelfId");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Bookshelf", (string)null);
                 });
@@ -348,14 +356,14 @@ namespace bookify_data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FeedbackId"));
 
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("FeedbackContent")
                         .HasColumnType("nvarchar(max)");
@@ -371,9 +379,9 @@ namespace bookify_data.Migrations
 
                     b.HasKey("FeedbackId");
 
-                    b.HasIndex("AccountId");
-
                     b.HasIndex("BookId");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Feedback", (string)null);
                 });
@@ -461,14 +469,14 @@ namespace bookify_data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
                     b.Property<string>("CancelReason")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("LastEdited")
                         .HasColumnType("datetime2");
@@ -484,7 +492,7 @@ namespace bookify_data.Migrations
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("VoucherId");
 
@@ -669,14 +677,11 @@ namespace bookify_data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WishlistId"));
 
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("AccountId1")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("LastEdited")
                         .HasColumnType("datetime2");
@@ -686,11 +691,7 @@ namespace bookify_data.Migrations
 
                     b.HasKey("WishlistId");
 
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("AccountId1")
-                        .IsUnique()
-                        .HasFilter("[AccountId1] IS NOT NULL");
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Wishlist", (string)null);
                 });
@@ -736,7 +737,13 @@ namespace bookify_data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Account_roleId");
 
+                    b.HasOne("bookify_data.Entities.Wishlist", "Wishlist")
+                        .WithMany()
+                        .HasForeignKey("WishlistId");
+
                     b.Navigation("Role");
+
+                    b.Navigation("Wishlist");
                 });
 
             modelBuilder.Entity("bookify_data.Entities.Book", b =>
@@ -820,10 +827,10 @@ namespace bookify_data.Migrations
                 {
                     b.HasOne("bookify_data.Entities.Account", "Account")
                         .WithMany("Bookshelves")
-                        .HasForeignKey("AccountId")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Bookshelf_accountId");
+                        .HasConstraintName("FK_Bookshelf_customerId");
 
                     b.Navigation("Account");
                 });
@@ -851,19 +858,19 @@ namespace bookify_data.Migrations
 
             modelBuilder.Entity("bookify_data.Entities.Feedback", b =>
                 {
-                    b.HasOne("bookify_data.Entities.Account", "Account")
-                        .WithMany("Feedbacks")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Feedback_accountId");
-
                     b.HasOne("bookify_data.Entities.Book", "Book")
                         .WithMany("Feedbacks")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Feedback_bookId");
+
+                    b.HasOne("bookify_data.Entities.Account", "Account")
+                        .WithMany("Feedbacks")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Feedback_customerId");
 
                     b.Navigation("Account");
 
@@ -898,10 +905,10 @@ namespace bookify_data.Migrations
                 {
                     b.HasOne("bookify_data.Entities.Account", "Account")
                         .WithMany("Orders")
-                        .HasForeignKey("AccountId")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Order_accountId");
+                        .HasConstraintName("FK_Order_customerId");
 
                     b.HasOne("bookify_data.Entities.Voucher", "Voucher")
                         .WithMany("Orders")
@@ -950,14 +957,10 @@ namespace bookify_data.Migrations
                 {
                     b.HasOne("bookify_data.Entities.Account", "Account")
                         .WithMany("Wishlists")
-                        .HasForeignKey("AccountId")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Wishlist_accountId");
-
-                    b.HasOne("bookify_data.Entities.Account", null)
-                        .WithOne("Wishlist")
-                        .HasForeignKey("bookify_data.Entities.Wishlist", "AccountId1");
+                        .HasConstraintName("FK_Wishlist_customerId");
 
                     b.Navigation("Account");
                 });
@@ -994,8 +997,6 @@ namespace bookify_data.Migrations
                     b.Navigation("Notes");
 
                     b.Navigation("Orders");
-
-                    b.Navigation("Wishlist");
 
                     b.Navigation("Wishlists");
                 });

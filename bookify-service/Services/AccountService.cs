@@ -47,8 +47,7 @@ namespace bookify_service.Services
 
 			// 2) Kiểm tra liên kết
 			//    Ví dụ: Nếu account còn Customer, News, Note... có thể cấm xóa hoặc cho xóa tùy logic
-			bool hasReferences = (account.Customers.Any()
-								  || account.NewsList.Any()
+			bool hasReferences = (account.NewsList.Any()
 								  || account.Notes.Any());
 			// ... Nếu bạn có Staff:  account.Staff.Any()  (hoặc Staff == null, tùy mô hình)
 

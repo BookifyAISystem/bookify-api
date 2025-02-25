@@ -11,14 +11,14 @@ namespace bookify_data.Entities
 		public int OrderId { get; set; }
 		public int Total { get; set; }
 		public string? CancelReason { get; set; }
-		public int CustomerId { get; set; }
+		public int AccountId { get; set; }
 		public int? VoucherId { get; set; }
 		public DateTime CreatedDate { get; set; }
 		public DateTime LastEdited { get; set; }
 		public int Status { get; set; }
 
 		// Navigation properties
-		public Customer? Customer { get; set; }
+		public Account? Account { get; set; }
 		public Voucher? Voucher { get; set; }
 		public List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 		public List<Payment> Payments { get; set; } = new List<Payment>();

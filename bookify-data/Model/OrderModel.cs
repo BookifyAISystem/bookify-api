@@ -12,7 +12,7 @@ namespace bookify_data.Model
         public int OrderId { get; set; }
         public int Total { get; set; }
         public string? CancelReason { get; set; }
-        public int CustomerId { get; set; }
+        public int AccountId { get; set; }
         public int? VoucherId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastEdited { get; set; }
@@ -25,7 +25,7 @@ namespace bookify_data.Model
 
     public class AddOrderDTO
     {
-        public int CustomerId { get; set; }
+        public int AccountId { get; set; }
         public int? VoucherId { get; set; }
         public List<AddOrderDetailDTO> OrderDetails { get; set; }
     }
