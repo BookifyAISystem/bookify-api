@@ -15,14 +15,14 @@ namespace bookify_api.Controllers
             _orderService = orderService;
         }
 
-        [HttpGet]
+        [HttpGet("GetAll")]
         public async Task<ActionResult<IEnumerable<GetOrderDTO>>> GetAllOrders()
         {
             var orders = await _orderService.GetAllAsync();
             return Ok(orders);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetById/{id}")]
         public async Task<ActionResult<GetOrderDTO>> GetOrderById(int id)
         {
             var order = await _orderService.GetByIdAsync(id);
@@ -32,7 +32,7 @@ namespace bookify_api.Controllers
             return Ok(order);
         }
 
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<ActionResult> CreateOrder([FromBody] AddOrderDTO addOrderDto)
         {
             bool isCreated = await _orderService.CreateOrderAsync(addOrderDto);
@@ -42,7 +42,7 @@ namespace bookify_api.Controllers
             return StatusCode(201, new { message = "Order created successfully" });
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("UpdateById/{id}")]
         public async Task<ActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDTO updateOrderDto)
         {
             bool isUpdated = await _orderService.UpdateOrderAsync(id, updateOrderDto);
@@ -52,9 +52,10 @@ namespace bookify_api.Controllers
             return NoContent(); // HTTP 204
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
     public async Task<ActionResult> DeleteOrder(int id)
     {
+        
         bool isDeleted = await _orderService.DeleteOrderAsync(id);
         if (!isDeleted)
             return NotFound(new { message = "Order not found" });

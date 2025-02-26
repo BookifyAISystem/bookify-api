@@ -20,12 +20,18 @@ namespace bookify_data.Repository
 
         public async Task<IEnumerable<Order>> GetAllAsync()
         {
-            return await _context.Orders.AsNoTracking().ToListAsync();
+            return await _context.Orders
+                         .Include(o => o.OrderDetails)
+                         .AsNoTracking()
+                         .ToListAsync();
+
         }
 
         public async Task<Order?> GetByIdAsync(int id)
         {
-            return await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
+            return await _context.Orders.Include(o => o.OrderDetails)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(o => o.OrderId == id);
         }
 
         public async Task<IEnumerable<Order>> GetByCustomerIdAsync(int customerId) 
