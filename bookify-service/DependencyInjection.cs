@@ -18,6 +18,7 @@ namespace bookify_service
 			service.AddTransient<IOrderService, OrderService>();
             service.AddTransient<IOrderDetailService, OrderDetailService>();
             service.AddTransient<IVoucherService, VoucherService>();
+            service.AddTransient<ICategoryService, CategoryService>();
 
             return service;
 		}

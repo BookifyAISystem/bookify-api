@@ -14,6 +14,5 @@ namespace bookify_data.Interfaces
         Task<IEnumerable<Order>> GetByCustomerIdAsync(int customerId);
         Task<bool> InsertAsync(Order order);
         Task<bool> UpdateAsync(Order order);
-        Task<bool> DeleteAsync(int id);
     }
 }

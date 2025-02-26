@@ -38,6 +38,7 @@ namespace bookify_data.Model
         public int MinAmount { get; set; }
         public int MaxDiscount { get; set; }
         public int Quantity { get; set; }
+        public int Status { get; set; }
 
     }
 }

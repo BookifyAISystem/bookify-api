@@ -90,7 +90,10 @@ namespace bookify_service.Services
         {
             var order = await _orderRepository.GetByIdAsync(id);
             if (order == null) return false;
-
+            if (updateOrderDto.Status != 1 && updateOrderDto.Status != 0 && updateOrderDto.Status != 2)
+            {
+                throw new ArgumentException("Invalid Order");
+            }
             order.Status = updateOrderDto.Status;
             if (updateOrderDto.Status == 0) // giả sử 0 = hủy
             {
@@ -100,9 +103,6 @@ namespace bookify_service.Services
             return await _orderRepository.UpdateAsync(order);
             // Truong hop bang 2 - thanh cong . Co the tao 1 DB danh cho luu tru hoa don thanh cong
         }
-        public async Task<bool> DeleteOrderAsync(int id) //may be no need
-        {
-            return await _orderRepository.DeleteAsync(id);
-        }
+       
     }
 }

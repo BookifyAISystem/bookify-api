@@ -26,7 +26,7 @@ namespace bookify_service.Services
         public async Task<IEnumerable<GetVoucherDTO>> GetAllAsync()
         {
             var voucherList = await _voucherRepository.GetAllAsync();
-            return _mapper.Map<IEnumerable<GetVoucherDTO>>( voucherList );
+            return _mapper.Map<IEnumerable<GetVoucherDTO>>( voucherList);
         }
         public async Task<GetVoucherDTO?> GetByIdAsync(int id)
         {
@@ -56,7 +56,9 @@ namespace bookify_service.Services
             if (updateVoucherDto.Discount <= 0 ||
             updateVoucherDto.MinAmount < 0 ||
             updateVoucherDto.MaxDiscount < 0 ||
-            updateVoucherDto.Quantity < 0)
+            updateVoucherDto.Quantity < 0 ||
+            (updateVoucherDto.Status != 1 &&
+            updateVoucherDto.Status != 0))
             {
                 throw new ArgumentException("Invalid voucher");
             }
@@ -65,9 +67,6 @@ namespace bookify_service.Services
 
             return await _voucherRepository.UpdateAsync(voucher);
         }
-        public async Task<bool> DeleteVoucherAsync(int id)
-        {
-            return await _voucherRepository.DeleteAsync(id);
-        }
+        
     }
 }

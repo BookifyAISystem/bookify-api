@@ -58,14 +58,6 @@ namespace bookify_api.Controllers
         }
 
 
-        [HttpDelete("DeleteById/{id}")]
-        public async Task<ActionResult> DeleteVoucher(int id)
-        {
-            bool isDeleted = await _voucherService.DeleteVoucherAsync(id);
-            if (!isDeleted)
-                return NotFound(new { message = "Voucher not found" });
-
-            return NoContent(); 
-        }
+        
     }
 }

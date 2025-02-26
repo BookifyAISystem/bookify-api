@@ -52,14 +52,6 @@ namespace bookify_data.Repository
             _context.Orders.Update(order);
             return await _context.SaveChangesAsync() > 0; 
         }
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null)
-                return false;
-
-            _context.Orders.Remove(order);
-            return await _context.SaveChangesAsync() > 0;
-        }
+        
     }
 }
