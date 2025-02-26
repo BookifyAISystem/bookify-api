@@ -23,7 +23,9 @@ namespace bookify_data
             service.AddTransient<IVoucherRepository, VoucherRepository>();
             service.AddTransient<IOrderDetailRepository, OrderDetailRepository>();
             service.AddTransient<ICategoryRepository, CategoryRepository>();
+            service.AddTransient<IBookCategoryRepository, BookCategoryRepository>();
             service.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
+
 			return service;
 		}
 	}

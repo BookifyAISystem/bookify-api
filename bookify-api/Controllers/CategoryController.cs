@@ -16,7 +16,7 @@ namespace bookify_api.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult<IEnumerable<GetCategoryDTO>>> GetAllVouchers()
+        public async Task<ActionResult<IEnumerable<GetCategoryDTO>>> GetAllCategories()
         {
             var categories = await _categoryService.GetAllAsync();
             return Ok(categories);
@@ -25,17 +25,17 @@ namespace bookify_api.Controllers
         [HttpGet("GetById/{id}")]
         public async Task<ActionResult<GetCategoryDTO>> GetCategoryById(int id)
         {
-            var voucher = await _categoryService.GetByIdAsync(id);
-            if (voucher == null)
+            var category = await _categoryService.GetByIdAsync(id);
+            if (category == null)
                 return NotFound(new { message = "Category not found" });
 
-            return Ok(voucher);
+            return Ok(category);
         }
 
         [HttpPost("Create")]
         public async Task<ActionResult> CreateCategory([FromBody] AddCategoryDTO addCategoryDTO)
         {
-            bool isCreated = await _categoryService.CreateVoucherAsync(addCategoryDTO);
+            bool isCreated = await _categoryService.CreateCategoryAsync(addCategoryDTO);
             if (!isCreated)
                 return BadRequest(new { message = "Failed to create category" });
 
@@ -45,7 +45,7 @@ namespace bookify_api.Controllers
         [HttpPut("UpdateById/{id}")]
         public async Task<ActionResult> UpdateCategory(int id, [FromBody] UpdateCategoryDTO updateCategoryDto)
         {
-            bool isUpdated = await _categoryService.UpdateVoucherAsync(id, updateCategoryDto);
+            bool isUpdated = await _categoryService.UpdateCategoryAsync(id, updateCategoryDto);
             if (!isUpdated)
                 return NotFound(new { message = "Category not found or update failed" });
 

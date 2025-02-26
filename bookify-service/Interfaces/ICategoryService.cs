@@ -11,7 +11,7 @@ namespace bookify_service.Interfaces
     {
         Task<IEnumerable<GetCategoryDTO>> GetAllAsync();
         Task<GetCategoryDTO?> GetByIdAsync(int id);
-        Task<bool> CreateVoucherAsync(AddCategoryDTO addCategoryDto);
-        Task<bool> UpdateVoucherAsync(int id, UpdateCategoryDTO updateCategoryDto);
+        Task<bool> CreateCategoryAsync(AddCategoryDTO addCategoryDto);
+        Task<bool> UpdateCategoryAsync(int id, UpdateCategoryDTO updateCategoryDto);
     }
 }

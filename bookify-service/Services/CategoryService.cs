@@ -33,7 +33,7 @@ namespace bookify_service.Services
             var category = await _categoryRepository.GetByIdAsync(id);
             return _mapper.Map<GetCategoryDTO>(category);
         }
-        public async Task<bool> CreateVoucherAsync(AddCategoryDTO addCategoryDto)
+        public async Task<bool> CreateCategoryAsync(AddCategoryDTO addCategoryDto)
         {
             var categoryToAdd = _mapper.Map<Category>(addCategoryDto);
             categoryToAdd.CreatedDate = DateTime.UtcNow;
@@ -41,7 +41,7 @@ namespace bookify_service.Services
             categoryToAdd.Status = 1;
             return await _categoryRepository.InsertAsync(categoryToAdd);
         }
-        public async Task<bool> UpdateVoucherAsync(int id, UpdateCategoryDTO updateCategoryDto)
+        public async Task<bool> UpdateCategoryAsync(int id, UpdateCategoryDTO updateCategoryDto)
         {
             var category = await _categoryRepository.GetByIdAsync(id);
             if (category == null)
