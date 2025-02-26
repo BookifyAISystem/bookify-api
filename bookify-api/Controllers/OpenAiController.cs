@@ -6,7 +6,7 @@ using OpenAI.Images;
 namespace bookify_api.Controllers
 {
 	[ApiController]
-	[Route("api/[controller]")]
+	[Route("api/open-ai")]
 	public class OpenAiController : ControllerBase
 	{
 		private readonly OpenAIConfig _openAIConfig;
