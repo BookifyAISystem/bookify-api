@@ -13,6 +13,5 @@ namespace bookify_data.Interfaces
         Task<Voucher?> GetByIdAsync(int id);
         Task<bool> InsertAsync(Voucher voucher);
         Task<bool> UpdateAsync(Voucher voucher);
-        Task<bool> DeleteAsync(int id);
     }
 }
