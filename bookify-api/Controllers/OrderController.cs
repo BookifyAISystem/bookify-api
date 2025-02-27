@@ -15,14 +15,14 @@ namespace bookify_api.Controllers
             _orderService = orderService;
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<GetOrderDTO>>> GetAllOrders()
         {
             var orders = await _orderService.GetAllAsync();
             return Ok(orders);
         }
 
-        [HttpGet("GetById/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<GetOrderDTO>> GetOrderById(int id)
         {
             var order = await _orderService.GetByIdAsync(id);
@@ -32,7 +32,7 @@ namespace bookify_api.Controllers
             return Ok(order);
         }
 
-        [HttpPost("Create")]
+        [HttpPost]
         public async Task<ActionResult> CreateOrder([FromBody] AddOrderDTO addOrderDto)
         {
             bool isCreated = await _orderService.CreateOrderAsync(addOrderDto);
@@ -42,7 +42,7 @@ namespace bookify_api.Controllers
             return StatusCode(201, new { message = "Order created successfully" });
         }
 
-        [HttpPut("UpdateById/{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDTO updateOrderDto)
         {
             bool isUpdated = await _orderService.UpdateOrderAsync(id, updateOrderDto);

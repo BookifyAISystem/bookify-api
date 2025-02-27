@@ -38,5 +38,10 @@ namespace bookify_data.Repository
             return await _context.SaveChangesAsync() > 0;
         }
 
+        public async Task<List<BookCategory>> GetByBookIdAsync(int bookId)
+        {
+            return await _context.BookCategories.Where(bc => bc.BookId == bookId).ToListAsync();
+        }
+
     }
 }

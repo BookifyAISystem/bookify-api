@@ -15,14 +15,14 @@ namespace bookify_api.Controllers
             _categoryService = categoryService;
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<GetCategoryDTO>>> GetAllCategories()
         {
             var categories = await _categoryService.GetAllAsync();
             return Ok(categories);
         }
 
-        [HttpGet("GetById/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<GetCategoryDTO>> GetCategoryById(int id)
         {
             var category = await _categoryService.GetByIdAsync(id);
@@ -32,7 +32,7 @@ namespace bookify_api.Controllers
             return Ok(category);
         }
 
-        [HttpPost("Create")]
+        [HttpPost]
         public async Task<ActionResult> CreateCategory([FromBody] AddCategoryDTO addCategoryDTO)
         {
             bool isCreated = await _categoryService.CreateCategoryAsync(addCategoryDTO);
@@ -42,7 +42,7 @@ namespace bookify_api.Controllers
             return StatusCode(201, new { message = "Category created successfully" });
         }
 
-        [HttpPut("UpdateById/{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCategory(int id, [FromBody] UpdateCategoryDTO updateCategoryDto)
         {
             bool isUpdated = await _categoryService.UpdateCategoryAsync(id, updateCategoryDto);

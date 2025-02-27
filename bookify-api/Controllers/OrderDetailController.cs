@@ -15,14 +15,14 @@ namespace bookify_api.Controllers
             _orderDetailService = orderDetailService;
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<GetOrderDetailDTO>>> GetAllOrderDetails()
         {
             var orderDetails = await _orderDetailService.GetAllAsync();
             return Ok(orderDetails);
         }
 
-        [HttpGet("GetById/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<GetOrderDetailDTO>> GetOrderDetailById(int id)
         {
             var orderDetail = await _orderDetailService.GetByIdAsync(id);
@@ -32,7 +32,7 @@ namespace bookify_api.Controllers
             return Ok(orderDetail);
         }
 
-        [HttpPost("Create")]
+        [HttpPost]
         public async Task<ActionResult> CreateOrderDetail([FromBody] AddOrderDetailDTO addOrderDetailDto)
         {
             bool isCreated = await _orderDetailService.CreateOrderDetailAsync(addOrderDetailDto);
@@ -42,7 +42,7 @@ namespace bookify_api.Controllers
             return StatusCode(201, new { message = "Order detail created successfully" });
         }
 
-        [HttpPut("UpdateById/{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateOrderDetail(int id, [FromBody] UpdateOrderDetailDTO updateOrderDetailDto)
         {
             bool isUpdated = await _orderDetailService.UpdateOrderDetailAsync(id, updateOrderDetailDto);
