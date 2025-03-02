@@ -19,6 +19,7 @@ using System.Text;
 using Amazon.S3;
 using Microsoft.AspNetCore.Builder;
 using bookify_data.Repositories;
+using bookify_data.Repositories.Interfaces;
 
 namespace bookify_api
 {
@@ -84,6 +85,9 @@ namespace bookify_api
 			builder.Services.AddScoped<IWishlistService, WishlistService>();
 			builder.Services.AddScoped<IWishlistDetailRepository, WishlistDetailRepository>();
 			builder.Services.AddScoped<IWishlistDetailService, WishlistDetailService>();
+            builder.Services.AddScoped<IBookContentVersionRepository, BookContentVersionRepository>();
+            builder.Services.AddScoped<IBookContentVersionService, BookContentVersionService>();
+
 
 
             #region configure jwt authentication
