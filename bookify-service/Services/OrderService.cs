@@ -40,7 +40,7 @@ namespace bookify_service.Services
         {
             var order = new Order
             {
-                CustomerId = addOrderDto.CustomerId,
+                AccountId = addOrderDto.AccountId,
                 VoucherId = addOrderDto.VoucherId,
                 CreatedDate = DateTime.UtcNow,
                 LastEdited = DateTime.UtcNow,

@@ -13,7 +13,7 @@ namespace bookify_api.Controllers
 {
 	[Route("api/authen")]
 	[ApiController]
-	[EnableCors("AllowSpecificOrigins")]
+	[EnableCors("AllowAll")]
 
 	public class AuthenController : ControllerBase
 	{
