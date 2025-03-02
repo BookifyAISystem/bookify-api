@@ -11,5 +11,7 @@ namespace bookify_data.Interfaces
         Task AddBookshelfDetailAsync(BookshelfDetail bookshelfDetail);
         Task UpdateBookshelfDetailAsync(BookshelfDetail bookshelfDetail);
         Task DeleteBookshelfDetailAsync(int id);
+        Task UpdateStatusAsync(int bookshelfDetailId, int status);
+
     }
 }

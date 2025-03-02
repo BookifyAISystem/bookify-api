@@ -1,4 +1,5 @@
 ﻿using bookify_data.Data;
+using bookify_data.DTOs;
 using bookify_data.Entities;
 using bookify_data.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -55,6 +56,47 @@ namespace bookify_data.Repository
 
             await _context.SaveChangesAsync();
         }
+        // 🔍 Gợi ý sách khi nhập ký tự
+        public async Task<IEnumerable<GetBookDTO>> SuggestBooksAsync(string query, int limit)
+        {
+            return await _context.Books
+                .Where(b => b.Status == 1 && b.BookName.Contains(query)) // Chỉ lấy sách có status = 1
+                .OrderBy(b => b.BookName)
+                .Take(limit)
+                .Select(b => new GetBookDTO
+                {
+                    BookId = b.BookId,
+                    BookName = b.BookName,
+                    BookImage = b.BookImage,
+                    Price = b.Price,
+                    PublishYear = b.PublishYear
+                }).ToListAsync();
+        }
+
+        // 🔍 Phân trang khi tìm kiếm
+        public async Task<(IEnumerable<GetBookDTO>, int)> SearchBooksAsync(string query, int pageNumber, int pageSize)
+        {
+            var booksQuery = _context.Books
+                .Where(b => b.Status == 1 && b.BookName.Contains(query))
+                .OrderBy(b => b.BookName);
+
+            int totalRecords = await booksQuery.CountAsync(); // Tổng số sách
+            int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize); // Tổng số trang
+
+            var books = await booksQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(b => new GetBookDTO
+                {
+                    BookId = b.BookId,
+                    BookName = b.BookName,
+                    BookImage = b.BookImage,
+                    Price = b.Price,
+                    PublishYear = b.PublishYear
+                }).ToListAsync();
+
+            return (books, totalPages);
+        }
 
         public async Task SaveChangesAsync()
         {
@@ -64,5 +106,15 @@ namespace bookify_data.Repository
         {
             return _context.Books.AsQueryable();
         }
+        public async Task UpdateStatusAsync(int bookId, int status)
+        {
+            var book = await _context.Books.FindAsync(bookId);
+            if (book != null)
+            {
+                book.Status = status;
+                await _context.SaveChangesAsync();
+            }
+        }
+
     }
 }

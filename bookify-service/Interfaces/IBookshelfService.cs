@@ -12,5 +12,7 @@ namespace bookify_service.Interfaces
         Task AddBookshelfAsync(CreateBookshelfDTO bookshelfDto);
         Task UpdateBookshelfAsync(UpdateBookshelfDTO bookshelfDto);
         Task DeleteBookshelfAsync(int bookshelfId);
+        Task UpdateStatusAsync(int bookshelfId, int status);
+
     }
 }
