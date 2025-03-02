@@ -31,15 +31,7 @@ namespace bookify_api.Controllers
             return Ok(feedback);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> CreateFeedback([FromBody] AddFeedbackDTO addFeedbackDTO)
-        {
-            bool isCreated = await _feedbackService.CreateFeedbackAsync(addFeedbackDTO);
-            if (!isCreated)
-                return BadRequest(new { message = "Failed to create feedback" });
-
-            return StatusCode(201, new { message = "Feedback created successfully" });
-        }
+        
 
         [HttpPost]
         public async Task<IActionResult> CreateFeedbackIfOrdered([FromBody] AddFeedbackDTO addFeedbackDto)
