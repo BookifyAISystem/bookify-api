@@ -36,6 +36,7 @@ namespace bookify_service.Services
         public async Task<bool> CreateVoucherAsync(AddVoucherDTO addVoucherDto)
         {
             if (addVoucherDto.Discount <= 0 ||
+                addVoucherDto.Discount > 100 ||
             addVoucherDto.MinAmount < 0 ||
             addVoucherDto.MaxDiscount < 0 ||
             addVoucherDto.Quantity < 0)
@@ -54,6 +55,7 @@ namespace bookify_service.Services
             if (voucher == null)
                 return false;
             if (updateVoucherDto.Discount <= 0 ||
+                updateVoucherDto.Discount > 100 ||
             updateVoucherDto.MinAmount < 0 ||
             updateVoucherDto.MaxDiscount < 0 ||
             updateVoucherDto.Quantity < 0 ||

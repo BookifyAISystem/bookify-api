@@ -41,6 +41,22 @@ namespace bookify_api.Controllers
             return StatusCode(201, new { message = "Feedback created successfully" });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateFeedbackIfOrdered([FromBody] AddFeedbackDTO addFeedbackDto)
+        {
+            try
+            {
+                bool isCreated = await _feedbackService.CreateFeedbackAsync(addFeedbackDto);
+                if (!isCreated)
+                    return BadRequest(new { message = "Failed to create feedback" });
+                return StatusCode(201, new { message = "Feedback created successfully" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCategory(int id, [FromBody] UpdateFeedbackDTO updateFeedbackDto)
         {
