@@ -52,6 +52,7 @@ namespace bookify_data.Repository
 			}
 			var claims = new[]
 				{
+				new Claim("AccountId", user.AccountId.ToString()),
 			new Claim(ClaimTypes.Name, user.DisplayName),
 			new Claim(ClaimTypes.NameIdentifier, user.DisplayName.ToString()),
 			new Claim(ClaimTypes.Role, user.Role.RoleName),
