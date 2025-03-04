@@ -111,8 +111,10 @@ namespace bookify_data.Repository
 					Password = BCrypt.Net.BCrypt.HashPassword(registerDTO.Password),
 					Phone = registerDTO.PhoneNumber,
 					Email = registerDTO.Email,
-					/*ReferralCode = GenerateReferralCode(),*/
-					/*DOB = registerDTO.DOB,*/
+					CreatedDate = DateTime.UtcNow.AddHours(7),
+					LastEdited = DateTime.UtcNow.AddHours(7),
+                    /*ReferralCode = GenerateReferralCode(),*/
+                    /*DOB = registerDTO.DOB,*/
                     RoleId = id,
 					/*Status = registerDTO.Status,*/
 				};
