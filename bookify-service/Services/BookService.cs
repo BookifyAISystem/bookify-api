@@ -38,8 +38,19 @@ namespace bookify_service.Services
                     BookId = book.BookId,
                     BookName = book.BookName,
                     BookImage = book.BookImage,
+                    BookType = book.BookType,
                     Price = book.Price,
-                    PublishYear = book.PublishYear
+                    PriceEbook = book.PriceEbook,
+                    Description = book.Description,
+                    BookContent = book.BookContent,
+                    PublishYear = book.PublishYear,
+                    CategoryId = book.CategoryId,
+                    PromotionId = book.PromotionId,
+                    ParentBookId = book.ParentBookId,
+                    AuthorId = book.AuthorId,
+                    CreatedDate = DateTime.UtcNow,
+                    LastEdited = DateTime.UtcNow,
+
                 })
                 .ToListAsync();
 
@@ -62,8 +73,18 @@ namespace bookify_service.Services
                     BookId = book.BookId,
                     BookName = book.BookName,
                     BookImage = book.BookImage,
+                    BookType = book.BookType,
                     Price = book.Price,
-                    PublishYear = book.PublishYear
+                    PriceEbook = book.PriceEbook,
+                    Description = book.Description,
+                    BookContent = book.BookContent,
+                    PublishYear = book.PublishYear,
+                    CategoryId  = book.CategoryId,
+                    PromotionId = book.PromotionId,
+                    ParentBookId    = book.ParentBookId,
+                    AuthorId = book.AuthorId,
+                    CreatedDate = DateTime.UtcNow,
+                    LastEdited = DateTime.UtcNow,
                 };
             }
             catch (Exception ex)
@@ -169,39 +190,33 @@ namespace bookify_service.Services
 
             await _bookRepository.UpdateBookAsync(book);
         }
-        
-        public async Task<(IEnumerable<GetBookDTO>, int)> SearchBooksAsync(string query, int pageNumber, int pageSize = 12)
+
+        // 🔍 Gợi ý sách khi nhập ký tự
+        public async Task<IEnumerable<GetBookDTO>> SuggestBooksAsync(string query, int limit)
         {
             if (string.IsNullOrWhiteSpace(query))
             {
-                throw new ArgumentException("Search query cannot be empty.");
+                return new List<GetBookDTO>();
             }
 
-            var normalizedQuery = query.Trim().ToLower();
-
-            var queryBooks = _bookRepository.QueryBooks()
-                .Where(book =>
-                    book.Status == 1 &&
-                    book.BookName.ToLower().Contains(normalizedQuery) ||
-                    book.Description.ToLower().Contains(normalizedQuery));
-
-            int totalCount = await queryBooks.CountAsync(); // Tổng số kết quả
-
-            var books = await queryBooks
-                .Skip((pageNumber - 1) * pageSize) // Phân trang
-                .Take(pageSize)
-                .Select(book => new GetBookDTO
-                {
-                    BookId = book.BookId,
-                    BookName = book.BookName,
-                    BookImage = book.BookImage,
-                    Price = book.Price,
-                    PublishYear = book.PublishYear
-                })
-                .ToListAsync();
-
-            return (books, totalCount);
+            return await _bookRepository.SuggestBooksAsync(query, limit);
         }
+
+        // 🔍 Phân trang khi tìm kiếm
+        public async Task<(IEnumerable<GetBookDTO>, int)> SearchBooksAsync(string query, int pageNumber, int pageSize)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return (new List<GetBookDTO>(), 0);
+            }
+
+            return await _bookRepository.SearchBooksAsync(query, pageNumber, pageSize);
+        }
+        public async Task UpdateStatusAsync(int bookId, int status)
+        {
+            await _bookRepository.UpdateStatusAsync(bookId, status);
+        }
+
 
     }
 }

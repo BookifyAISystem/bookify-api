@@ -1,4 +1,5 @@
-﻿using bookify_data.Entities;
+﻿using bookify_data.DTOs;
+using bookify_data.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,7 +13,10 @@ namespace bookify_data.Interfaces
         Task UpdateBookAsync(Book book);
         Task DeleteBookAsync(int bookId);
         Task SaveChangesAsync();
+        Task<(IEnumerable<GetBookDTO>, int)> SearchBooksAsync(string query, int pageNumber, int pageSize);
+        Task<IEnumerable<GetBookDTO>> SuggestBooksAsync(string query, int limit);
         IQueryable<Book> QueryBooks();
+        Task UpdateStatusAsync(int bookId, int status);
 
     }
 }

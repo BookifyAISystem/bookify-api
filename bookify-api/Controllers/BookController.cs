@@ -1,5 +1,6 @@
 ﻿using bookify_data.DTOs;
 using bookify_service.Interfaces;
+using bookify_service.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace bookify_api.Controllers
 {
-    [Route("api/book")]
+    [Route("api")]
     [ApiController]
     public class BookController : ControllerBase
     {
@@ -21,7 +22,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Lấy danh sách tất cả sách.
         /// </summary>      
-        [HttpGet]
+        [HttpGet("books")]
         public async Task<IActionResult> GetAllBooks(
             [FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 12)
@@ -48,7 +49,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Lấy chi tiết sách theo ID.
         /// </summary>
-        [HttpGet("{id}")]
+        [HttpGet("book/{id}")]
         public async Task<IActionResult> GetBookById(int id)
         {
             try
@@ -69,7 +70,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Thêm mới sách với hình ảnh upload lên AWS S3.
         /// </summary>
-        [HttpPost]
+        [HttpPost ("book")]
         public async Task<IActionResult> AddBook([FromForm] AddBookDTO bookDto)
         {
             try
@@ -90,7 +91,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Cập nhật thông tin sách, hỗ trợ thay đổi ảnh trên AWS S3.
         /// </summary>
-        [HttpPut("{id}")]
+        [HttpPut("book/{id}")]
         public async Task<IActionResult> UpdateBook(int id, [FromForm] UpdateBookDTO bookDto)
         {
             if (id != bookDto.BookId)
@@ -118,7 +119,7 @@ namespace bookify_api.Controllers
         }
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("book/{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
             try
@@ -135,33 +136,51 @@ namespace bookify_api.Controllers
                 return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
             }
         }
-        [HttpGet("search")]
-        public async Task<IActionResult> SearchBooks(
-            [FromQuery] string query,
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 12) // Mặc định 12 sách mỗi trang
+        /// <summary>
+        /// Gợi ý sách dựa trên ký tự nhập vào.
+        /// </summary>
+        [HttpGet("books/suggest")]
+        public async Task<IActionResult> SuggestBooks([FromQuery] string query, [FromQuery] int limit = 5)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(query))
-                {
-                    return BadRequest(new { message = "Query cannot be empty." });
-                }
+                var books = await _bookService.SuggestBooksAsync(query, limit);
+                return Ok(books);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while suggesting books.", details = ex.Message });
+            }
+        }
 
-                var (books, totalCount) = await _bookService.SearchBooksAsync(query, pageNumber, pageSize);
+        /// <summary>
+        /// Tìm kiếm sách có phân trang.
+        /// </summary>
+        [HttpGet("book/search")]
+        public async Task<IActionResult> SearchBooks([FromQuery] string query, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 12)
+        {
+            try
+            {
+                var (books, totalPages) = await _bookService.SearchBooksAsync(query, pageNumber, pageSize);
 
                 return Ok(new
                 {
-                    totalItems = totalCount,
-                    totalPages = (int)Math.Ceiling((double)totalCount / pageSize),
-                    currentPage = pageNumber,
-                    books
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                    TotalPages = totalPages,
+                    Books = books
                 });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
+                return StatusCode(500, new { message = "An error occurred while searching books.", details = ex.Message });
             }
+        }
+        [HttpPatch("book/{id}/status")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromQuery] int status)
+        {
+            await _bookService.UpdateStatusAsync(id, status);
+            return Ok(new { message = "Book status updated successfully!" });
         }
 
 

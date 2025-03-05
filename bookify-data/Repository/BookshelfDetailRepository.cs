@@ -54,5 +54,15 @@ namespace bookify_data.Repository
                 await _dbContext.SaveChangesAsync();
             }
         }
+        public async Task UpdateStatusAsync(int bookshelfDetailId, int status)
+        {
+            var bookshelfDetail = await _dbContext.BookshelfDetails.FindAsync(bookshelfDetailId);
+            if (bookshelfDetail != null)
+            {
+                bookshelfDetail.Status = status;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
     }
 }

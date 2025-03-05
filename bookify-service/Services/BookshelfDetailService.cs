@@ -78,5 +78,10 @@ namespace bookify_service.Services
         {
             await _bookshelfDetailRepository.DeleteBookshelfDetailAsync(id);
         }
+        public async Task UpdateStatusAsync(int bookshelfDetailId, int status)
+        {
+            await _bookshelfDetailRepository.UpdateStatusAsync(bookshelfDetailId, status);
+        }
+
     }
 }

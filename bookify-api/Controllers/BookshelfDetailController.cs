@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace bookify_api.Controllers
 {
-    [Route("api/book-detail")]
+    [Route("api")]
     [ApiController]
     public class BookshelfDetailController : ControllerBase
     {
@@ -21,7 +21,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Lấy danh sách tất cả BookshelfDetails
         /// </summary>
-        [HttpGet]
+        [HttpGet ("bookshelf-details")]
         public async Task<IActionResult> GetAllBookshelfDetails()
         {
             var bookshelfDetails = await _bookshelfDetailService.GetAllBookshelfDetailsAsync();
@@ -31,7 +31,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Lấy thông tin BookshelfDetail theo ID
         /// </summary>
-        [HttpGet("{id}")]
+        [HttpGet("bookshelf-detail/{id}")]
         public async Task<IActionResult> GetBookshelfDetailById(int id)
         {
             var bookshelfDetail = await _bookshelfDetailService.GetBookshelfDetailByIdAsync(id);
@@ -45,7 +45,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Thêm mới một BookshelfDetail
         /// </summary>
-        [HttpPost]
+        [HttpPost("bookshelf-detail")]
         public async Task<IActionResult> AddBookshelfDetail([FromBody] AddBookshelfDetailDTO dto)
         {
             try
@@ -62,7 +62,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Cập nhật thông tin BookshelfDetail
         /// </summary>
-        [HttpPut("{id}")]
+        [HttpPut("bookshelf-detail/{id}")]
         public async Task<IActionResult> UpdateBookshelfDetail(int id, [FromBody] UpdateBookshelfDetailDTO dto)
         {
             if (id != dto.BookshelfDetailId)
@@ -88,7 +88,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Xóa một BookshelfDetail (Soft Delete)
         /// </summary>
-        [HttpDelete("{id}")]
+        [HttpDelete("bookshelf-detail/{id}")]
         public async Task<IActionResult> DeleteBookshelfDetail(int id)
         {
             try
@@ -105,5 +105,12 @@ namespace bookify_api.Controllers
                 return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
             }
         }
+        [HttpPatch("bookshelf-detail/{id}/status")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromQuery] int status)
+        {
+            await _bookshelfDetailService.UpdateStatusAsync(id, status);
+            return Ok(new { message = "BookshelfDetail status updated successfully!" });
+        }
+
     }
 }

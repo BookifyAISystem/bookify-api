@@ -11,7 +11,9 @@ namespace bookify_service.Interfaces
         Task AddBookAsync(AddBookDTO bookDto);
         Task UpdateBookAsync(UpdateBookDTO bookDto);
         Task DeleteBookAsync(int bookId);
+        Task<IEnumerable<GetBookDTO>> SuggestBooksAsync(string query, int limit);
         Task<(IEnumerable<GetBookDTO>, int)> SearchBooksAsync(string query, int pageNumber, int pageSize);
+        Task UpdateStatusAsync(int bookId, int status);
 
     }
 }

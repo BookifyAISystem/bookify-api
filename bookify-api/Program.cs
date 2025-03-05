@@ -20,6 +20,8 @@ using System.Reflection;
 using System.Text;
 using Amazon.S3;
 using Microsoft.AspNetCore.Builder;
+using bookify_data.Repositories;
+using bookify_data.Repositories.Interfaces;
 
 namespace bookify_api
 {
@@ -77,6 +79,16 @@ namespace bookify_api
             builder.Services.AddScoped<IBookshelfService, BookshelfService>();
 			builder.Services.AddScoped<IBookshelfDetailRepository, BookshelfDetailRepository>();
 			builder.Services.AddScoped<IBookshelfDetailService, BookshelfDetailService>();
+			builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+			builder.Services.AddScoped<IAuthorService, AuthorService>();
+			builder.Services.AddScoped<IBookAuthorRepository, BookAuthorRepository>();
+			builder.Services.AddScoped<IBookAuthorService, BookAuthorService>();
+			builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
+			builder.Services.AddScoped<IWishlistService, WishlistService>();
+			builder.Services.AddScoped<IWishlistDetailRepository, WishlistDetailRepository>();
+			builder.Services.AddScoped<IWishlistDetailService, WishlistDetailService>();
+            builder.Services.AddScoped<IBookContentVersionRepository, BookContentVersionRepository>();
+            builder.Services.AddScoped<IBookContentVersionService, BookContentVersionService>();
 
 
 

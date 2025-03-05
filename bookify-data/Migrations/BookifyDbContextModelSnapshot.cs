@@ -228,9 +228,6 @@ namespace bookify_data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookContentVersionId"));
 
-                    b.Property<string>("AiSummary")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
@@ -242,6 +239,21 @@ namespace bookify_data.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("Summary1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Summary2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Summary3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Summary4")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Summary5")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Version")
                         .HasColumnType("int");
@@ -683,6 +695,9 @@ namespace bookify_data.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("WishlistName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("WishlistId");
 

@@ -11,10 +11,10 @@
         public string? Description { get; set; }
         public string? BookContent { get; set; }
         public int PublishYear { get; set; }
-        public int CategoryId { get; set; }
-        public int PromotionId { get; set; }
+        public int? CategoryId { get; set; }
+        public int? PromotionId { get; set; }
         public int? ParentBookId { get; set; }
-        public int AuthorId { get; set; }
+        public int? AuthorId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastEdited { get; set; }
     }

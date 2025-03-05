@@ -10,7 +10,8 @@ namespace bookify_data.Entities
 	{
 		public int WishlistId { get; set; }
 		public int AccountId { get; set; }
-		public DateTime CreatedDate { get; set; }
+        public string? WishlistName { get; set; }
+        public DateTime CreatedDate { get; set; }
 		public DateTime LastEdited { get; set; }
 		public int Status { get; set; }
 
