@@ -2,7 +2,9 @@
 using bookify_data.Entities;
 using bookify_data.Interfaces;
 using bookify_data.Model;
+using bookify_data.Repository;
 using bookify_service.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +16,13 @@ namespace bookify_service.Services
     public class FeedbackService : IFeedbackService
     {
         private readonly IFeedbackRepository _feedbackRepository;
+        private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
 
-        public FeedbackService(IFeedbackRepository feedbackRepository, IMapper mapper)
+        public FeedbackService(IFeedbackRepository feedbackRepository, IOrderRepository orderRepository, IMapper mapper)
         {
             _feedbackRepository = feedbackRepository;
+            _orderRepository = orderRepository;
             _mapper = mapper;
         }
 
@@ -34,6 +38,24 @@ namespace bookify_service.Services
         }
         public async Task<bool> CreateFeedbackAsync(AddFeedbackDTO addFeedbackDTO)
         {
+            var feedbackToAdd = _mapper.Map<Feedback>(addFeedbackDTO);
+            feedbackToAdd.CreatedDate = DateTime.UtcNow;
+            feedbackToAdd.LastEdited = DateTime.UtcNow;
+            feedbackToAdd.Status = 1;
+            return await _feedbackRepository.InsertAsync(feedbackToAdd);
+        }
+        public async Task<bool> CreateFeedbackIfOrderedAsync(AddFeedbackDTO addFeedbackDTO)
+        {
+            // Sử dụng method của OrderRepository để kiểm tra
+            bool hasCompletedOrderForBook = await _orderRepository.HasCompletedOrderForBookAsync(
+                addFeedbackDTO.AccountId, addFeedbackDTO.BookId);
+
+            if (!hasCompletedOrderForBook)
+            {
+                throw new InvalidOperationException("You must have a completed order for this book before submitting feedback.");
+            }
+
+            // Tạo feedback sau khi xác nhận điều kiện
             var feedbackToAdd = _mapper.Map<Feedback>(addFeedbackDTO);
             feedbackToAdd.CreatedDate = DateTime.UtcNow;
             feedbackToAdd.LastEdited = DateTime.UtcNow;

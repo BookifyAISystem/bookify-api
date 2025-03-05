@@ -14,11 +14,15 @@ namespace bookify_service.Services
     public class BookCategoryService : IBookCategoryService
     {
         private readonly IBookCategoryRepository _bookCategoryRepository;
+        private readonly IBookRepository _bookRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
 
-        public BookCategoryService(IBookCategoryRepository bookCategoryRepository, IMapper mapper)
+        public BookCategoryService(IBookCategoryRepository bookCategoryRepository, IBookRepository bookRepository, ICategoryRepository categoryRepository, IMapper mapper)
         {
             _bookCategoryRepository = bookCategoryRepository;
+            _bookRepository = bookRepository;
+            _categoryRepository = categoryRepository;
             _mapper = mapper;
         }
 
@@ -53,6 +57,52 @@ namespace bookify_service.Services
             bookCategory.CreatedDate = DateTime.UtcNow;
             return await _bookCategoryRepository.UpdateAsync(bookCategory);
 
+        }
+
+        public async Task<bool> AssignCategoriesToBookAsync(int bookId, List<int> categoryIds)
+        {
+            var book = await _bookRepository.GetBookByIdAsync(bookId);
+            if (book == null) return false;
+
+            var currentCategories = await _bookCategoryRepository.GetByBookIdAsync(bookId);
+            var currentCategoryIds = currentCategories.Select(bc => bc.CategoryId).ToList();
+
+            // Xóa những danh mục cũ không còn trong danh sách mới
+            var toRemove = currentCategories.Where(bc => !categoryIds.Contains(bc.CategoryId)).ToList();
+            foreach (var item in toRemove)
+                await _bookCategoryRepository.RemoveAsync(item);
+
+            // Thêm danh mục mới
+            var toAdd = categoryIds.Except(currentCategoryIds).ToList();
+            foreach (var categoryId in toAdd)
+            {
+                var newBookCategory = new BookCategory
+                {
+                    BookId = bookId,
+                    CategoryId = categoryId,
+                    CreatedDate = DateTime.UtcNow,
+                    Status = 1
+                };
+                await _bookCategoryRepository.InsertAsync(newBookCategory);
+            }
+
+            return true;
+        }
+
+        public async Task<List<Category?>> GetCategoriesByBookIdAsync(int bookId)
+        {
+            return await _bookCategoryRepository.GetByBookIdAsync(bookId)
+                                          .ContinueWith(task => task.Result.Select(bc => bc.Category).ToList());
+        }
+
+        public async Task<bool> RemoveCategoryFromBookAsync(int bookId, int categoryId)
+        {
+            var bookCategory = (await _bookCategoryRepository.GetByBookIdAsync(bookId))
+                              .FirstOrDefault(bc => bc.CategoryId == categoryId);
+            if (bookCategory == null) return false;
+
+            await _bookCategoryRepository.RemoveAsync(bookCategory);
+            return true;
         }
     }
 }

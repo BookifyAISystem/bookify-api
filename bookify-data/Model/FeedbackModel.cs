@@ -11,7 +11,7 @@ namespace bookify_data.Model
         public int FeedbackId { get; set; }
         public int Star { get; set; }
         public string? FeedbackContent { get; set; }
-        public int CustomerId { get; set; }
+        public int AccountId { get; set; }
         public int BookId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastEdited { get; set; }
@@ -26,14 +26,14 @@ namespace bookify_data.Model
     {
         public int Star { get; set; }
         public string? FeedbackContent { get; set; }
-        public int CustomerId { get; set; }
+        public int AccountId { get; set; }
         public int BookId { get; set; }
     }
     public class UpdateFeedbackDTO
     {
         public int Star { get; set; }
         public string? FeedbackContent { get; set; }
-        public int CustomerId { get; set; }
+        public int AccountId { get; set; }
         public int Status { get; set; }
 
     }
