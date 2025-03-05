@@ -78,7 +78,7 @@ namespace bookify_api.Controllers
 
 		[HttpPost]
 		[Route("register")]
-		public async Task<IActionResult> Register([FromForm] RegisterLoginModel registerDTO)
+		public async Task<IActionResult> Register([FromBody] RegisterLoginModel registerDTO)
 		{
 			if (!ModelState.IsValid)
 			{
