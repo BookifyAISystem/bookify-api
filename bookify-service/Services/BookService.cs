@@ -48,8 +48,8 @@ namespace bookify_service.Services
                     PromotionId = book.PromotionId,
                     ParentBookId = book.ParentBookId,
                     AuthorId = book.AuthorId,
-                    CreatedDate = DateTime.UtcNow,
-                    LastEdited = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow.AddHours(7),
+                    LastEdited = DateTime.UtcNow.AddHours(7),
 
                 })
                 .ToListAsync();
@@ -83,8 +83,8 @@ namespace bookify_service.Services
                     PromotionId = book.PromotionId,
                     ParentBookId    = book.ParentBookId,
                     AuthorId = book.AuthorId,
-                    CreatedDate = DateTime.UtcNow,
-                    LastEdited = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow.AddHours(7),
+                    LastEdited = DateTime.UtcNow.AddHours(7),
                 };
             }
             catch (Exception ex)
@@ -110,8 +110,8 @@ namespace bookify_service.Services
                     PromotionId = bookDto.PromotionId,
                     ParentBookId = bookDto.ParentBookId,
                     AuthorId = bookDto.AuthorId,
-                    CreatedDate = DateTime.UtcNow,
-                    LastEdited = DateTime.UtcNow
+                    CreatedDate = DateTime.UtcNow.AddHours(7),
+                    LastEdited = DateTime.UtcNow.AddHours(7),
                 };
 
                 if (bookDto.ImageFile != null)
@@ -152,7 +152,7 @@ namespace bookify_service.Services
                 book.PromotionId = bookDto.PromotionId;
                 book.ParentBookId = bookDto.ParentBookId;
                 book.AuthorId = bookDto.AuthorId;
-                book.LastEdited = DateTime.UtcNow;
+                book.LastEdited = DateTime.UtcNow.AddHours(7);
 
                 if (bookDto.ImageFile != null)
                 {

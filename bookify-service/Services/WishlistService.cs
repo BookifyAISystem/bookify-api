@@ -30,8 +30,8 @@ namespace bookify_service.Services
             {
                 AccountId = wishlistDto.AccountId,
                 WishlistName = wishlistDto.WishlistName,
-                CreatedDate = DateTime.UtcNow,
-                LastEdited = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
                 Status = wishlistDto.Status
             };
 
@@ -46,7 +46,7 @@ namespace bookify_service.Services
 
             // Cập nhật thông tin
             wishlistEntity.WishlistName = wishlistDto.WishlistName;
-            wishlistEntity.LastEdited = DateTime.UtcNow;
+            wishlistEntity.LastEdited = DateTime.UtcNow.AddHours(7);
             wishlistEntity.Status = wishlistDto.Status;
 
             // Gọi repository để update

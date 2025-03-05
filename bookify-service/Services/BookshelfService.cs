@@ -27,8 +27,8 @@ namespace bookify_service.Services
                 BookshelfId = bs.BookshelfId,
                 AccountId = bs.AccountId,
                 BookShelfName = bs.BookShelfName,
-                CreatedDate = bs.CreatedDate,
-                LastEdited = bs.LastEdited,
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
                 Status = bs.Status
             }).ToList();
         }
@@ -41,8 +41,8 @@ namespace bookify_service.Services
                 BookshelfId = bs.BookshelfId,
 				AccountId = bs.AccountId,
                 BookShelfName = bs.BookShelfName,
-                CreatedDate = bs.CreatedDate,
-                LastEdited = bs.LastEdited,
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
                 Status = bs.Status
             };
         }
@@ -53,8 +53,8 @@ namespace bookify_service.Services
             {
 				AccountId = bookshelfDto.AccountId,
                 BookShelfName = bookshelfDto.BookShelfName,
-                CreatedDate = DateTime.UtcNow,
-                LastEdited = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
                 Status = 1
             };
 
@@ -67,7 +67,7 @@ namespace bookify_service.Services
             if (bookshelf == null) throw new KeyNotFoundException("Bookshelf not found.");
 
             bookshelf.BookShelfName = bookshelfDto.BookShelfName;
-            bookshelf.LastEdited = DateTime.UtcNow;
+            bookshelf.LastEdited = DateTime.UtcNow.AddHours(7);
 
             await _bookshelfRepository.UpdateBookshelfAsync(bookshelf);
         }

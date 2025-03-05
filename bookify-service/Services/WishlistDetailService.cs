@@ -23,8 +23,8 @@ namespace bookify_service.Services
                 WishlistId = wd.WishlistId,
                 BookId = wd.BookId,
                 BookName = wd.Book?.BookName,
-                CreatedDate = wd.CreatedDate,
-                LastEdited = wd.LastEdited,
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
                 Status = wd.Status
             });
         }
@@ -38,8 +38,8 @@ namespace bookify_service.Services
                 WishlistId = wd.WishlistId,
                 BookId = wd.BookId,
                 BookName = wd.Book?.BookName,
-                CreatedDate = wd.CreatedDate,
-                LastEdited = wd.LastEdited,
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
                 Status = wd.Status
             } : null;
         }
@@ -50,8 +50,8 @@ namespace bookify_service.Services
             {
                 WishlistId = wishlistDetailDto.WishlistId,
                 BookId = wishlistDetailDto.BookId,
-                CreatedDate = DateTime.UtcNow,
-                LastEdited = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
                 Status = 1
             };
             await _wishlistDetailRepository.AddWishlistDetailAsync(wd);
@@ -63,7 +63,7 @@ namespace bookify_service.Services
             if (wd != null)
             {
                 wd.BookId = wishlistDetailDto.BookId;
-                wd.LastEdited = DateTime.UtcNow;
+                wd.LastEdited = DateTime.UtcNow.AddHours(7);
                 wd.Status = wishlistDetailDto.Status;
                 await _wishlistDetailRepository.UpdateWishlistDetailAsync(wd);
             }

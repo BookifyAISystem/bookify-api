@@ -29,8 +29,8 @@ namespace bookify_service.Services
                 Summary5 = dto.Summaries[4],
                 Version = dto.Version,
                 Status = dto.Status,
-                CreatedDate = DateTime.UtcNow,
-                LastEdited = DateTime.UtcNow
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
             };
 
             await _repository.AddAsync(entity);
@@ -55,8 +55,8 @@ namespace bookify_service.Services
                     entity.Summary5 ?? ""
                 },
                 Version = entity.Version,
-                CreatedDate = entity.CreatedDate,
-                LastEdited = entity.LastEdited,
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
                 Status = entity.Status
             };
         }
@@ -77,8 +77,8 @@ namespace bookify_service.Services
                     entity.Summary5 ?? ""
                 },
                 Version = entity.Version,
-                CreatedDate = entity.CreatedDate,
-                LastEdited = entity.LastEdited,
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
                 Status = entity.Status
             }).ToList();
         }
@@ -95,7 +95,7 @@ namespace bookify_service.Services
             entity.Summary4 = dto.Summaries[3];
             entity.Summary5 = dto.Summaries[4];
             entity.Status = dto.Status;
-            entity.LastEdited = DateTime.UtcNow;
+            entity.LastEdited = DateTime.UtcNow.AddHours(7);
 
             await _repository.UpdateAsync(entity);
         }
