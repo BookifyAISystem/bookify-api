@@ -13,7 +13,7 @@ namespace bookify_api.Controllers
 {
 	[Route("api/authen")]
 	[ApiController]
-	[EnableCors("AllowSpecificOrigins")]
+	[EnableCors("AllowAll")]
 
 	public class AuthenController : ControllerBase
 	{
@@ -78,7 +78,7 @@ namespace bookify_api.Controllers
 
 		[HttpPost]
 		[Route("register")]
-		public async Task<IActionResult> Register([FromForm] RegisterLoginModel registerDTO)
+		public async Task<IActionResult> Register([FromBody] RegisterLoginModel registerDTO)
 		{
 			if (!ModelState.IsValid)
 			{

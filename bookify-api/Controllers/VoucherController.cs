@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace bookify_api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/voucher")]
     [ApiController]
     public class VoucherController : Controller
     {
@@ -58,14 +58,6 @@ namespace bookify_api.Controllers
         }
 
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteVoucher(int id)
-        {
-            bool isDeleted = await _voucherService.DeleteVoucherAsync(id);
-            if (!isDeleted)
-                return NotFound(new { message = "Voucher not found" });
-
-            return NoContent(); 
-        }
+        
     }
 }

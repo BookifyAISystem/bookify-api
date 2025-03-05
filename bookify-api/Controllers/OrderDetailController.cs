@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace bookify_api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/order-detail")]
     [ApiController]
     public class OrderDetailController : ControllerBase
     {
@@ -52,14 +52,6 @@ namespace bookify_api.Controllers
             return NoContent(); // HTTP 204
         }
 
-        [HttpDelete("{id}")] 
-        public async Task<ActionResult> DeleteOrderDetail(int id )    
-        {
-            bool isDeleted = await _orderDetailService.DeleteOrderDetailAsync(id);
-            if (!isDeleted)
-                return NotFound(new { message = "Order detail not found" });
-
-            return NoContent(); // HTTP 204
-        }
+        
     }
 }
