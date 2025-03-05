@@ -39,14 +39,6 @@ namespace bookify_data.Repository
             _context.Vouchers.Update(voucher);
             return await _context.SaveChangesAsync() > 0;
         }
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var voucher = await _context.Vouchers.FindAsync(id);
-            if(voucher == null)
-                return false;
-
-            _context.Vouchers.Remove(voucher);
-            return await _context.SaveChangesAsync() > 0;
-        }
+        
     }
 }

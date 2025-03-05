@@ -8,9 +8,11 @@ using bookify_data.Repository;
 using bookify_service;
 using bookify_service.Interfaces;
 using bookify_service.Services;
+using DocumentFormat.OpenXml.InkML;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -222,6 +224,8 @@ namespace bookify_api
 
 
             app.MapControllers();
+
+           
 
             app.Run();
         }

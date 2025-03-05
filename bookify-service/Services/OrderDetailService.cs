@@ -45,16 +45,16 @@ namespace bookify_service.Services
             var orderDetail = await _orderDetailRepository.GetByIdAsync(id);
             if (orderDetail == null)
                 return false;
-
+            if (updateOrderDetailDto.Status != 1 && updateOrderDetailDto.Status != 0)
+            {
+                throw new ArgumentException("Invalid OrderDetail");
+            }
             _mapper.Map(updateOrderDetailDto, orderDetail);
             orderDetail.LastEdited = DateTime.UtcNow;
 
             return await _orderDetailRepository.UpdateAsync(orderDetail);
         }
 
-        public async Task<bool> DeleteOrderDetailAsync(int id)
-        {
-            return await _orderDetailRepository.DeleteAsync(id);
-        }
+        
     }
 }

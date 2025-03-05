@@ -52,6 +52,7 @@ namespace bookify_data.Repository
 			}
 			var claims = new[]
 				{
+				new Claim("AccountId", user.AccountId.ToString()),
 			new Claim(ClaimTypes.Name, user.DisplayName),
 			new Claim(ClaimTypes.NameIdentifier, user.DisplayName.ToString()),
 			new Claim(ClaimTypes.Role, user.Role.RoleName),
@@ -110,8 +111,10 @@ namespace bookify_data.Repository
 					Password = BCrypt.Net.BCrypt.HashPassword(registerDTO.Password),
 					Phone = registerDTO.PhoneNumber,
 					Email = registerDTO.Email,
-					/*ReferralCode = GenerateReferralCode(),*/
-					/*DOB = registerDTO.DOB,*/
+					CreatedDate = DateTime.UtcNow.AddHours(7),
+					LastEdited = DateTime.UtcNow.AddHours(7),
+                    /*ReferralCode = GenerateReferralCode(),*/
+                    /*DOB = registerDTO.DOB,*/
                     RoleId = id,
 					/*Status = registerDTO.Status,*/
 				};

@@ -28,6 +28,10 @@ namespace bookify_data.Helper
             CreateMap<OrderDetail, GetOrderDetailDTO>();
             CreateMap<AddOrderDetailDTO, OrderDetail>();
             CreateMap<UpdateOrderDetailDTO, OrderDetail>();
+            //Category
+            CreateMap<Category, GetCategoryDTO>();
+            CreateMap<AddCategoryDTO, Category>();
+            CreateMap<UpdateCategoryDTO, Category>();
 
 
         }

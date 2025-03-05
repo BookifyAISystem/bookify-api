@@ -26,7 +26,7 @@ namespace bookify_service.Services
         public async Task<IEnumerable<GetVoucherDTO>> GetAllAsync()
         {
             var voucherList = await _voucherRepository.GetAllAsync();
-            return _mapper.Map<IEnumerable<GetVoucherDTO>>( voucherList );
+            return _mapper.Map<IEnumerable<GetVoucherDTO>>( voucherList);
         }
         public async Task<GetVoucherDTO?> GetByIdAsync(int id)
         {
@@ -35,7 +35,17 @@ namespace bookify_service.Services
         }
         public async Task<bool> CreateVoucherAsync(AddVoucherDTO addVoucherDto)
         {
+            if (addVoucherDto.Discount <= 0 ||
+            addVoucherDto.MinAmount < 0 ||
+            addVoucherDto.MaxDiscount < 0 ||
+            addVoucherDto.Quantity < 0)
+            {
+                throw new ArgumentException("Invalid voucher");
+            }
             var voucherToAdd = _mapper.Map<Voucher>(addVoucherDto);
+            voucherToAdd.CreatedDate = DateTime.UtcNow;
+            voucherToAdd.LastEdited = DateTime.UtcNow;
+            voucherToAdd.Status = 1;
             return await _voucherRepository.InsertAsync( voucherToAdd );
         }
         public async Task<bool> UpdateVoucherAsync(int id, UpdateVoucherDTO updateVoucherDto)
@@ -43,15 +53,20 @@ namespace bookify_service.Services
             var voucher = await _voucherRepository.GetByIdAsync(id);
             if (voucher == null)
                 return false;
-
+            if (updateVoucherDto.Discount <= 0 ||
+            updateVoucherDto.MinAmount < 0 ||
+            updateVoucherDto.MaxDiscount < 0 ||
+            updateVoucherDto.Quantity < 0 ||
+            (updateVoucherDto.Status != 1 &&
+            updateVoucherDto.Status != 0))
+            {
+                throw new ArgumentException("Invalid voucher");
+            }
             _mapper.Map(updateVoucherDto, voucher);
             voucher.LastEdited = DateTime.UtcNow;
 
             return await _voucherRepository.UpdateAsync(voucher);
         }
-        public async Task<bool> DeleteVoucherAsync(int id)
-        {
-            return await _voucherRepository.DeleteAsync(id);
-        }
+        
     }
 }
