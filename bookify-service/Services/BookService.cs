@@ -217,6 +217,35 @@ namespace bookify_service.Services
             await _bookRepository.UpdateStatusAsync(bookId, status);
         }
 
+        public async Task<IEnumerable<GetBookDTO>> GetLatestBooksAsync(int count)
+        {
+            var books = await _bookRepository.GetLatestBooksAsync(count);
+            return books.Select(b => new GetBookDTO
+            {
+                BookId = b.BookId,
+                BookName = b.BookName,
+                BookType = b.BookType,
+                Price = b.Price,
+                PriceEbook = b.PriceEbook,
+                Description = b.Description,
+                PublishYear = b.PublishYear,
+                CreatedDate = b.CreatedDate,
+                LastEdited = b.LastEdited,
+            }).ToList();
+        }
 
+        public async Task<IEnumerable<GetBookDTO>> GetBestSellingBooksAsync(int count)
+        {
+            var books = await _bookRepository.GetBestSellingBooksAsync(count);
+            return books.Select(b => new GetBookDTO
+            {
+                BookId = b.BookId,
+                BookName = b.BookName,
+                Price = b.Price,
+                PriceEbook = b.PriceEbook,
+                Description = b.Description,
+                BookImage = b.BookImage,    
+            }).ToList();
+        }
     }
 }
