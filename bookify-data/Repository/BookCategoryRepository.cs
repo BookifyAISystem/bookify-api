@@ -43,5 +43,10 @@ namespace bookify_data.Repository
             return await _context.BookCategories.Where(bc => bc.BookId == bookId).ToListAsync();
         }
 
+        public async Task RemoveAsync(BookCategory bookCategory)
+        {
+            _context.BookCategories.Remove(bookCategory);
+            await _context.SaveChangesAsync();
+        }
     }
 }

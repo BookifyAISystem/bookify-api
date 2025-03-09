@@ -24,7 +24,11 @@ namespace bookify_service.Services
 			this.authenRepository = authenRepository;
 			/*this.emailSenderRepository = emailSenderRepository;*/
 		}
-		public Task<string> Login(LoginModel model)
+        public Task<string> LoginGoogle(GoogleLoginModel model)
+        {
+            return authenRepository.LoginGoogle(model);
+        }
+        public Task<string> Login(LoginModel model)
 		{
 			return authenRepository.Login(model);
 		}

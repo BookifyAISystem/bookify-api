@@ -36,6 +36,10 @@ namespace bookify_data.Repository
         }
         public async Task<bool> UpdateAsync(Voucher voucher)
         {
+            if (voucher.Quantity == 0) 
+            {
+                voucher.Status = 0;
+            }
             _context.Vouchers.Update(voucher);
             return await _context.SaveChangesAsync() > 0;
         }

@@ -14,5 +14,6 @@ namespace bookify_data.Interfaces
         Task<bool> InsertAsync(BookCategory bookCategory);
         Task<bool> UpdateAsync(BookCategory bookCategory);
         Task<List<BookCategory>> GetByBookIdAsync(int bookId);
+        Task RemoveAsync(BookCategory bookCategory);
     }
 }

@@ -34,7 +34,7 @@ namespace bookify_data.Repository
                 .FirstOrDefaultAsync(o => o.OrderId == id);
         }
 
-        public async Task<IEnumerable<Order>> GetByCustomerIdAsync(int accountId) 
+        public async Task<IEnumerable<Order>> GetByAccountIdAsync(int accountId) 
         {
             return await _context.Orders
                 .Where(n => n.AccountId == accountId && n.Status != 0)
@@ -52,6 +52,13 @@ namespace bookify_data.Repository
             _context.Orders.Update(order);
             return await _context.SaveChangesAsync() > 0; 
         }
-        
+
+        public async Task<bool> HasCompletedOrderForBookAsync(int accountId, int bookId)
+        {
+            return await _context.Orders
+                .Where(o => o.AccountId == accountId && o.Status == 2)
+                .AnyAsync(o => o.OrderDetails.Any(od => od.BookId == bookId));
+        }
+
     }
 }
