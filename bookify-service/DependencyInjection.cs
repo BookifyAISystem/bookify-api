@@ -21,6 +21,7 @@ namespace bookify_service
             service.AddTransient<ICategoryService, CategoryService>();
             service.AddTransient<IBookCategoryService, BookCategoryService>();
             service.AddTransient<IFeedbackService, FeedbackService>();
+            service.AddTransient<IVnpayService, VnpayService>();
 
             return service;
 		}

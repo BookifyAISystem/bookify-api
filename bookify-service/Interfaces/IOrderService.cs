@@ -1,4 +1,5 @@
 ﻿
+using bookify_data.Entities;
 using bookify_data.Model;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,10 @@ namespace bookify_service.Interfaces
     {
         Task<IEnumerable<GetOrderDTO>> GetAllAsync();
         Task<GetOrderDTO?> GetByIdAsync(int id);
+        Task<Order?> GetEntitesByIdAsync(int id);
         Task<bool> CreateOrderAsync(AddOrderDTO addOrderDto);
         Task<bool> UpdateOrderAsync(int id, UpdateOrderDTO updateOrderDto);
+        Task<bool> UpdateOrderPaymentStatusAsync(int orderId, int newStatus);
 
     }
 }
