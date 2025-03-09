@@ -225,6 +225,7 @@ namespace bookify_service.Services
                 BookId = b.BookId,
                 BookName = b.BookName,
                 BookType = b.BookType,
+                BookImage = b.BookImage,
                 Price = b.Price,
                 PriceEbook = b.PriceEbook,
                 Description = b.Description,
