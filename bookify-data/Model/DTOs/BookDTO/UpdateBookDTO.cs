@@ -22,7 +22,7 @@ namespace bookify_data.DTOs
         public string? Description { get; set; }
         public string? BookContent { get; set; }
 
-        [Range(1700, 2025, ErrorMessage = "Publish Year must be between 1900 and 2025.")]
+        [Range(1700, 2025, ErrorMessage = "Publish Year must be between 1700 and 2025.")]
         public int PublishYear { get; set; }
 
         public int? CategoryId { get; set; }

@@ -26,8 +26,8 @@ namespace bookify_service.Services
                 BookshelfDetailId = bsd.BookshelfDetailId,
                 BookshelfId = bsd.BookshelfId,
                 BookId = bsd.BookId,
-                CreatedDate = bsd.CreatedDate,
-                LastEdited = bsd.LastEdited,
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
                 Status = bsd.Status
             }).ToList();
         }
@@ -42,8 +42,8 @@ namespace bookify_service.Services
                 BookshelfDetailId = bsd.BookshelfDetailId,
                 BookshelfId = bsd.BookshelfId,
                 BookId = bsd.BookId,
-                CreatedDate = bsd.CreatedDate,
-                LastEdited = bsd.LastEdited,
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
                 Status = bsd.Status
             };
         }
@@ -54,8 +54,8 @@ namespace bookify_service.Services
             {
                 BookshelfId = bookshelfDetailDto.BookshelfId,
                 BookId = bookshelfDetailDto.BookId,
-                CreatedDate = DateTime.UtcNow,
-                LastEdited = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
                 Status = 1
             };
 
@@ -69,7 +69,7 @@ namespace bookify_service.Services
 
             bookshelfDetail.BookshelfId = bookshelfDetailDto.BookshelfId;
             bookshelfDetail.BookId = bookshelfDetailDto.BookId;
-            bookshelfDetail.LastEdited = DateTime.UtcNow;
+            bookshelfDetail.LastEdited = DateTime.UtcNow.AddHours(7);
 
             await _bookshelfDetailRepository.UpdateBookshelfDetailAsync(bookshelfDetail);
         }

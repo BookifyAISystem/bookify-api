@@ -115,6 +115,25 @@ namespace bookify_data.Repository
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task<IEnumerable<Book>> GetLatestBooksAsync(int count)
+        {
+            return await _context.Books
+                .Where(b => b.Status == 1) 
+                .OrderByDescending(b => b.CreatedDate) 
+                .Take(count) 
+                .ToListAsync();
+        }
 
-    }
+        public async Task<IEnumerable<Book>> GetBestSellingBooksAsync(int count)
+        {
+            return await _context.Books
+                .Where(b => b.Status == 1)
+                .OrderByDescending(b => _context.OrderDetails
+                    .Where(od => od.BookId == b.BookId)
+                    .Sum(od => od.Quantity))
+                .Take(count)
+                .ToListAsync();
+        }
+    
+}
 }

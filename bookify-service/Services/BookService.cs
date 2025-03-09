@@ -48,8 +48,8 @@ namespace bookify_service.Services
                     PromotionId = book.PromotionId,
                     ParentBookId = book.ParentBookId,
                     AuthorId = book.AuthorId,
-                    CreatedDate = DateTime.UtcNow,
-                    LastEdited = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow.AddHours(7),
+                    LastEdited = DateTime.UtcNow.AddHours(7),
 
                 })
                 .ToListAsync();
@@ -83,8 +83,8 @@ namespace bookify_service.Services
                     PromotionId = book.PromotionId,
                     ParentBookId    = book.ParentBookId,
                     AuthorId = book.AuthorId,
-                    CreatedDate = DateTime.UtcNow,
-                    LastEdited = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow.AddHours(7),
+                    LastEdited = DateTime.UtcNow.AddHours(7),
                 };
             }
             catch (Exception ex)
@@ -110,8 +110,8 @@ namespace bookify_service.Services
                     PromotionId = bookDto.PromotionId,
                     ParentBookId = bookDto.ParentBookId,
                     AuthorId = bookDto.AuthorId,
-                    CreatedDate = DateTime.UtcNow,
-                    LastEdited = DateTime.UtcNow
+                    CreatedDate = DateTime.UtcNow.AddHours(7),
+                    LastEdited = DateTime.UtcNow.AddHours(7),
                 };
 
                 if (bookDto.ImageFile != null)
@@ -152,7 +152,7 @@ namespace bookify_service.Services
                 book.PromotionId = bookDto.PromotionId;
                 book.ParentBookId = bookDto.ParentBookId;
                 book.AuthorId = bookDto.AuthorId;
-                book.LastEdited = DateTime.UtcNow;
+                book.LastEdited = DateTime.UtcNow.AddHours(7);
 
                 if (bookDto.ImageFile != null)
                 {
@@ -217,6 +217,36 @@ namespace bookify_service.Services
             await _bookRepository.UpdateStatusAsync(bookId, status);
         }
 
+        public async Task<IEnumerable<GetBookDTO>> GetLatestBooksAsync(int count)
+        {
+            var books = await _bookRepository.GetLatestBooksAsync(count);
+            return books.Select(b => new GetBookDTO
+            {
+                BookId = b.BookId,
+                BookName = b.BookName,
+                BookType = b.BookType,
+                BookImage = b.BookImage,
+                Price = b.Price,
+                PriceEbook = b.PriceEbook,
+                Description = b.Description,
+                PublishYear = b.PublishYear,
+                CreatedDate = b.CreatedDate,
+                LastEdited = b.LastEdited,
+            }).ToList();
+        }
 
+        public async Task<IEnumerable<GetBookDTO>> GetBestSellingBooksAsync(int count)
+        {
+            var books = await _bookRepository.GetBestSellingBooksAsync(count);
+            return books.Select(b => new GetBookDTO
+            {
+                BookId = b.BookId,
+                BookName = b.BookName,
+                Price = b.Price,
+                PriceEbook = b.PriceEbook,
+                Description = b.Description,
+                BookImage = b.BookImage,    
+            }).ToList();
+        }
     }
 }

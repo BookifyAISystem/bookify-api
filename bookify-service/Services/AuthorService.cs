@@ -26,8 +26,8 @@ namespace bookify_service.Services
                 AuthorId = a.AuthorId,
                 AuthorName = a.AuthorName,
                 Content = a.Content,
-                CreatedDate = a.CreatedDate,
-                LastEdited = a.LastEdited,
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
                 Status = a.Status
             }).ToList();
         }
@@ -42,8 +42,8 @@ namespace bookify_service.Services
                 AuthorId = author.AuthorId,
                 AuthorName = author.AuthorName,
                 Content = author.Content,
-                CreatedDate = author.CreatedDate,
-                LastEdited = author.LastEdited,
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
                 Status = author.Status
             };
         }
@@ -54,8 +54,8 @@ namespace bookify_service.Services
             {
                 AuthorName = authorDto.AuthorName,
                 Content = authorDto.Content,
-                CreatedDate = DateTime.UtcNow,
-                LastEdited = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow.AddHours(7),
+                LastEdited = DateTime.UtcNow.AddHours(7),
                 Status = 1
             };
 
@@ -73,7 +73,7 @@ namespace bookify_service.Services
             author.AuthorName = authorDto.AuthorName;
             author.Content = authorDto.Content;
             author.Status = authorDto.Status;
-            author.LastEdited = DateTime.UtcNow;
+            author.LastEdited = DateTime.UtcNow.AddHours(7);
 
             await _authorRepository.UpdateAuthorAsync(author);
         }

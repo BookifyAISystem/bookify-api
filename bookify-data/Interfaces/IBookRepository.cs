@@ -17,6 +17,9 @@ namespace bookify_data.Interfaces
         Task<IEnumerable<GetBookDTO>> SuggestBooksAsync(string query, int limit);
         IQueryable<Book> QueryBooks();
         Task UpdateStatusAsync(int bookId, int status);
+        Task<IEnumerable<Book>> GetLatestBooksAsync(int count);
+        Task<IEnumerable<Book>> GetBestSellingBooksAsync(int count); 
+
 
     }
 }
