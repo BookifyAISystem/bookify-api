@@ -43,12 +43,18 @@ namespace bookify_data.Repository
 
             if (user == null)
             {
+                var roleUser = await _roleRepository.GetByNameAsync("User");
+                if (roleUser == null)
+                {
+                    return "Role User not found";
+                }
+                int id = roleUser.RoleId;
                 // Nếu chưa tồn tại, tạo mới user
                 user = new Account
                 {
                     DisplayName = model.Name,
                     Email = model.Email,
-                    RoleId = 1,
+                    RoleId = id,
                     CreatedDate = DateTime.UtcNow,
                 };
 
