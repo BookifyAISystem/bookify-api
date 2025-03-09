@@ -34,7 +34,74 @@ namespace bookify_api.Controllers
 			_unitOfWork = unitOfWork;
 			/*this.emailSender = emailSender;*/
 		}
-		[HttpPost]
+
+        [HttpPost]
+        [Route("google")]
+        public async Task<IActionResult> LoginGoogle([FromBody] GoogleTokenRequest model)
+        {
+            if (model == null || string.IsNullOrEmpty(model.Token))
+            {
+                return BadRequest(new { code = 400, message = "Token không được để trống" });
+            }
+
+            try
+            {
+                _unitOfWork.BeginTransaction();
+
+                // Decode JWT do Google trả về
+                var handler = new JwtSecurityTokenHandler();
+                var decodedToken = handler.ReadJwtToken(model.Token);
+
+                // Trích xuất email, name, picture từ các claim
+                var email = decodedToken.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+                var name = decodedToken.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
+                var picture = decodedToken.Claims.FirstOrDefault(c => c.Type == "picture")?.Value;
+
+                if (string.IsNullOrEmpty(email))
+                {
+                    return BadRequest(new { code = 400, message = "Token không hợp lệ (thiếu email)" });
+                }
+
+                // Tạo model chuyển sang service
+                var googleLoginModel = new GoogleLoginModel
+                {
+                    Email = email,
+                    Name = name,
+                };
+
+                // Gọi service để xử lý đăng nhập Google
+                var token = await _authenServices.LoginGoogle(googleLoginModel);
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    return Unauthorized(new { code = 401, message = "Đăng nhập Google thất bại" });
+                }
+
+                // Lưu token của hệ thống vào cookie (nếu muốn)
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = false,
+                    Secure = true,   // Chỉ chạy trên HTTPS
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTime.Now.AddDays(7),
+                    Path = "/"
+                };
+                Response.Cookies.Append("authToken", token, cookieOptions);
+
+                _unitOfWork.CommitTransaction();
+
+                return Ok(new { code = 200, token = token, message = "Đăng nhập Google thành công" });
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.RollbackTransaction();
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                                  new { code = 500, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
 		[Route("login")]
 		public async Task<IActionResult> Login([FromBody] LoginModel model)
 		{
