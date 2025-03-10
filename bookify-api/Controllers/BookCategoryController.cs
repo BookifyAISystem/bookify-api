@@ -51,5 +51,28 @@ namespace bookify_api.Controllers
 
             return NoContent(); // HTTP 204
         }
+
+        [HttpPost("{bookId}/categories")]
+        public async Task<IActionResult> AssignCategories(int bookId, [FromBody] List<int> categoryIds)
+        {
+            var result = await _bookCategoryService.AssignCategoriesToBookAsync(bookId, categoryIds);
+            if (!result) return NotFound("Book not found or update failed");
+            return NoContent();
+        }
+
+        [HttpGet("{bookId}/categories")]
+        public async Task<IActionResult> GetCategories(int bookId)
+        {
+            var categories = await _bookCategoryService.GetCategoriesByBookIdAsync(bookId);
+            return Ok(categories);
+        }
+
+        [HttpDelete("{bookId}/categories/{categoryId}")]
+        public async Task<IActionResult> RemoveCategory(int bookId, int categoryId)
+        {
+            var result = await _bookCategoryService.RemoveCategoryFromBookAsync(bookId, categoryId);
+            if (!result) return NotFound();
+            return NoContent();
+        }
     }
 }

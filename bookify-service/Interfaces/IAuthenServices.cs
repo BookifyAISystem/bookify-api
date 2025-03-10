@@ -13,6 +13,7 @@ namespace bookify_service.Interfaces
 	public interface IAuthenServices
 	{
 		Task<string> Login(LoginModel model);
+		Task<string> LoginGoogle(GoogleLoginModel model);
 		Task<string> Register(RegisterLoginModel registerDTO);
 /*		Task<string> ConfirmEmailAsync(string? username);
 */		string GenerateJwtToken(Account user);

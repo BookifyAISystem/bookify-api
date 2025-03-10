@@ -17,6 +17,7 @@ namespace bookify_data.Interfaces
 		string GenerateJwtToken(Account user);
 		//Task<String> GetUserNameFromToken(HttpClient client);
 		Task<bool> Logout(string userId);
+		Task<string> LoginGoogle(GoogleLoginModel model);
 
 	}
 }
