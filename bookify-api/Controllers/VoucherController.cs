@@ -58,6 +58,45 @@ namespace bookify_api.Controllers
         }
 
 
-        
+        [HttpPatch("change-status/{id}")]
+        public async Task<IActionResult> UpdateVoucherStatus(int id, [FromBody] int status)
+        {
+            try
+            {
+                bool isUpdate = await _voucherService.UpdateVoucherStatusAsync(id, status);
+
+                if (!isUpdate)
+                {
+                    return NotFound($"Not found or update failed");
+                }
+                return Ok("Update Successfully");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteVoucher(int id)
+        {
+            try
+            {
+                bool isDeleted = await _voucherService.DeleteVoucherAsync(id);
+                if (!isDeleted)
+                    return NotFound(new { message = "Not found or delete failed" });
+
+                return Ok("Delete Success (Status = 0).");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
     }
 }

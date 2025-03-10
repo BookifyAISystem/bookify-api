@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace bookify_api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/category")]
     [ApiController]
     public class CategoryController : Controller
     {
@@ -50,6 +50,45 @@ namespace bookify_api.Controllers
                 return NotFound(new { message = "Category not found or update failed" });
 
             return NoContent(); // HTTP 204
+        }
+
+        [HttpPatch("change-status/{id}")]
+        public async Task<IActionResult> UpdateCategoryStatus(int id, [FromBody] int status)
+        {
+            try
+            {
+                bool isUpdate = await _categoryService.UpdateCategoryStatusAsync(id, status);
+
+                if (!isUpdate)
+                {
+                    return NotFound($"Not found or update failed");
+                }
+                return Ok("Update Successfully");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteCategory(int id)
+        {
+            try
+            {
+                bool isDeleted = await _categoryService.DeleteCategoryAsync(id);
+                if (!isDeleted)
+                    return NotFound(new { message = "Not found or delete failed" });
+
+                return Ok("Delete Success (Status = 0).");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }

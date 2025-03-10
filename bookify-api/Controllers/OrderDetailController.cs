@@ -1,5 +1,6 @@
 ﻿using bookify_data.Model;
 using bookify_service.Interfaces;
+using bookify_service.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace bookify_api.Controllers
@@ -52,6 +53,45 @@ namespace bookify_api.Controllers
             return NoContent(); // HTTP 204
         }
 
-        
+        [HttpPatch("change-status/{id}")]
+        public async Task<IActionResult> UpdateOrderDetailStatus(int id, [FromBody] int status)
+        {
+            try
+            {
+                bool isUpdate = await _orderDetailService.UpdateOrderDetailStatusAsync(id, status);
+
+                if (!isUpdate)
+                {
+                    return NotFound($"Not found or update failed");
+                }
+                return Ok("Update Successfully");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteOrderDetail(int id)
+        {
+            try
+            {
+                bool isDeleted = await _orderDetailService.DeleteOrderDetailAsync(id);
+                if (!isDeleted)
+                    return NotFound(new { message = "Not found or delete failed" });
+
+                return Ok("Delete Success (Status = 0).");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
     }
 }

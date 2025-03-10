@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Amazon.S3.Model;
+using AutoMapper;
 using bookify_data.Entities;
 using bookify_data.Interfaces;
 using bookify_data.Model;
@@ -103,6 +104,32 @@ namespace bookify_service.Services
 
             await _bookCategoryRepository.RemoveAsync(bookCategory);
             return true;
+        }
+
+        public async Task<bool> UpdateBookCategoryStatusAsync(int id, int newStatus)
+        {
+            var bookCategory = await _bookCategoryRepository.GetByIdAsync(id);
+            if (bookCategory == null) return false;
+            bookCategory.Status = newStatus;
+            bookCategory.LastEdited = DateTime.UtcNow;
+            return await _bookCategoryRepository.UpdateAsync(bookCategory);
+        }
+
+        public async Task<bool> DeleteBookCategoryAsync(int id)
+        {
+            var bookCategory = await _bookCategoryRepository.GetByIdAsync(id);
+            if (bookCategory == null)
+            {
+                throw new Exception($"Not found BookCategory with ID = {bookCategory}");
+            }
+
+            if (bookCategory.Status != 0 && bookCategory.Status != 1 && bookCategory.Status != 2)
+            {
+                throw new ArgumentException("Trạng thái đơn hàng không hợp lệ");
+            }
+            bookCategory.Status = 0;
+            bookCategory.LastEdited = DateTime.UtcNow;
+            return await _bookCategoryRepository.UpdateAsync(bookCategory);
         }
     }
 }

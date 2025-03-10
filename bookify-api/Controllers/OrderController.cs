@@ -52,6 +52,44 @@ namespace bookify_api.Controllers
             return NoContent(); // HTTP 204
         }
 
-        
+        [HttpPatch("change-status/{id}")]
+        public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] int status)
+        {
+            try
+            {
+                bool isUpdate = await _orderService.UpdateOrderStatusAsync(id, status);
+
+                if (!isUpdate)
+                {
+                    return NotFound($"Not found or update failed");
+                }
+                return Ok("Update Successfully");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteOrder(int id)
+        {
+            try
+            {
+                bool isDeleted = await _orderService.DeleteOrderAsync(id);
+                if (!isDeleted)
+                    return NotFound(new { message = "Not found or delete failed" });
+
+                return Ok("Delete Success (Status = 0).");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }

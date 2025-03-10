@@ -76,5 +76,35 @@ namespace bookify_service.Services
             return await _feedbackRepository.UpdateAsync(feedback);
 
         }
+
+        public async Task<bool> UpdateFeedbackStatusAsync(int id, int newStatus)
+        {
+            var feedback = await _feedbackRepository.GetByIdAsync(id);
+            if (feedback == null)
+            {
+                throw new Exception($"Not found with ID = {feedback}");
+            }
+
+            if (feedback.Status != 0 && feedback.Status != 1 )
+            {
+                throw new ArgumentException("Invalid Status");
+            }
+            feedback.Status = newStatus;
+            feedback.LastEdited = DateTime.UtcNow;
+            return await _feedbackRepository.UpdateAsync(feedback);
+        }
+
+        public async Task<bool> DeleteFeedbackAsync(int id)
+        {
+            var feedback = await _feedbackRepository.GetByIdAsync(id);
+            if (feedback == null)
+            {
+                throw new Exception($"Not found with ID = {feedback}");
+            }
+
+            feedback.Status = 0;
+            feedback.LastEdited = DateTime.UtcNow;
+            return await _feedbackRepository.UpdateAsync(feedback);
+        }
     }
 }
