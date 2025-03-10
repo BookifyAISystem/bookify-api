@@ -2,6 +2,7 @@
 using bookify_data.Entities;
 using bookify_data.Interfaces;
 using bookify_data.Model;
+using bookify_data.Repository;
 using bookify_service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -110,7 +111,7 @@ namespace bookify_service.Services
             // Truong hop bang 2 - thanh cong . Co the tao 1 DB danh cho luu tru hoa don thanh cong
         }
 
-        public async Task<bool> UpdateOrderPaymentStatusAsync(int orderId, int newStatus)
+        public async Task<bool> UpdateOrderStatusAsync(int orderId, int newStatus)
         {
             // Lấy đơn hàng theo orderId từ repository
             var order = await _orderRepository.GetByIdAsync(orderId);
@@ -130,6 +131,21 @@ namespace bookify_service.Services
             order.LastEdited = DateTime.UtcNow;
 
             // Cập nhật đơn hàng qua repository và trả về kết quả
+            return await _orderRepository.UpdateAsync(order);
+        }
+
+        
+
+        public async Task<bool> DeleteOrderAsync(int id)
+        {
+            var order = await _orderRepository.GetByIdAsync(id);
+            if (order == null)
+            {
+                throw new Exception($"Not found with ID = {order}");
+            }
+
+            order.Status = 0;
+            order.LastEdited = DateTime.UtcNow;
             return await _orderRepository.UpdateAsync(order);
         }
 

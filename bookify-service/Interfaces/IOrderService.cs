@@ -16,7 +16,7 @@ namespace bookify_service.Interfaces
         Task<Order?> GetEntitesByIdAsync(int id);
         Task<bool> CreateOrderAsync(AddOrderDTO addOrderDto);
         Task<bool> UpdateOrderAsync(int id, UpdateOrderDTO updateOrderDto);
-        Task<bool> UpdateOrderPaymentStatusAsync(int orderId, int newStatus);
+        Task<bool> UpdateOrderStatusAsync(int orderId, int newStatus);
 
     }
 }

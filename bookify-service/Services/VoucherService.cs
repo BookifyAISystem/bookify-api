@@ -69,6 +69,36 @@ namespace bookify_service.Services
 
             return await _voucherRepository.UpdateAsync(voucher);
         }
-        
+
+        public async Task<bool> UpdateVoucherStatusAsync(int id, int newStatus)
+        {
+            var voucher = await _voucherRepository.GetByIdAsync(id);
+            if (voucher == null)
+            {
+                throw new Exception($"Not found with ID = {voucher}");
+            }
+
+            if (voucher.Status != 0 && voucher.Status != 1)
+            {
+                throw new ArgumentException("Invalid Status");
+            }
+            voucher.Status = newStatus;
+            voucher.LastEdited = DateTime.UtcNow;
+            return await _voucherRepository.UpdateAsync(voucher);
+        }
+
+        public async Task<bool> DeleteVoucherAsync(int id)
+        {
+            var voucher = await _voucherRepository.GetByIdAsync(id);
+            if (voucher == null)
+            {
+                throw new Exception($"Not found with ID = {voucher}");
+            }
+
+            voucher.Status = 0;
+            voucher.LastEdited = DateTime.UtcNow;
+            return await _voucherRepository.UpdateAsync(voucher);
+        }
+
     }
 }

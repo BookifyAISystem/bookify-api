@@ -122,7 +122,7 @@ namespace bookify_api.Controllers
                             return BadRequest("Không xác định được OrderId từ dữ liệu thanh toán.");
                         }
 
-                        await _orderService.UpdateOrderPaymentStatusAsync(orderId, 2);
+                        await _orderService.UpdateOrderStatusAsync(orderId, 2);
                         // Thực hiện hành động nếu thanh toán thành công tại đây. Ví dụ: Cập nhật trạng thái đơn hàng trong cơ sở dữ liệu.
                         return Ok();
                     }
@@ -159,7 +159,7 @@ namespace bookify_api.Controllers
                         {
                             return BadRequest("Không xác định được OrderId từ dữ liệu thanh toán.");
                         }
-                        await _orderService.UpdateOrderPaymentStatusAsync(orderId, 2);
+                        await _orderService.UpdateOrderStatusAsync(orderId, 2);
                         return Ok(paymentResult);
                     }
 

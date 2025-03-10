@@ -17,6 +17,10 @@ namespace bookify_service.Interfaces
         Task<bool> AssignCategoriesToBookAsync(int bookId, List<int> categoryIds);
         Task<List<Category?>> GetCategoriesByBookIdAsync(int bookId);
         Task<bool> RemoveCategoryFromBookAsync(int bookId, int categoryId);
+        Task<bool> UpdateBookCategoryStatusAsync(int id, int newStatus);
+        Task<bool> DeleteBookCategoryAsync(int id);
+
+
 
     }
 }

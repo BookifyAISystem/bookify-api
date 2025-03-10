@@ -1,10 +1,11 @@
 ﻿using bookify_data.Model;
 using bookify_service.Interfaces;
+using bookify_service.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace bookify_api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/feedback")]
     [ApiController]
     public class FeedbackController : Controller
     {
@@ -57,6 +58,45 @@ namespace bookify_api.Controllers
                 return NotFound(new { message = "Feedback not found or update failed" });
 
             return NoContent(); // HTTP 204
+        }
+
+        [HttpPatch("change-status/{id}")]
+        public async Task<IActionResult> UpdateFeedbackStatus(int id, [FromBody] int status)
+        {
+            try
+            {
+                bool isUpdate = await _feedbackService.UpdateFeedbackStatusAsync(id, status);
+
+                if (!isUpdate)
+                {
+                    return NotFound($"Not found or update failed");
+                }
+                return Ok("Update Successfully");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteFeedback(int id)
+        {
+            try
+            {
+                bool isDeleted = await _feedbackService.DeleteFeedbackAsync(id);
+                if (!isDeleted)
+                    return NotFound(new { message = "Not found or delete failed" });
+
+                return Ok("Delete Success (Status = 0).");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }
