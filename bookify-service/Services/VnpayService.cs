@@ -50,7 +50,7 @@ namespace bookify_service.Services
         /// </summary>
         /// <param name="request">Thông tin cần có để tạo yêu cầu</param>
         /// <returns></returns>
-        public string GetPaymentUrl(PaymentRequest request)
+        public string GetPaymentUrl(VnpayPaymentRequest request)
         {
             EnsureParametersBeforePayment();
 
@@ -93,7 +93,7 @@ namespace bookify_service.Services
         /// </summary>
         /// <param name="parameters">Các tham số trong chuỗi truy vấn của <c>CallbackUrl</c></param>
         /// <returns></returns>
-        public PaymentResult GetPaymentResult(IQueryCollection parameters)
+        public VnpayPaymentResult GetPaymentResult(IQueryCollection parameters)
         {
             var responseData = parameters
                 .Where(kv => !string.IsNullOrEmpty(kv.Key) && kv.Key.StartsWith("vnp_"))
@@ -140,7 +140,7 @@ namespace bookify_service.Services
             {
                 int.TryParse(vnp_ExtraData, out orderId);
             }
-            return new PaymentResult
+            return new VnpayPaymentResult
             {
                 OrderId = orderId,
                 PaymentId = long.Parse(vnp_TxnRef),
@@ -153,17 +153,17 @@ namespace bookify_service.Services
                 Timestamp = string.IsNullOrEmpty(vnp_PayDate)
                     ? DateTime.Now
                     : DateTime.ParseExact(vnp_PayDate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture),
-                TransactionStatus = new TransactionStatus
+                TransactionStatus = new VnpayTransactionStatus
                 {
                     Code = transactionStatusCode,
                     Description = EnumHelper.GetDescription(transactionStatusCode)
                 },
-                PaymentResponse = new PaymentResponse
+                PaymentResponse = new VnpayPaymentResponse
                 {
                     Code = responseCode,
                     Description = EnumHelper.GetDescription(responseCode)
                 },
-                BankingInfor = new BankingInfor
+                BankingInfor = new VnpayBankingInfor
                 {
                     BankCode = vnp_BankCode,
                     BankTransactionId = string.IsNullOrEmpty(vnp_BankTranNo)

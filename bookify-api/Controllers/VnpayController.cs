@@ -50,7 +50,7 @@ namespace bookify_api.Controllers
                 }
                 var ipAddress = NetworkHelper.GetIpAddress(HttpContext); // Lấy địa chỉ IP của thiết bị thực hiện giao dịch
                 string description = "Thanh toán cho đơn hàng ${order.OrderId}";
-                var request = new PaymentRequest
+                var request = new VnpayPaymentRequest
                 {
                     PaymentId = DateTime.Now.Ticks,
                     Money = Convert.ToDouble(order.Total),
@@ -79,7 +79,7 @@ namespace bookify_api.Controllers
             {
                 var ipAddress = NetworkHelper.GetIpAddress(HttpContext); // Lấy địa chỉ IP của thiết bị thực hiện giao dịch
 
-                var request = new PaymentRequest
+                var request = new VnpayPaymentRequest
                 {
                     PaymentId = DateTime.Now.Ticks,
                     Money = money,
@@ -144,7 +144,7 @@ namespace bookify_api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("Callback")]
-        public async Task<ActionResult<PaymentResult>> Callback()
+        public async Task<ActionResult<VnpayPaymentResult>> Callback()
         {
             if (Request.QueryString.HasValue)
             {
