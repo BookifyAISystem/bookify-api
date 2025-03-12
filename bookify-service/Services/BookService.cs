@@ -44,6 +44,7 @@ namespace bookify_service.Services
                     Description = book.Description,
                     BookContent = book.BookContent,
                     PublishYear = book.PublishYear,
+                    Quantity = book.Quantity,
                     CategoryId = book.CategoryId,
                     PromotionId = book.PromotionId,
                     ParentBookId = book.ParentBookId,
@@ -79,6 +80,7 @@ namespace bookify_service.Services
                     Description = book.Description,
                     BookContent = book.BookContent,
                     PublishYear = book.PublishYear,
+                    Quantity = book.Quantity,
                     CategoryId  = book.CategoryId,
                     PromotionId = book.PromotionId,
                     ParentBookId    = book.ParentBookId,
@@ -106,6 +108,7 @@ namespace bookify_service.Services
                     Description = bookDto.Description,
                     BookContent = bookDto.BookContent,
                     PublishYear = bookDto.PublishYear,
+                    Quantity = bookDto.Quantity,
                     CategoryId = bookDto.CategoryId,
                     PromotionId = bookDto.PromotionId,
                     ParentBookId = bookDto.ParentBookId,
@@ -148,10 +151,11 @@ namespace bookify_service.Services
                 book.Description = bookDto.Description;
                 book.BookContent = bookDto.BookContent;
                 book.PublishYear = bookDto.PublishYear;
+                book.Quantity = bookDto.Quantity;
                 book.CategoryId = bookDto.CategoryId;
                 book.PromotionId = bookDto.PromotionId;
                 book.ParentBookId = bookDto.ParentBookId;
-                book.AuthorId = bookDto.AuthorId;
+                book.AuthorId = bookDto.AuthorId;             
                 book.LastEdited = DateTime.UtcNow.AddHours(7);
 
                 if (bookDto.ImageFile != null)
