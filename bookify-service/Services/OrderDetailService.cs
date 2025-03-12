@@ -38,6 +38,9 @@ namespace bookify_service.Services
         public async Task<bool> CreateOrderDetailAsync(AddOrderDetailDTO addOrderDetailDto)
         {
             var orderDetailToAdd = _mapper.Map<OrderDetail>(addOrderDetailDto);
+            orderDetailToAdd.CreatedDate = DateTime.UtcNow;
+            orderDetailToAdd.LastEdited = DateTime.UtcNow;
+            orderDetailToAdd.Status = 1;
             return await _orderDetailRepository.InsertAsync(orderDetailToAdd);
         }
 
