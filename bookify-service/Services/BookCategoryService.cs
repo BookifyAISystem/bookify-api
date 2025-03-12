@@ -135,5 +135,5 @@ namespace bookify_service.Services
             bookCategory.LastEdited = DateTime.UtcNow;
             return await _bookCategoryRepository.UpdateAsync(bookCategory);
         }
-    }
+  }
 }
