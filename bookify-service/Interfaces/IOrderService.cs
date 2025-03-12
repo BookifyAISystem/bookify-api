@@ -17,6 +17,6 @@ namespace bookify_service.Interfaces
         Task<bool> CreateOrderAsync(AddOrderDTO addOrderDto);
         Task<bool> UpdateOrderAsync(int id, UpdateOrderDTO updateOrderDto);
         Task<bool> UpdateOrderStatusAsync(int orderId, int newStatus);
-
+        Task<bool> DeleteOrderAsync(int id);
     }
 }
