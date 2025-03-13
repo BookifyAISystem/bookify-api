@@ -27,7 +27,7 @@ namespace bookify_data.Model
     {
         public int AccountId { get; set; }
         public int? VoucherId { get; set; }
-        public List<AddOrderDetailWithNoOrderIdDTO>? OrderDetails { get; set; }
+        public List<AddOrderDetailWithNoOrderIdDTO> OrderDetails { get; set; }
     }
     public class UpdateOrderDTO
     {
