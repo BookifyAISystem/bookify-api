@@ -57,7 +57,7 @@ namespace bookify_service.Services
             {
                 var orderDetail = new OrderDetail
                 {
-                    BookId = odDto.BookId,
+                    OrderId = order.OrderId,
                     Quantity = odDto.Quantity,
                     Price = odDto.Price,
                     CreatedDate = DateTime.UtcNow,
