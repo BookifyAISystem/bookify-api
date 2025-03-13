@@ -252,5 +252,15 @@ namespace bookify_service.Services
                 BookImage = b.BookImage,    
             }).ToList();
         }
+        public async Task UpdateBookQuantityAsync(int bookId, int quantity)
+        {
+            if (quantity <= 0)
+            {
+                throw new ArgumentException("Số lượng phải lớn hơn 0.");
+            }
+
+            await _bookRepository.UpdateBookQuantityAsync(bookId, quantity);
+        }
+
     }
 }

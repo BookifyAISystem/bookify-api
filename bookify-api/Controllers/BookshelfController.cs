@@ -25,34 +25,34 @@ namespace bookify_api.Controllers
             return Ok(await _bookshelfService.GetAllBookshelvesAsync());
         }
 
-        [HttpGet("bookshelf/{id}")]
+        [HttpGet("bookshelfs/{id}")]
         public async Task<IActionResult> GetBookshelfById(int id)
         {
             var bookshelf = await _bookshelfService.GetBookshelfByIdAsync(id);
             return bookshelf != null ? Ok(bookshelf) : NotFound();
         }
 
-        [HttpPost("bookshelf")]
+        [HttpPost("bookshelfs")]
         public async Task<IActionResult> AddBookshelf(CreateBookshelfDTO dto)
         {
             await _bookshelfService.AddBookshelfAsync(dto);
             return Ok(new { message = "Bookshelf added successfully!" });
         }
 
-        [HttpPut("bookshelf/{id}")]
+        [HttpPut("bookshelfs/{id}")]
         public async Task<IActionResult> UpdateBookshelf(int id, UpdateBookshelfDTO dto)
         {
             await _bookshelfService.UpdateBookshelfAsync(dto);
             return Ok(new { message = "Bookshelf updated successfully!" });
         }
 
-        [HttpDelete("bookshelf/{id}")]
+        [HttpDelete("bookshelfs/{id}")]
         public async Task<IActionResult> DeleteBookshelf(int id)
         {
             await _bookshelfService.DeleteBookshelfAsync(id);
             return Ok(new { message = "Bookshelf deleted successfully!" });
         }
-        [HttpPatch("bookshelf/{id}/status")]
+        [HttpPatch("bookshelfs/{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromQuery] int status)
         {
             await _bookshelfService.UpdateStatusAsync(id, status);

@@ -134,6 +134,19 @@ namespace bookify_data.Repository
                 .Take(count)
                 .ToListAsync();
         }
-    
-}
+        public async Task UpdateBookQuantityAsync(int bookId, int quantity)
+        {
+            var book = await _context.Books.FirstOrDefaultAsync(b => b.BookId == bookId);
+            if (book == null)
+            {
+                throw new KeyNotFoundException($"Book với ID {bookId} không tồn tại.");
+            }
+
+            book.Quantity += quantity; // ✅ Cộng thêm số lượng mới
+            book.LastEdited = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+        }
+
+    }
 }

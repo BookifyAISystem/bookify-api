@@ -70,7 +70,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Lấy chi tiết sách theo ID.
         /// </summary>
-        [HttpGet("book/{id}")]
+        [HttpGet("books/{id}")]
         public async Task<IActionResult> GetBookById(int id)
         {
             try
@@ -91,7 +91,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Thêm mới sách với hình ảnh upload lên AWS S3.
         /// </summary>
-        [HttpPost ("book")]
+        [HttpPost ("books")]
         public async Task<IActionResult> AddBook([FromForm] AddBookDTO bookDto)
         {
             try
@@ -112,7 +112,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Cập nhật thông tin sách, hỗ trợ thay đổi ảnh trên AWS S3.
         /// </summary>
-        [HttpPut("book/{id}")]
+        [HttpPut("books/{id}")]
         public async Task<IActionResult> UpdateBook(int id, [FromForm] UpdateBookDTO bookDto)
         {
             if (id != bookDto.BookId)
@@ -140,7 +140,7 @@ namespace bookify_api.Controllers
         }
 
 
-        [HttpDelete("book/{id}")]
+        [HttpDelete("books/{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
             try
@@ -158,7 +158,7 @@ namespace bookify_api.Controllers
             }
         }
        
-        [HttpPatch("book/{id}/status")]
+        [HttpPatch("books/{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromQuery] int status)
         {
             await _bookService.UpdateStatusAsync(id, status);
@@ -191,6 +191,28 @@ namespace bookify_api.Controllers
                 return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
             }
         }
+        [HttpPatch("books/{id}/quantity")]
+        public async Task<IActionResult> UpdateBookQuantity(int id, [FromQuery] int quantity)
+        {
+            try
+            {
+                await _bookService.UpdateBookQuantityAsync(id, quantity);
+                return Ok(new { message = $"Số lượng sách ID {id} đã được cập nhật thành công!" });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi khi cập nhật số lượng sách.", details = ex.Message });
+            }
+        }
+
 
     }
 }

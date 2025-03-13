@@ -246,7 +246,7 @@ namespace bookify_data.Data
 					  .HasForeignKey(w => w.AccountId)
 					  .HasConstraintName("FK_Wishlist_accountId");
 			});
-
+				
 			// ------------------------------
 			// BẢNG WishlistDetail
 			// ------------------------------
