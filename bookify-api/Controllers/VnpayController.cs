@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace bookify_api.Controllers
 {
-    [Route("api/payment/vnpay")]
+    [Route("api/Vnpay")]
     [ApiController]
     public class VnpayController : Controller
     {
@@ -34,7 +34,7 @@ namespace bookify_api.Controllers
         /// <param name="money">Số tiền phải thanh toán</param>
         /// <param name="description">Mô tả giao dịch</param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet("CreatePaymentUrlByOrder")]
         public async Task<ActionResult<string>> CreatePaymentUrlByOrder(int orderId)
         {
             try
@@ -72,41 +72,41 @@ namespace bookify_api.Controllers
             }
         }
 
-        //[HttpGet("CreatePaymentUrl")]
-        //public ActionResult<string> CreatePaymentUrl(double money, string description)
-        //{
-        //    try
-        //    {
-        //        var ipAddress = NetworkHelper.GetIpAddress(HttpContext); // Lấy địa chỉ IP của thiết bị thực hiện giao dịch
+        [HttpGet("CreatePaymentUrl")]
+        public ActionResult<string> CreatePaymentUrl(double money, string description)
+        {
+            try
+            {
+                var ipAddress = NetworkHelper.GetIpAddress(HttpContext); // Lấy địa chỉ IP của thiết bị thực hiện giao dịch
 
-        //        var request = new VnpayPaymentRequest
-        //        {
-        //            PaymentId = DateTime.Now.Ticks,
-        //            Money = money,
-        //            Description = description,
-        //            IpAddress = ipAddress,
-        //            BankCode = BankCode.ANY, // Tùy chọn. Mặc định là tất cả phương thức giao dịch
-        //            CreatedDate = DateTime.Now, // Tùy chọn. Mặc định là thời điểm hiện tại
-        //            Currency = Currency.VND, // Tùy chọn. Mặc định là VND (Việt Nam đồng)
-        //            Language = DisplayLanguage.Vietnamese, // Tùy chọn. Mặc định là tiếng Việt
+                var request = new VnpayPaymentRequest
+                {
+                    PaymentId = DateTime.Now.Ticks,
+                    Money = money,
+                    Description = description,
+                    IpAddress = ipAddress,
+                    BankCode = BankCode.ANY, // Tùy chọn. Mặc định là tất cả phương thức giao dịch
+                    CreatedDate = DateTime.Now, // Tùy chọn. Mặc định là thời điểm hiện tại
+                    Currency = Currency.VND, // Tùy chọn. Mặc định là VND (Việt Nam đồng)
+                    Language = DisplayLanguage.Vietnamese, // Tùy chọn. Mặc định là tiếng Việt
                     
-        //        };
+                };
 
-        //        var paymentUrl = _vnpayService.GetPaymentUrl(request);
+                var paymentUrl = _vnpayService.GetPaymentUrl(request);
 
-        //        return Created(paymentUrl, paymentUrl);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+                return Created(paymentUrl, paymentUrl);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         /// <summary>
         /// Thực hiện hành động sau khi thanh toán. URL này cần được khai báo với VNPAY để API này hoạt đồng (ví dụ: http://localhost:1234/api/Vnpay/IpnAction)
         /// </summary>
         /// <returns></returns>
-        [HttpGet("ipn")]
+        [HttpGet("IpnAction")]
         public async Task<IActionResult> IpnAction()
         {
             if (Request.QueryString.HasValue)
@@ -143,7 +143,7 @@ namespace bookify_api.Controllers
         /// Trả kết quả thanh toán về cho người dùng
         /// </summary>
         /// <returns></returns>
-        [HttpGet("callback")]
+        [HttpGet("Callback")]
         public async Task<ActionResult<VnpayPaymentResult>> Callback()
         {
             if (Request.QueryString.HasValue)

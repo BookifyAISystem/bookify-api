@@ -16,7 +16,8 @@ public class AccountController : ControllerBase
 	}
 
 	// PUT: api/Account/5
-	[HttpPut("{id}")]
+	[HttpPut]
+	[Route("updateAccount")]
 
 	public async Task<IActionResult> UpdateAccount(int id, [FromBody] UpdateAccountModel model)
 	{
@@ -44,7 +45,8 @@ public class AccountController : ControllerBase
 
 		return NoContent(); 
 	}
-	[HttpGet("{id}")]
+	[HttpGet]
+	[Route("getAccont")]
 
 	public async Task<IActionResult> GetAccount(int id)
 	{
@@ -56,7 +58,8 @@ public class AccountController : ControllerBase
 	}
 
 	// DELETE: api/Account/5  (thực hiện soft delete)
-	[HttpDelete("{id}")]
+	[HttpDelete]
+	[Route("deleteAccount")]
 
 	public async Task<IActionResult> DeleteAccount(int id)
 	{
@@ -69,6 +72,7 @@ public class AccountController : ControllerBase
 		return NoContent(); // 204
 	}
 	[HttpGet]
+	[Route("getAccountsPaging")]
 
 	public async Task<IActionResult> GetAccountsPaging([FromQuery] AccountQueryParameters parameters)
 	{

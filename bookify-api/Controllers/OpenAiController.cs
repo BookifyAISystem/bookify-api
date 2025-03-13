@@ -17,7 +17,7 @@ namespace bookify_api.Controllers
 		}
 
 		// GET: /api/OpenAi/generateImage?input=...
-		[HttpPost("image")]
+		[HttpGet("generateImage")]
 		public async Task<IActionResult> GenerateImage([FromQuery] string input)
 		{
 			var apiKey = _openAIConfig.ApiKeyVip;
@@ -37,7 +37,7 @@ namespace bookify_api.Controllers
 		}
 
 		// POST: /api/OpenAi/editGeneratedImage
-		[HttpGet("edit")]
+		[HttpPost("editGeneratedImage")]
 		public async Task<IActionResult> EditGeneratedImage()
 		{
 			var apiKey = _openAIConfig.ApiKeyVip;
@@ -56,7 +56,7 @@ namespace bookify_api.Controllers
 		}
 
 		// POST: /api/OpenAi/GenerateRandomImageBasedOnFile
-		[HttpGet("generate")]
+		[HttpPost("GenerateRandomImageBasedOnFile")]
 		public async Task<IActionResult> GenerateRandomImageBasedOnFile()
 		{
 			var imageClient = new ImageClient("dall-e-2", "<get API key from OpenAI portal>");

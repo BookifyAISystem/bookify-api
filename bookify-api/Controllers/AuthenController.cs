@@ -11,7 +11,7 @@ using System.Text;
 
 namespace bookify_api.Controllers
 {
-	[Route("api/auth")]
+	[Route("api/authen")]
 	[ApiController]
 	[EnableCors("AllowAll")]
 
