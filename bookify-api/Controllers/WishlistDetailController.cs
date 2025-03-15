@@ -21,14 +21,14 @@ namespace bookify_api.Controllers
             return Ok(await _wishlistDetailService.GetAllWishlistDetailsAsync());
         }
 
-        [HttpGet("wishlist-detail/{id}")]
+        [HttpGet("wishlist-details/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _wishlistDetailService.GetWishlistDetailByIdAsync(id);
             return result != null ? Ok(result) : NotFound();
         }
 
-        [HttpPost("wishlist-detail")]
+        [HttpPost("wishlist-details")]
         public async Task<IActionResult> Create([FromBody] CreateWishlistDetailDTO dto)
         {
             await _wishlistDetailService.AddWishlistDetailAsync(dto);
@@ -36,7 +36,7 @@ namespace bookify_api.Controllers
 
         }
 
-        [HttpPut("wishlist-detail")]
+        [HttpPut("wishlist-details")]
         public async Task<IActionResult> Update([FromBody] UpdateWishlistDetailDTO dto)
         {
             await _wishlistDetailService.UpdateWishlistDetailAsync(dto);
@@ -44,7 +44,7 @@ namespace bookify_api.Controllers
 
         }
 
-        [HttpDelete("wishlist-detail/{id}")]
+        [HttpDelete("wishlist-details/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _wishlistDetailService.DeleteWishlistDetailAsync(id);

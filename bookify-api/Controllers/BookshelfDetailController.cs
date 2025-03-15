@@ -31,7 +31,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Lấy thông tin BookshelfDetail theo ID
         /// </summary>
-        [HttpGet("bookshelf-detail/{id}")]
+        [HttpGet("bookshelf-details/{id}")]
         public async Task<IActionResult> GetBookshelfDetailById(int id)
         {
             var bookshelfDetail = await _bookshelfDetailService.GetBookshelfDetailByIdAsync(id);
@@ -45,7 +45,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Thêm mới một BookshelfDetail
         /// </summary>
-        [HttpPost("bookshelf-detail")]
+        [HttpPost("bookshelf-details")]
         public async Task<IActionResult> AddBookshelfDetail([FromBody] AddBookshelfDetailDTO dto)
         {
             try
@@ -62,7 +62,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Cập nhật thông tin BookshelfDetail
         /// </summary>
-        [HttpPut("bookshelf-detail/{id}")]
+        [HttpPut("bookshelf-details/{id}")]
         public async Task<IActionResult> UpdateBookshelfDetail(int id, [FromBody] UpdateBookshelfDetailDTO dto)
         {
             if (id != dto.BookshelfDetailId)
@@ -88,7 +88,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Xóa một BookshelfDetail (Soft Delete)
         /// </summary>
-        [HttpDelete("bookshelf-detail/{id}")]
+        [HttpDelete("bookshelf-details/{id}")]
         public async Task<IActionResult> DeleteBookshelfDetail(int id)
         {
             try
@@ -105,7 +105,7 @@ namespace bookify_api.Controllers
                 return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
             }
         }
-        [HttpPatch("bookshelf-detail/{id}/status")]
+        [HttpPatch("bookshelf-details/{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromQuery] int status)
         {
             await _bookshelfDetailService.UpdateStatusAsync(id, status);
