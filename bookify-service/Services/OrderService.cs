@@ -2,6 +2,7 @@
 using bookify_data.Entities;
 using bookify_data.Interfaces;
 using bookify_data.Model;
+using bookify_data.Repository;
 using bookify_service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -36,6 +37,12 @@ namespace bookify_service.Services
             var order =  await _orderRepository.GetByIdAsync(id);
             return  _mapper.Map<GetOrderDTO>(order);
         }
+
+        public async Task<Order?> GetEntitesByIdAsync(int id)
+        {
+            var order = await _orderRepository.GetByIdAsync(id);
+            return order;
+            }
         public async Task<bool> CreateOrderAsync(AddOrderDTO addOrderDto)
         {
             var order = new Order
@@ -103,6 +110,44 @@ namespace bookify_service.Services
             return await _orderRepository.UpdateAsync(order);
             // Truong hop bang 2 - thanh cong . Co the tao 1 DB danh cho luu tru hoa don thanh cong
         }
-       
+
+        public async Task<bool> UpdateOrderStatusAsync(int orderId, int newStatus)
+        {
+            // Lấy đơn hàng theo orderId từ repository
+            var order = await _orderRepository.GetByIdAsync(orderId);
+            if (order == null)
+            {
+                throw new Exception($"Không tìm thấy đơn hàng có ID = {orderId}");
+            }
+
+            // Nếu cần, bạn có thể kiểm tra giá trị newStatus hợp lệ (ví dụ chỉ cho phép 0, 1, 2)
+            if (newStatus != 0 && newStatus != 1 && newStatus != 2)
+            {
+                throw new ArgumentException("Trạng thái đơn hàng không hợp lệ");
+            }
+
+            // Cập nhật trạng thái thanh toán và thời gian chỉnh sửa
+            order.Status = newStatus;
+            order.LastEdited = DateTime.UtcNow;
+
+            // Cập nhật đơn hàng qua repository và trả về kết quả
+            return await _orderRepository.UpdateAsync(order);
+        }
+
+        
+
+        public async Task<bool> DeleteOrderAsync(int id)
+        {
+            var order = await _orderRepository.GetByIdAsync(id);
+            if (order == null)
+            {
+                throw new Exception($"Not found with ID = {order}");
+            }
+
+            order.Status = 0;
+            order.LastEdited = DateTime.UtcNow;
+            return await _orderRepository.UpdateAsync(order);
+        }
+
     }
 }

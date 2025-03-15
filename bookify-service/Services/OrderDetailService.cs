@@ -2,6 +2,7 @@
 using bookify_data.Entities;
 using bookify_data.Interfaces;
 using bookify_data.Model;
+using bookify_data.Repository;
 using bookify_service.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,9 @@ namespace bookify_service.Services
         public async Task<bool> CreateOrderDetailAsync(AddOrderDetailDTO addOrderDetailDto)
         {
             var orderDetailToAdd = _mapper.Map<OrderDetail>(addOrderDetailDto);
+            orderDetailToAdd.CreatedDate = DateTime.UtcNow;
+            orderDetailToAdd.LastEdited = DateTime.UtcNow;
+            orderDetailToAdd.Status = 1;
             return await _orderDetailRepository.InsertAsync(orderDetailToAdd);
         }
 
@@ -55,6 +59,35 @@ namespace bookify_service.Services
             return await _orderDetailRepository.UpdateAsync(orderDetail);
         }
 
-        
+        public async Task<bool> UpdateOrderDetailStatusAsync(int id, int newStatus)
+        {
+            var orderDetail = await _orderDetailRepository.GetByIdAsync(id);
+            if (orderDetail == null)
+            {
+                throw new Exception($"Not found with ID = {orderDetail}");
+            }
+
+            if (orderDetail.Status != 0 && orderDetail.Status != 1)
+            {
+                throw new ArgumentException("Invalid Status");
+            }
+            orderDetail.Status = newStatus;
+            orderDetail.LastEdited = DateTime.UtcNow;
+            return await _orderDetailRepository.UpdateAsync(orderDetail);
+        }
+
+        public async Task<bool> DeleteOrderDetailAsync(int id)
+        {
+            var orderDetail = await _orderDetailRepository.GetByIdAsync(id);
+            if (orderDetail == null)
+            {
+                throw new Exception($"Not found with ID = {orderDetail}");
+            }
+
+            orderDetail.Status = 0;
+            orderDetail.LastEdited = DateTime.UtcNow;
+            return await _orderDetailRepository.UpdateAsync(orderDetail);
+        }
+
     }
 }

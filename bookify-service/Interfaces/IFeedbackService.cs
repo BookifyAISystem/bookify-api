@@ -14,6 +14,9 @@ namespace bookify_service.Interfaces
         Task<bool> CreateFeedbackAsync(AddFeedbackDTO addFeedbackDto);
         Task<bool> UpdateFeedbackAsync(int id, UpdateFeedbackDTO updateFeedbackDto);
         Task<bool> CreateFeedbackIfOrderedAsync(AddFeedbackDTO addFeedbackDto);
+        Task<bool> UpdateFeedbackStatusAsync(int id, int newStatus);
+        Task<bool> DeleteFeedbackAsync(int id);
+
     }
 
 }

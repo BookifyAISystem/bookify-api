@@ -55,5 +55,34 @@ namespace bookify_service.Services
             return await _categoryRepository.UpdateAsync(category);
 
         }
+        public async Task<bool> UpdateCategoryStatusAsync(int id, int newStatus)
+        {
+            var category = await _categoryRepository.GetByIdAsync(id);
+            if (category == null)
+            {
+                throw new Exception($"Not found with ID = {category}");
+            }
+
+            if (category.Status != 0 && category.Status != 1 )
+            {
+                throw new ArgumentException("Invalid Order Status");
+            }
+            category.Status = newStatus;
+            category.LastEdited = DateTime.UtcNow;
+            return await _categoryRepository.UpdateAsync(category);
+        }
+
+        public async Task<bool> DeleteCategoryAsync(int id)
+        {
+            var category = await _categoryRepository.GetByIdAsync(id);
+            if (category == null)
+            {
+                throw new Exception($"Not found with ID = {category}");
+            }
+
+            category.Status = 0;
+            category.LastEdited = DateTime.UtcNow;
+            return await _categoryRepository.UpdateAsync(category);
+        }
     }
 }

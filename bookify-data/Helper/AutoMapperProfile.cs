@@ -22,6 +22,7 @@ namespace bookify_data.Helper
 			CreateMap<UpdateVoucherDTO, Voucher>();
 			//Order
 			CreateMap<Order, GetOrderDTO>();
+            CreateMap<GetOrderDTO,Order>();
             CreateMap<AddOrderDTO, Order>();
             CreateMap<UpdateOrderDTO, Order>();
             //Order Detail

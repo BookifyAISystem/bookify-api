@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace bookify_api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/book-category")]
     [ApiController]
     public class BookCategoryController : Controller
     {
@@ -53,7 +53,7 @@ namespace bookify_api.Controllers
         }
 
         [HttpPost("{bookId}/categories")]
-        public async Task<IActionResult> AssignCategories(int bookId, [FromBody] List<int> categoryIds)
+        public async Task<IActionResult> AssignCategoriesToBook(int bookId, [FromBody] List<int> categoryIds)
         {
             var result = await _bookCategoryService.AssignCategoriesToBookAsync(bookId, categoryIds);
             if (!result) return NotFound("Book not found or update failed");
@@ -61,18 +61,59 @@ namespace bookify_api.Controllers
         }
 
         [HttpGet("{bookId}/categories")]
-        public async Task<IActionResult> GetCategories(int bookId)
+        public async Task<IActionResult> GetCategoriesByBook(int bookId)
         {
             var categories = await _bookCategoryService.GetCategoriesByBookIdAsync(bookId);
             return Ok(categories);
         }
 
         [HttpDelete("{bookId}/categories/{categoryId}")]
-        public async Task<IActionResult> RemoveCategory(int bookId, int categoryId)
+        public async Task<IActionResult> RemoveCategoryFromBook(int bookId, int categoryId)
         {
             var result = await _bookCategoryService.RemoveCategoryFromBookAsync(bookId, categoryId);
             if (!result) return NotFound();
             return NoContent();
         }
+
+        [HttpPatch("change-status/{id}")]
+        public async Task<IActionResult> UpdateBookCategoryStatus(int id, [FromBody] int status)
+        {
+            try
+            {
+                bool isUpdate = await _bookCategoryService.UpdateBookCategoryStatusAsync(id, status);
+
+                if (!isUpdate)
+                {
+                    return NotFound($"Not found or update failed");
+                }
+                return Ok("Update Successfully");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteBookCategory(int id)
+        {
+            try
+            {
+                bool isDeleted = await _bookCategoryService.DeleteBookCategoryAsync(id);
+                if (!isDeleted)
+                    return NotFound(new { message = "Not found or delete failed" });
+
+                return Ok("Delete Success (Status = 0).");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
     }
 }
