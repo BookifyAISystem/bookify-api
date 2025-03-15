@@ -15,6 +15,7 @@
         public int? PromotionId { get; set; }
         public int? ParentBookId { get; set; }
         public int? AuthorId { get; set; }
+        public int Quantity { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastEdited { get; set; }
     }
