@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace bookify_api.Controllers
 {
-    [Route("api/authors")]
+    [Route("api/v1/authors")]
     [ApiController]
     public class AuthorController : ControllerBase
     {
