@@ -1,6 +1,6 @@
 ﻿using bookify_data.DTOs;
+using bookify_data.DTOs.BookAuthorDTO;
 using bookify_service.Interfaces;
-using bookify_service.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,51 +13,29 @@ namespace bookify_api.Controllers
     public class BookController : ControllerBase
     {
         private readonly IBookService _bookService;
+        private readonly IBookAuthorService _bookAuthorService;
 
-        public BookController(IBookService bookService)
+        public BookController(IBookService bookService, IBookAuthorService bookAuthorService)
         {
             _bookService = bookService;
+            _bookAuthorService = bookAuthorService;
         }
 
-        /// <summary>
-        /// Lấy danh sách tất cả sách.
-        /// </summary>      
+        // --- API liên quan đến Book ---
         [HttpGet]
-        public async Task<IActionResult> GetBooks(
-        [FromQuery] string query = null,
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 12)
+        public async Task<IActionResult> GetBooks([FromQuery] string query = null, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 12)
         {
             try
             {
                 if (!string.IsNullOrWhiteSpace(query))
                 {
-                    // Nếu có tham số 'query', thực hiện tìm kiếm
                     var (books, totalPages) = await _bookService.SearchBooksAsync(query, pageNumber, pageSize);
-
-                    return Ok(new
-                    {
-                        isSearch = true,
-                        query = query,
-                        pageNumber = pageNumber,
-                        pageSize = pageSize,
-                        totalPages = totalPages,
-                        books = books
-                    });
+                    return Ok(new { isSearch = true, query, pageNumber, pageSize, totalPages, books });
                 }
                 else
                 {
-                    // Nếu không có tham số 'query', lấy tất cả sách với phân trang
                     var (books, totalCount) = await _bookService.GetAllBooksAsync(pageNumber, pageSize);
-
-                    return Ok(new
-                    {
-                        isSearch = false,
-                        totalItems = totalCount,
-                        totalPages = (int)Math.Ceiling((double)totalCount / pageSize),
-                        currentPage = pageNumber,
-                        books = books
-                    });
+                    return Ok(new { isSearch = false, totalItems = totalCount, totalPages = (int)Math.Ceiling((double)totalCount / pageSize), currentPage = pageNumber, books });
                 }
             }
             catch (Exception ex)
@@ -66,98 +44,35 @@ namespace bookify_api.Controllers
             }
         }
 
-
-        /// <summary>
-        /// Lấy chi tiết sách theo ID.
-        /// </summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBookById(int id)
         {
-            try
-            {
-                var book = await _bookService.GetBookByIdAsync(id);
-                if (book == null)
-                {
-                    return NotFound(new { message = "Book not found." });
-                }
-                return Ok(book);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
-            }
+            var book = await _bookService.GetBookByIdAsync(id);
+            return book != null ? Ok(book) : NotFound(new { message = "Book not found." });
         }
 
-        /// <summary>
-        /// Thêm mới sách với hình ảnh upload lên AWS S3.
-        /// </summary>
         [HttpPost]
         public async Task<IActionResult> AddBook([FromForm] AddBookDTO bookDto)
         {
-            try
-            {
-                await _bookService.AddBookAsync(bookDto);
-                return Ok(new { message = "Book added successfully!" });
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
-            }
+            await _bookService.AddBookAsync(bookDto);
+            return Ok(new { message = "Book added successfully!" });
         }
 
-        /// <summary>
-        /// Cập nhật thông tin sách, hỗ trợ thay đổi ảnh trên AWS S3.
-        /// </summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBook(int id, [FromForm] UpdateBookDTO bookDto)
         {
-            if (id != bookDto.BookId)
-            {
-                return BadRequest(new { message = "Book ID mismatch." });
-            }
-
-            try
-            {
-                await _bookService.UpdateBookAsync(bookDto);
-                return Ok(new { message = "Book updated successfully!" });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
-            }
+            if (id != bookDto.BookId) return BadRequest(new { message = "Book ID mismatch." });
+            await _bookService.UpdateBookAsync(bookDto);
+            return Ok(new { message = "Book updated successfully!" });
         }
-
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
-            try
-            {
-                await _bookService.DeleteBookAsync(id);
-                return Ok(new { message = "Book deleted successfully (soft delete)!" });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
-            }
+            await _bookService.DeleteBookAsync(id);
+            return Ok(new { message = "Book deleted successfully (soft delete)!" });
         }
-       
+
         [HttpPatch("{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromQuery] int status)
         {
@@ -165,54 +80,49 @@ namespace bookify_api.Controllers
             return Ok(new { message = "Book status updated successfully!" });
         }
 
-        [HttpGet("latest")]
-        public async Task<IActionResult> GetLatestBooks([FromQuery] int count = 8)
+        // --- API liên quan đến BookAuthor ---
+        [HttpGet("authors")]
+        public async Task<IEnumerable<GetBookAuthorDTO>> GetAllBookAuthors()
         {
-            try
-            {
-                var latestBooks = await _bookService.GetLatestBooksAsync(count);
-                return Ok(latestBooks);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Error retrieving latest books.", details = ex.Message });
-            }
-        }
-        [HttpGet("bestsellers")]
-        public async Task<IActionResult> GetBestSellingBooks([FromQuery] int count = 8)
-        {
-            try
-            {
-                var books = await _bookService.GetBestSellingBooksAsync(count);
-                return Ok(new { message = "Success", data = books });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
-            }
-        }
-        [HttpPatch("{id}/quantity")]
-        public async Task<IActionResult> UpdateBookQuantity(int id, [FromQuery] int quantity)
-        {
-            try
-            {
-                await _bookService.UpdateBookQuantityAsync(id, quantity);
-                return Ok(new { message = $"Số lượng sách ID {id} đã được cập nhật thành công!" });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Lỗi khi cập nhật số lượng sách.", details = ex.Message });
-            }
+            return await _bookAuthorService.GetAllBookAuthorsAsync();
         }
 
+        [HttpGet("authors/{id}")]
+        public async Task<IActionResult> GetBookAuthorById(int id)
+        {
+            var bookAuthor = await _bookAuthorService.GetBookAuthorByIdAsync(id);
+            return bookAuthor != null ? Ok(bookAuthor) : NotFound(new { message = "BookAuthor not found." });
+        }
 
+        [HttpPost("authors")]
+        public async Task<IActionResult> AddBookAuthor([FromBody] CreateBookAuthorDTO bookAuthorDto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            await _bookAuthorService.AddBookAuthorAsync(bookAuthorDto);
+            return Ok(new { message = "BookAuthor created successfully!" });
+        }
+
+        [HttpPut("authors/{id}")]
+        public async Task<IActionResult> UpdateBookAuthor(int id, [FromBody] UpdateBookAuthorDTO bookAuthorDto)
+        {
+            if (id != bookAuthorDto.BookAuthorId) return BadRequest(new { message = "BookAuthor ID mismatch." });
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            await _bookAuthorService.UpdateBookAuthorAsync(bookAuthorDto);
+            return Ok(new { message = "BookAuthor updated successfully!" });
+        }
+
+        [HttpDelete("authors/{id}")]
+        public async Task<IActionResult> DeleteBookAuthor(int id)
+        {
+            await _bookAuthorService.DeleteBookAuthorAsync(id);
+            return Ok(new { message = "BookAuthor deleted successfully!" });
+        }
+
+        [HttpPatch("authors/{id}/status")]
+        public async Task<IActionResult> UpdateBookAuthorStatus(int id, [FromQuery] int status)
+        {
+            await _bookAuthorService.UpdateStatusAsync(id, status);
+            return Ok(new { message = "BookAuthor status updated successfully!" });
+        }
     }
 }
