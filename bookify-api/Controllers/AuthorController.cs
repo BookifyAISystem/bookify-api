@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace bookify_api.Controllers
 {
-    [Route("api")]
+    [Route("api/v1/authors")]
     [ApiController]
     public class AuthorController : ControllerBase
     {
@@ -21,7 +21,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Lấy danh sách tất cả tác giả (chỉ hiển thị những tác giả có `Status = 1`).
         /// </summary>
-        [HttpGet("authors")]
+        [HttpGet]
         public async Task<IActionResult> GetAllAuthors()
         {
             var authors = await _authorService.GetAllAuthorsAsync();
@@ -31,7 +31,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Lấy chi tiết một tác giả theo ID.
         /// </summary>
-        [HttpGet("authors/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetAuthorById(int id)
         {
             try
@@ -52,7 +52,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Thêm mới tác giả.
         /// </summary>
-        [HttpPost("authors")]
+        [HttpPost]
         public async Task<IActionResult> AddAuthor([FromBody] CreateAuthorDTO authorDto)
         {
             try
@@ -73,7 +73,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Cập nhật thông tin tác giả.
         /// </summary>
-        [HttpPut("authors/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAuthor(int id, [FromBody] UpdateAuthorDTO authorDto)
         {
             if (id != authorDto.AuthorId)
@@ -103,7 +103,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Xóa tác giả bằng soft delete (cập nhật `Status = 0`).
         /// </summary>
-        [HttpDelete("authors/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAuthor(int id)
         {
             try
@@ -120,7 +120,7 @@ namespace bookify_api.Controllers
                 return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
             }
         }
-        [HttpPatch("authors/{id}/status")]
+        [HttpPatch("{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromQuery] int status)
         {
             await _authorService.UpdateStatusAsync(id, status);

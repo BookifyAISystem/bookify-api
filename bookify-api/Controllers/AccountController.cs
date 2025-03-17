@@ -5,7 +5,7 @@ using bookify_service.Interfaces;
 using bookify_data.Model;
 
 [ApiController]
-[Route("api/accounts")]
+[Route("api/v1/accounts")]
 public class AccountController : ControllerBase
 {
 	private readonly IAccountService _accountService;

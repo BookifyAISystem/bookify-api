@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace bookify_api.Controllers
 {
-    [Route("api/order-detail")]
+    [Route("api/v1/order-details")]
     [ApiController]
     public class OrderDetailController : ControllerBase
     {

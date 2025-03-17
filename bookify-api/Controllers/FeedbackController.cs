@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace bookify_api.Controllers
 {
-    [Route("api/feedback")]
+    [Route("api/v1/feedbacks")]
     [ApiController]
     public class FeedbackController : Controller
     {

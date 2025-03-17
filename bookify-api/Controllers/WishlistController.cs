@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace bookify_api.Controllers
 {
-    [Route("api")]
+    [Route("api/v1/wishlists")]
     [ApiController]
     public class WishlistController : ControllerBase
     {
@@ -15,28 +15,28 @@ namespace bookify_api.Controllers
             _wishlistService = wishlistService;
         }
 
-        [HttpGet("wishlists")]
+        [HttpGet]
         public async Task<IActionResult> GetAllWishlists()
         {
             var wishlists = await _wishlistService.GetAllWishlistsAsync();
             return Ok(wishlists);
         }
 
-        [HttpGet("wishlists/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetWishlistById(int id)
         {
             var wishlist = await _wishlistService.GetWishlistByIdAsync(id);
             return wishlist != null ? Ok(wishlist) : NotFound();
         }
 
-        [HttpPost("wishlists")]
+        [HttpPost]
         public async Task<IActionResult> AddWishlist([FromBody] CreateWishlistDTO dto)
         {
             await _wishlistService.AddWishlistAsync(dto);
             return Ok(new { message = "Wishlist created successfully!" });
         }
 
-        [HttpPut("wishlists/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateWishlist(int id, [FromBody] UpdateWishlistDTO dto)
         {
             if (id != dto.WishlistId) return BadRequest("ID mismatch!");
@@ -44,7 +44,7 @@ namespace bookify_api.Controllers
             return Ok(new { message = "Wishlist updated successfully!" });
         }
 
-        [HttpDelete("wishlists/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWishlist(int id)
         {
             await _wishlistService.DeleteWishlistAsync(id);

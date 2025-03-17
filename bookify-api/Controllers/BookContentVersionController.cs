@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace bookify_api.Controllers
 {
-    [Route("api")]
+    [Route("api/v1/book-content-version")]
     [ApiController]
     public class BookContentVersionController : ControllerBase
     {
@@ -15,7 +15,7 @@ namespace bookify_api.Controllers
             _service = service;
         }
 
-        [HttpPost("book-content-version")]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateBookContentVersionDTO dto)
         {
             if (!ModelState.IsValid)
@@ -25,7 +25,7 @@ namespace bookify_api.Controllers
             return Ok(new { message = "BookContentVersion created successfully!" });
         }
 
-        [HttpGet("book-content-version/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _service.GetByIdAsync(id);
@@ -35,14 +35,14 @@ namespace bookify_api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("book-content-versions/{bookId}")]
+        [HttpGet("{bookId}")]
         public async Task<IActionResult> GetAllByBookId(int bookId)
         {
             var results = await _service.GetAllVersionsByBookIdAsync(bookId);
             return Ok(results);
         }
 
-        [HttpPut("book-content-version")]
+        [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateBookContentVersionDTO dto)
         {
             if (!ModelState.IsValid)
@@ -52,7 +52,7 @@ namespace bookify_api.Controllers
             return Ok(new { message = "BookContentVersion updated successfully!" });
         }
 
-        [HttpDelete("book-content-version/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _service.DeleteAsync(id);

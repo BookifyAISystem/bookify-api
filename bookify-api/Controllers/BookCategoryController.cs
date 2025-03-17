@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace bookify_api.Controllers
 {
-    [Route("api/book-category")]
+    [Route("api/v1/book-categories")]
     [ApiController]
     public class BookCategoryController : Controller
     {
@@ -75,7 +75,7 @@ namespace bookify_api.Controllers
             return NoContent();
         }
 
-        [HttpPatch("change-status/{id}")]
+        [HttpPatch("{id}/status")]
         public async Task<IActionResult> UpdateBookCategoryStatus(int id, [FromBody] int status)
         {
             try

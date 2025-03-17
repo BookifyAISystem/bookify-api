@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace bookify_api.Controllers
 {
-    [Route("api")]
+    [Route("api/v1/books")]
     [ApiController]
     public class BookController : ControllerBase
     {
@@ -22,7 +22,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Lấy danh sách tất cả sách.
         /// </summary>      
-        [HttpGet("books")]
+        [HttpGet]
         public async Task<IActionResult> GetBooks(
         [FromQuery] string query = null,
         [FromQuery] int pageNumber = 1,
@@ -70,7 +70,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Lấy chi tiết sách theo ID.
         /// </summary>
-        [HttpGet("books/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetBookById(int id)
         {
             try
@@ -91,7 +91,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Thêm mới sách với hình ảnh upload lên AWS S3.
         /// </summary>
-        [HttpPost ("books")]
+        [HttpPost]
         public async Task<IActionResult> AddBook([FromForm] AddBookDTO bookDto)
         {
             try
@@ -112,7 +112,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Cập nhật thông tin sách, hỗ trợ thay đổi ảnh trên AWS S3.
         /// </summary>
-        [HttpPut("books/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBook(int id, [FromForm] UpdateBookDTO bookDto)
         {
             if (id != bookDto.BookId)
@@ -140,7 +140,7 @@ namespace bookify_api.Controllers
         }
 
 
-        [HttpDelete("books/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
             try
@@ -158,14 +158,14 @@ namespace bookify_api.Controllers
             }
         }
        
-        [HttpPatch("books/{id}/status")]
+        [HttpPatch("{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromQuery] int status)
         {
             await _bookService.UpdateStatusAsync(id, status);
             return Ok(new { message = "Book status updated successfully!" });
         }
 
-        [HttpGet("books/latest")]
+        [HttpGet("latest")]
         public async Task<IActionResult> GetLatestBooks([FromQuery] int count = 8)
         {
             try
@@ -178,7 +178,7 @@ namespace bookify_api.Controllers
                 return StatusCode(500, new { message = "Error retrieving latest books.", details = ex.Message });
             }
         }
-        [HttpGet("books/bestsellers")]
+        [HttpGet("bestsellers")]
         public async Task<IActionResult> GetBestSellingBooks([FromQuery] int count = 8)
         {
             try
@@ -191,7 +191,7 @@ namespace bookify_api.Controllers
                 return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
             }
         }
-        [HttpPatch("books/{id}/quantity")]
+        [HttpPatch("{id}/quantity")]
         public async Task<IActionResult> UpdateBookQuantity(int id, [FromQuery] int quantity)
         {
             try

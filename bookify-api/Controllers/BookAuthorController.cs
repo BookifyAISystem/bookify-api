@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace bookify_api.Controllers
 {
-    [Route("api")]
+    [Route("api/v1/book-authors")]
     [ApiController]
     public class BookAuthorController : ControllerBase
     {
@@ -17,13 +17,13 @@ namespace bookify_api.Controllers
             _bookAuthorService = bookAuthorService;
         }
 
-        [HttpGet("bookauthors")]
+        [HttpGet]
         public async Task<IEnumerable<GetBookAuthorDTO>> GetAllBookAuthors()
         {
             return await _bookAuthorService.GetAllBookAuthorsAsync();
         }
 
-        [HttpGet("bookauthors/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<GetBookAuthorDTO>> GetBookAuthorById(int id)
         {
             var bookAuthor = await _bookAuthorService.GetBookAuthorByIdAsync(id);
@@ -31,7 +31,7 @@ namespace bookify_api.Controllers
             return Ok(bookAuthor);
         }
 
-        [HttpPost("bookauthors")]
+        [HttpPost]
         public async Task<IActionResult> AddBookAuthor([FromBody] CreateBookAuthorDTO bookAuthorDto)
         {
             if (!ModelState.IsValid)
@@ -43,7 +43,7 @@ namespace bookify_api.Controllers
             return Ok(new { message = "BookAuthor created successfully!" });
         }
 
-        [HttpPut("bookauthors/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBookAuthor(int id, [FromBody] UpdateBookAuthorDTO bookAuthorDto)
         {
             if (id != bookAuthorDto.BookAuthorId)
@@ -60,13 +60,13 @@ namespace bookify_api.Controllers
             return Ok(new { message = "BookAuthor updated successfully!" });
         }
 
-        [HttpDelete("bookauthors/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBookAuthor(int id)
         {
             await _bookAuthorService.DeleteBookAuthorAsync(id);
             return Ok(new { message = "BookAuthor deleted successfully!" });
         }
-        [HttpPatch("bookauthors{id}/status")]
+        [HttpPatch("{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromQuery] int status)
         {
             await _bookAuthorService.UpdateStatusAsync(id, status);
