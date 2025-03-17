@@ -80,8 +80,35 @@ namespace bookify_api.Controllers
             return Ok(new { message = "Book status updated successfully!" });
         }
 
-        // --- API liên quan đến BookAuthor ---
-        [HttpGet("authors")]
+        [HttpGet("bestsellers")]
+        public async Task<IActionResult> GetBestSellingBooks([FromQuery] int count = 8)
+        {
+            try
+            {
+                var books = await _bookService.GetBestSellingBooksAsync(count);
+                return Ok(new { message = "Success", data = books });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
+            }
+        }
+        [HttpGet("latest")]
+        public async Task<IActionResult> GetLatestBooks([FromQuery] int count = 8)
+        {
+            try
+            {
+                var latestBooks = await _bookService.GetLatestBooksAsync(count);
+                return Ok(latestBooks);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error retrieving latest books.", details = ex.Message });
+            }
+        }
+
+            // --- API liên quan đến BookAuthor ---
+            [HttpGet("authors")]
         public async Task<IEnumerable<GetBookAuthorDTO>> GetAllBookAuthors()
         {
             return await _bookAuthorService.GetAllBookAuthorsAsync();
