@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace bookify_data.DTOs.AuthorDTO
 {
@@ -8,5 +9,7 @@ namespace bookify_data.DTOs.AuthorDTO
         public string AuthorName { get; set; }
 
         public string? Content { get; set; }
+        public IFormFile? AuthorImageFile { get; set; }  // ✅ Hỗ trợ upload hình ảnh
+
     }
 }

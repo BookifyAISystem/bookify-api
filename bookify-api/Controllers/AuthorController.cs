@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace bookify_api.Controllers
 {
-    [Route("api")]
+    [Route("api/authors")]
     [ApiController]
     public class AuthorController : ControllerBase
     {
@@ -21,7 +21,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Lấy danh sách tất cả tác giả (chỉ hiển thị những tác giả có `Status = 1`).
         /// </summary>
-        [HttpGet("authors")]
+        [HttpGet]
         public async Task<IActionResult> GetAllAuthors()
         {
             var authors = await _authorService.GetAllAuthorsAsync();
@@ -31,7 +31,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Lấy chi tiết một tác giả theo ID.
         /// </summary>
-        [HttpGet("authors/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetAuthorById(int id)
         {
             try
@@ -50,10 +50,10 @@ namespace bookify_api.Controllers
         }
 
         /// <summary>
-        /// Thêm mới tác giả.
+        /// Thêm mới tác giả (hỗ trợ upload ảnh).
         /// </summary>
-        [HttpPost("authors")]
-        public async Task<IActionResult> AddAuthor([FromBody] CreateAuthorDTO authorDto)
+        [HttpPost]
+        public async Task<IActionResult> AddAuthor([FromForm] CreateAuthorDTO authorDto)
         {
             try
             {
@@ -71,10 +71,10 @@ namespace bookify_api.Controllers
         }
 
         /// <summary>
-        /// Cập nhật thông tin tác giả.
+        /// Cập nhật thông tin tác giả (hỗ trợ cập nhật ảnh).
         /// </summary>
-        [HttpPut("authors/{id}")]
-        public async Task<IActionResult> UpdateAuthor(int id, [FromBody] UpdateAuthorDTO authorDto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAuthor(int id, [FromForm] UpdateAuthorDTO authorDto)
         {
             if (id != authorDto.AuthorId)
             {
@@ -103,7 +103,7 @@ namespace bookify_api.Controllers
         /// <summary>
         /// Xóa tác giả bằng soft delete (cập nhật `Status = 0`).
         /// </summary>
-        [HttpDelete("authors/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAuthor(int id)
         {
             try
@@ -120,12 +120,15 @@ namespace bookify_api.Controllers
                 return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
             }
         }
-        [HttpPatch("authors/{id}/status")]
+
+        /// <summary>
+        /// Cập nhật trạng thái tác giả (0: Ẩn, 1: Hiển thị).
+        /// </summary>
+        [HttpPatch("{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromQuery] int status)
         {
             await _authorService.UpdateStatusAsync(id, status);
             return Ok(new { message = "Author status updated successfully!" });
         }
-
     }
 }
