@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace bookify_api.Controllers
 {
 
-    [Route("api/v1/Vnpay")]
+    [Route("[controller]")]
     [ApiController]
     public class VnpayController : Controller
     {
