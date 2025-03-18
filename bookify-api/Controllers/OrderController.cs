@@ -22,6 +22,14 @@ namespace bookify_api.Controllers
             return Ok(orders);
         }
 
+        
+        [HttpGet("account/{accountId}")]
+        public async Task<ActionResult<IEnumerable<GetOrderDTO>>> GetOrdersByAccountId( int accountId)
+        {
+            var orders = await _orderService.GetOrdersByAccountIdAsync(accountId);
+            return Ok(orders);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<GetOrderDTO>> GetOrderById(int id)
         {

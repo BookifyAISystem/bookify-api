@@ -32,6 +32,12 @@ namespace bookify_service.Services
             return _mapper.Map<IEnumerable<GetOrderDTO>>(orderList);
 
         }
+
+        public async Task<IEnumerable<GetOrderDTO>> GetOrdersByAccountIdAsync(int accountId)
+        {
+            var orderList = await _orderRepository.GetOrdersByAccountIdAsync(accountId);
+            return _mapper.Map<IEnumerable<GetOrderDTO>>(orderList);
+        }
         public async Task<GetOrderDTO?> GetByIdAsync(int id)
         {
             var order =  await _orderRepository.GetByIdAsync(id);
