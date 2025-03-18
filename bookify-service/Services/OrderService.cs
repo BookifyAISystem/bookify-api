@@ -32,6 +32,12 @@ namespace bookify_service.Services
             return _mapper.Map<IEnumerable<GetOrderDTO>>(orderList);
 
         }
+
+        public async Task<IEnumerable<GetOrderDTO>> GetOrdersByAccountIdAsync(int accountId)
+        {
+            var orderList = await _orderRepository.GetOrdersByAccountIdAsync(accountId);
+            return _mapper.Map<IEnumerable<GetOrderDTO>>(orderList);
+        }
         public async Task<GetOrderDTO?> GetByIdAsync(int id)
         {
             var order =  await _orderRepository.GetByIdAsync(id);
@@ -55,6 +61,15 @@ namespace bookify_service.Services
             };
             foreach (var odDto in addOrderDto.OrderDetails )
             {
+                if (odDto.Quantity < 1)
+                {
+                    throw new ArgumentException("OrderDetail.Quantity must be greater than or equal to 1");
+                }
+
+                if (odDto.Price <= 0)
+                {
+                    throw new ArgumentException("OrderDetail.Price must be greater than 0");
+                }
                 var orderDetail = new OrderDetail
                 {
                     BookId = odDto.BookId,
@@ -96,7 +111,10 @@ namespace bookify_service.Services
         public async Task<bool> UpdateOrderAsync(int id, UpdateOrderDTO updateOrderDto)
         {
             var order = await _orderRepository.GetByIdAsync(id);
-            if (order == null) return false;
+            if (order == null)
+            {
+                throw new Exception($"Not found with ID = {order}");
+            }
             if (updateOrderDto.Status != 1 && updateOrderDto.Status != 0 && updateOrderDto.Status != 2)
             {
                 throw new ArgumentException("Invalid Order");
@@ -136,14 +154,18 @@ namespace bookify_service.Services
 
         
 
-        public async Task<bool> DeleteOrderAsync(int id)
+        public async Task<bool> DeleteOrderAsync(int id, DeleteOrderDTO deleteOrderDTO)
         {
             var order = await _orderRepository.GetByIdAsync(id);
             if (order == null)
             {
                 throw new Exception($"Not found with ID = {order}");
             }
-
+            if (order.Status != 1 )
+            {
+                throw new ArgumentException("Can't cancel order without status 1");
+            }
+            order.CancelReason = deleteOrderDTO.CancelReason;
             order.Status = 0;
             order.LastEdited = DateTime.UtcNow;
             return await _orderRepository.UpdateAsync(order);
