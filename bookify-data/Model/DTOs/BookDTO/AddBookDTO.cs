@@ -28,7 +28,7 @@ namespace bookify_data.DTOs
         public int? ParentBookId { get; set; }
 
         public int? AuthorId { get; set; }
-
+        public int Quantity {  get; set; }
         public IFormFile? ImageFile { get; set; } // Dùng để upload ảnh lên AWS S3
     }
 }

@@ -17,7 +17,7 @@ namespace bookify_data.Model
         public DateTime CreatedDate { get; set; }
         public DateTime LastEdited { get; set; }
         public int Status { get; set; } // 1 - active , 0 - canceled , 2 - completed
-        public List<GetOrderDetailDTO>? OrderDetails { get; set; }
+        public List<GetOrderDetailDTO> OrderDetails { get; set; }
 
     }
 

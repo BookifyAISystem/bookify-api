@@ -24,9 +24,10 @@ namespace bookify_data.Entities
 		public int? ParentBookId { get; set; }
 		public int? CategoryId { get; set; }
 		public int? PromotionId { get; set; }
+        public int Quantity { get; set; } // Thêm mới
 
-		// Navigation properties
-		public Book? ParentBook { get; set; }
+        // Navigation properties
+        public Book? ParentBook { get; set; }
 		public Promotion? Promotion { get; set; }
 		public Author? Author { get; set; }
 		public List<BookAuthor> BookAuthors { get; set; } = new List<BookAuthor>();

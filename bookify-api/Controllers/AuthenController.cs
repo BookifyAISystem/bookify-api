@@ -11,8 +11,8 @@ using System.Text;
 
 namespace bookify_api.Controllers
 {
-	[Route("api/auth")]
-	[ApiController]
+    [Route("api/v1/authen")]
+    [ApiController]
 	[EnableCors("AllowAll")]
 
 	public class AuthenController : ControllerBase
@@ -35,8 +35,7 @@ namespace bookify_api.Controllers
 			/*this.emailSender = emailSender;*/
 		}
 
-        [HttpPost]
-        [Route("google")]
+        [HttpPost("google")]
         public async Task<IActionResult> LoginGoogle([FromBody] GoogleTokenRequest model)
         {
             if (model == null || string.IsNullOrEmpty(model.Token))
@@ -101,8 +100,7 @@ namespace bookify_api.Controllers
         }
 
 
-        [HttpPost]
-		[Route("login")]
+        [HttpPost("login")]
 		public async Task<IActionResult> Login([FromBody] LoginModel model)
 		{
 			if (model == null || string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password))
@@ -143,8 +141,7 @@ namespace bookify_api.Controllers
 		}
 
 
-		[HttpPost]
-		[Route("register")]
+        [HttpPost("register")]
 		public async Task<IActionResult> Register([FromBody] RegisterLoginModel registerDTO)
 		{
 			if (!ModelState.IsValid)
@@ -179,10 +176,10 @@ namespace bookify_api.Controllers
 		}
 
 
-		
 
-		[HttpGet("confirm-email")]
-		public async Task<IActionResult> ConfirmEmail(string token)
+
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string token)
 		{
 			if (string.IsNullOrEmpty(token))
 			{

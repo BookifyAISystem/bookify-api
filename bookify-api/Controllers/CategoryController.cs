@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace bookify_api.Controllers
 {
-    [Route("api/category")]
+    [Route("api/v1/categories")]
     [ApiController]
     public class CategoryController : Controller
     {

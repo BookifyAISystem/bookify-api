@@ -18,7 +18,8 @@ namespace bookify_data.Interfaces
         IQueryable<Book> QueryBooks();
         Task UpdateStatusAsync(int bookId, int status);
         Task<IEnumerable<Book>> GetLatestBooksAsync(int count);
-        Task<IEnumerable<Book>> GetBestSellingBooksAsync(int count); 
+        Task<IEnumerable<Book>> GetBestSellingBooksAsync(int count);
+        Task UpdateBookQuantityAsync(int bookId, int quantity);
 
 
     }
