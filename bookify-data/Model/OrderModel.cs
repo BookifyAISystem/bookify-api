@@ -37,7 +37,13 @@ namespace bookify_data.Model
 
     }
 
-   
-    
-    
+    public class DeleteOrderDTO
+    {
+
+        public string? CancelReason { get; set; }
+
+    }
+
+
+
 }
