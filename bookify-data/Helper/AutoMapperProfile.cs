@@ -16,7 +16,25 @@ namespace bookify_data.Helper
 		{
 			
 			CreateMap<RegisterRequest, Account>();
-			
-		}
+			//Voucher
+            CreateMap<Voucher, GetVoucherDTO>();
+            CreateMap<AddVoucherDTO, Voucher>();
+			CreateMap<UpdateVoucherDTO, Voucher>();
+			//Order
+			CreateMap<Order, GetOrderDTO>();
+            CreateMap<GetOrderDTO,Order>();
+            CreateMap<AddOrderDTO, Order>();
+            CreateMap<UpdateOrderDTO, Order>();
+            //Order Detail
+            CreateMap<OrderDetail, GetOrderDetailDTO>();
+            CreateMap<AddOrderDetailDTO, OrderDetail>();
+            CreateMap<UpdateOrderDetailDTO, OrderDetail>();
+            //Category
+            CreateMap<Category, GetCategoryDTO>();
+            CreateMap<AddCategoryDTO, Category>();
+            CreateMap<UpdateCategoryDTO, Category>();
+
+
+        }
 	}
 }

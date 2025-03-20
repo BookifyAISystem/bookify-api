@@ -1,5 +1,6 @@
 ﻿using bookify_data.Entities;
 using bookify_data.Interfaces;
+using bookify_data.Model;
 using bookify_service.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,60 @@ namespace bookify_service.Services
 			// Thêm logic băm mật khẩu, validate email/phone, ... nếu cần
 			account.LastEdited = DateTime.Now;
 			await _accountRepository.UpdateAccountAsync(account);
+		}
+		public async Task<Account?> GetAccountWithReferencesAsync(int accountId)
+		{
+			return await _accountRepository.GetAccountByIdWithReferencesAsync(accountId);
+		}
+
+		// Trả về true/false xem xóa thành công không
+		public async Task<bool> DeleteAccountAsync(int accountId)
+		{
+			// 1) Lấy Account + các liên kết
+			var account = await _accountRepository.GetAccountByIdWithReferencesAsync(accountId);
+			if (account == null)
+			{
+				return false; // Account không tồn tại
+			}
+
+			// 2) Kiểm tra liên kết
+			//    Ví dụ: Nếu account còn Customer, News, Note... có thể cấm xóa hoặc cho xóa tùy logic
+			bool hasReferences = (account.NewsList.Any()
+								  || account.Notes.Any());
+			// ... Nếu bạn có Staff:  account.Staff.Any()  (hoặc Staff == null, tùy mô hình)
+
+			// 3) Tùy yêu cầu nghiệp vụ:
+			//    - Nếu có ràng buộc, bạn có thể không cho xóa, hoặc vẫn xóa (status=0) nhưng log warning.
+			if (hasReferences)
+			{
+				// Ví dụ: Vẫn cho xóa, nhưng log
+				Console.WriteLine("Account đang được tham chiếu bởi Customer/News/Note...");
+				// Hoặc return false để cấm xóa.
+			}
+
+			// 4) Thực hiện Soft Delete
+			await _accountRepository.DeleteAccountAsync(account);
+			return true;
+		}
+		public async Task<PagedResult<Account>> GetAccountsAsync(AccountQueryParameters parameters)
+		{
+			// Gọi repository để lấy dữ liệu + totalCount
+			var (items, totalCount) = await _accountRepository.GetPagedAccountsAsync(parameters);
+
+			// Tính toán totalPages
+			int totalPages = (int)Math.Ceiling((double)totalCount / parameters.PageSize);
+
+			// Đóng gói kết quả
+			var result = new PagedResult<Account>
+			{
+				Items = items.ToList(),
+				TotalCount = totalCount,
+				Page = parameters.Page,
+				PageSize = parameters.PageSize,
+				TotalPages = totalPages
+			};
+
+			return result;
 		}
 	}
 

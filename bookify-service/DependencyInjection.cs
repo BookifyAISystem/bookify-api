@@ -15,8 +15,15 @@ namespace bookify_service
 		{
 			service.AddTransient<IAuthenServices, AuthenServices>();
 			service.AddTransient<IAccountService, AccountService>();
+			service.AddTransient<IOrderService, OrderService>();
+            service.AddTransient<IOrderDetailService, OrderDetailService>();
+            service.AddTransient<IVoucherService, VoucherService>();
+            service.AddTransient<ICategoryService, CategoryService>();
+            service.AddTransient<IBookCategoryService, BookCategoryService>();
+            service.AddTransient<IFeedbackService, FeedbackService>();
+            service.AddTransient<IVnpayService, VnpayService>();
 
-			return service;
+            return service;
 		}
 	}
 }

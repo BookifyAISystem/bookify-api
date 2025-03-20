@@ -19,14 +19,17 @@ namespace bookify_data.Entities
 		public int PublishYear { get; set; }
 		public DateTime CreatedDate { get; set; }
 		public DateTime LastEdited { get; set; }
-		public int Status { get; set; }
+		public int Status { get; set; } = 1;
+		public int? AuthorId { get; set; }
 		public int? ParentBookId { get; set; }
-		public int CategoryId { get; set; }
-		public int PromotionId { get; set; }
+		public int? CategoryId { get; set; }
+		public int? PromotionId { get; set; }
+        public int Quantity { get; set; } // Thêm mới
 
-		// Navigation properties
-		public Book? ParentBook { get; set; }
+        // Navigation properties
+        public Book? ParentBook { get; set; }
 		public Promotion? Promotion { get; set; }
+		public Author? Author { get; set; }
 		public List<BookAuthor> BookAuthors { get; set; } = new List<BookAuthor>();
 		public List<BookshelfDetail> BookshelfDetails { get; set; } = new List<BookshelfDetail>();
 		public List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();

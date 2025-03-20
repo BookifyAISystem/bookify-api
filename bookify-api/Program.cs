@@ -8,14 +8,21 @@ using bookify_data.Repository;
 using bookify_service;
 using bookify_service.Interfaces;
 using bookify_service.Services;
+using DocumentFormat.OpenXml.InkML;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
+using Amazon.S3;
+using Microsoft.AspNetCore.Builder;
+using bookify_data.Repositories;
+using bookify_data.Repositories.Interfaces;
+
 namespace bookify_api
 {
     public class Program
@@ -24,14 +31,16 @@ namespace bookify_api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-			// Add services to the container.
+            // Add services to the container.
+            builder.Services.Configure<AwsOptions>(builder.Configuration.GetSection("AWS"));
 
-			builder.Services.AddControllers();
+            builder.Services.AddControllers();
 			builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
-			
+			builder.Services.Configure<OpenAIConfig>(builder.Configuration.GetSection("OpenAI"));
+
 			// Load appsettings.json configuration
 			builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 			builder.Configuration.AddJsonFile("appsettings.json"); 
@@ -63,6 +72,24 @@ namespace bookify_api
             builder.Services.AddScoped<INoteService, NoteService>();
             builder.Services.AddScoped<INewsRepository, NewsRepository>();
             builder.Services.AddScoped<INewsService, NewsService>();
+			builder.Services.AddScoped<IBookRepository, BookRepository>();
+			builder.Services.AddScoped<IBookService, BookService>();
+            builder.Services.AddSingleton<AmazonS3Service>(); // Lưu trữ ảnh trên AWS S3
+            builder.Services.AddScoped<IBookshelfRepository, BookshelfRepository>();
+            builder.Services.AddScoped<IBookshelfService, BookshelfService>();
+			builder.Services.AddScoped<IBookshelfDetailRepository, BookshelfDetailRepository>();
+			builder.Services.AddScoped<IBookshelfDetailService, BookshelfDetailService>();
+			builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+			builder.Services.AddScoped<IAuthorService, AuthorService>();
+			builder.Services.AddScoped<IBookAuthorRepository, BookAuthorRepository>();
+			builder.Services.AddScoped<IBookAuthorService, BookAuthorService>();
+			builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
+			builder.Services.AddScoped<IWishlistService, WishlistService>();
+			builder.Services.AddScoped<IWishlistDetailRepository, WishlistDetailRepository>();
+			builder.Services.AddScoped<IWishlistDetailService, WishlistDetailService>();
+            builder.Services.AddScoped<IBookContentVersionRepository, BookContentVersionRepository>();
+            builder.Services.AddScoped<IBookContentVersionService, BookContentVersionService>();
+
 
 
             #region configure jwt authentication
@@ -162,7 +189,7 @@ namespace bookify_api
             {
                 options.AddPolicy("AllowAll", policy =>
                 {
-                    policy.WithOrigins("http://localhost:5173") 
+                    policy.SetIsOriginAllowed(origin => true)
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials();
@@ -197,6 +224,8 @@ namespace bookify_api
 
 
             app.MapControllers();
+
+           
 
             app.Run();
         }
