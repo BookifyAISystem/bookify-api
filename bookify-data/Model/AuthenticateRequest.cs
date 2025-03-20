@@ -18,12 +18,12 @@ namespace bookify_data.Model
 	public class ChangePasswordModel
 	{
 		[Required]
-		public string Password { get; set; }
-		[Required]
-		public string PasswordNew { get; set; }
-		[Required]
-		public string PasswordRepeat { get; set; }
-	}
+        public string Email { get; set; }
+        [Required]
+        public string OldPassword { get; set; }
+        [Required]
+        public string NewPassword { get; set; }
+    }
 	public class ResetPasswordModel
 	{
 		[Required]

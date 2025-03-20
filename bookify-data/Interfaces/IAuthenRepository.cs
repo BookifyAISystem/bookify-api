@@ -18,6 +18,8 @@ namespace bookify_data.Interfaces
 		//Task<String> GetUserNameFromToken(HttpClient client);
 		Task<bool> Logout(string userId);
 		Task<string> LoginGoogle(GoogleLoginModel model);
+		Task<string> ChangePassword(ChangePasswordModel model);
 
-	}
+
+    }
 }

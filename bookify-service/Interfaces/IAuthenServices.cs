@@ -20,5 +20,7 @@ namespace bookify_service.Interfaces
 		//Task<string> GetUsername
 		Task<bool> Logout(HttpContext httpContext);
 		bool IsTokenBlacklisted(string token);
-	}
+        Task<string> ChangePassword(ChangePasswordModel model);
+
+    }
 }

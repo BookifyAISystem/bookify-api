@@ -56,5 +56,10 @@ namespace bookify_service.Services
 		{
 			return false;
 		}
-	}
+        public async Task<string> ChangePassword(ChangePasswordModel model)
+		{
+			return await authenRepository.ChangePassword(model);
+		}
+
+    }
 }

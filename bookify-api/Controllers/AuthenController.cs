@@ -1,5 +1,6 @@
 ﻿using bookify_data.Interfaces;
 using bookify_data.Model;
+using bookify_data.Repository;
 using bookify_service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -243,7 +244,7 @@ namespace bookify_api.Controllers
 
 
 
-		/*[HttpPost("send-verification-email")]
+        /*[HttpPost("send-verification-email")]
 		public async Task<IActionResult> SendVerificationEmail([FromQuery] string username)
 		{
 			if (string.IsNullOrWhiteSpace(username))
@@ -285,8 +286,17 @@ namespace bookify_api.Controllers
 				return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
 			}
 		}*/
-
-		[HttpPost("logout")]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
+        {
+            var result = await _authenServices.ChangePassword(model);
+            if (result == "Password changed successfully")
+            {
+                return Ok(new { message = result });
+            }
+            return BadRequest(new { error = result });
+        }
+        [HttpPost("logout")]
 		public async Task<IActionResult> Logout()
 		{
 			var result = await _authenServices.Logout(HttpContext);
