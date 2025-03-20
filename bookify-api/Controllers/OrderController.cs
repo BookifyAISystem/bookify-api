@@ -20,7 +20,7 @@ namespace bookify_api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GetOrderDTO>>> GetAllOrders()
         {
-            var orders = await _orderService.GetAllAsync();
+            var orders = await _orderService.GetAllOrderAsync();
             return Ok(orders);
         }
 
@@ -32,42 +32,61 @@ namespace bookify_api.Controllers
             return Ok(orders);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<GetOrderDTO>> GetOrderById(int id)
+        [HttpGet("{orderId}")]
+        public async Task<ActionResult<GetOrderDTO>> GetOrderById(int orderId)
         {
-            var order = await _orderService.GetByIdAsync(id);
+            var order = await _orderService.GetByOrderDetailByIdAsync(orderId);
             if (order == null)
                 return NotFound(new { message = "Order not found" });
 
             return Ok(order);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> CreateOrder([FromBody] AddOrderDTO addOrderDto)
+        [HttpPost("{accountId}")]
+        public async Task<ActionResult> CreateOrder(int accountId)
         {
-            bool isCreated = await _orderService.CreateOrderAsync(addOrderDto);
+            bool isCreated = await _orderService.CreateOrderAsync(accountId);
             if (!isCreated)
                 return BadRequest(new { message = "Failed to create order" });
 
             return StatusCode(201, new { message = "Order created successfully" });
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDTO updateOrderDto)
+        [HttpPost("order-details")]
+        public async Task<ActionResult> AddOrderDetailToOrder([FromBody] AddOrderDetailDTO addOrderDetailDto)
         {
-            try
-            {
-                bool isUpdated = await _orderService.UpdateOrderAsync(id, updateOrderDto);
-                if (!isUpdated)
-                    return NotFound(new { message = "Order not found or update failed" });
+            bool isCreated = await _orderDetailService.AddOrderDetailAsync(addOrderDetailDto);
+            if (!isCreated)
+                return BadRequest(new { message = "Failed to create order detail" });
 
-                return NoContent(); // HTTP 204
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return StatusCode(201, new { message = "Order detail created successfully" });
         }
+
+        [HttpPut("order-details/{orderDetailId}")]
+        public async Task<ActionResult> UpdateOrderDetailQuantity(int orderDetailId, [FromBody] int newQuantity)
+        {
+            bool isUpdated = await _orderDetailService.UpdateOrderDetailQuantityAsync(orderDetailId, newQuantity);
+            if (!isUpdated)
+                return NotFound(new { message = "Order detail not found or update failed" });
+
+            return NoContent(); // HTTP 204
+        }
+        //[HttpPut("{id}")]
+        //public async Task<ActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDTO updateOrderDto)
+        //{
+        //    try
+        //    {
+        //        bool isUpdated = await _orderService.UpdateOrderAsync(id, updateOrderDto);
+        //        if (!isUpdated)
+        //            return NotFound(new { message = "Order not found or update failed" });
+
+        //        return NoContent(); // HTTP 204
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
 
         [HttpPatch("change-status/{id}")]
         public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] int status)
@@ -91,6 +110,21 @@ namespace bookify_api.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpPost("confirm/{orderId}")]
+        public async Task<IActionResult> ConfirmOrder(int orderId)
+        {
+            try
+            {
+                var result = await _orderService.ConfirmOrderAsync(orderId);
+                if (!result) return BadRequest("Cannot confirm order");
+                return Ok("Order confirmed");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteOrder(int id, [FromBody] DeleteOrderDTO deleteOrderDTO)
         {
@@ -111,39 +145,39 @@ namespace bookify_api.Controllers
         [HttpGet("order-details")]
         public async Task<ActionResult<IEnumerable<GetOrderDetailDTO>>> GetAllOrderDetails()
         {
-            var orderDetails = await _orderDetailService.GetAllAsync();
+            var orderDetails = await _orderDetailService.GetAllOrderDetailAsync();
             return Ok(orderDetails);
         }
 
         [HttpGet("order-details/{orderDetailId}")]
         public async Task<ActionResult<GetOrderDetailDTO>> GetOrderDetailById(int orderDetailId)
         {
-            var orderDetail = await _orderDetailService.GetByIdAsync(orderDetailId);
+            var orderDetail = await _orderDetailService.GetByOrderDetailByIdAsync(orderDetailId);
             if (orderDetail == null)
                 return NotFound(new { message = "Order detail not found" });
 
             return Ok(orderDetail);
         }
 
-        [HttpPost("order-details")]
-        public async Task<ActionResult> CreateOrderDetail([FromBody] AddOrderDetailDTO addOrderDetailDto)
-        {
-            bool isCreated = await _orderDetailService.CreateOrderDetailAsync(addOrderDetailDto);
-            if (!isCreated)
-                return BadRequest(new { message = "Failed to create order detail" });
+        //[HttpPost("order-details")]
+        //public async Task<ActionResult> CreateOrderDetail([FromBody] AddOrderDetailDTO addOrderDetailDto)
+        //{
+        //    bool isCreated = await _orderDetailService.AddOrderDetailAsync(addOrderDetailDto);
+        //    if (!isCreated)
+        //        return BadRequest(new { message = "Failed to create order detail" });
 
-            return StatusCode(201, new { message = "Order detail created successfully" });
-        }
+        //    return StatusCode(201, new { message = "Order detail created successfully" });
+        //}
 
-        [HttpPut("order-details/{orderDetailId}")]
-        public async Task<ActionResult> UpdateOrderDetail(int orderDetailId, [FromBody] UpdateOrderDetailDTO updateOrderDetailDto)
-        {
-            bool isUpdated = await _orderDetailService.UpdateOrderDetailAsync(orderDetailId, updateOrderDetailDto);
-            if (!isUpdated)
-                return NotFound(new { message = "Order detail not found or update failed" });
+        //[HttpPut("order-details/{orderDetailId}")]
+        //public async Task<ActionResult> UpdateOrderDetail(int orderDetailId, [FromBody] UpdateOrderDetailDTO updateOrderDetailDto)
+        //{
+        //    bool isUpdated = await _orderDetailService.UpdateOrderDetailAsync(orderDetailId, updateOrderDetailDto);
+        //    if (!isUpdated)
+        //        return NotFound(new { message = "Order detail not found or update failed" });
 
-            return NoContent(); // HTTP 204
-        }
+        //    return NoContent(); // HTTP 204
+        //}
 
         [HttpPatch("order-details/change-status/{orderDetailId}")]
         public async Task<IActionResult> UpdateOrderDetailStatus(int orderDetailId, [FromBody] int status)

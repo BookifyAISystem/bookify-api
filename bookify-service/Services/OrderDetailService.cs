@@ -30,22 +30,20 @@ namespace bookify_service.Services
             _voucherRepository = voucherRepository;
         }
 
-        public async Task<IEnumerable<GetOrderDetailDTO>> GetAllAsync()
+        public async Task<IEnumerable<GetOrderDetailDTO>> GetAllOrderDetailAsync()
         {
             var orderDetailList = await _orderDetailRepository.GetAllAsync();
             return _mapper.Map<IEnumerable<GetOrderDetailDTO>>(orderDetailList);
         }
 
-        public async Task<GetOrderDetailDTO?> GetByIdAsync(int id)
+        public async Task<GetOrderDetailDTO?> GetByOrderDetailByIdAsync(int id)
         {
             var orderDetail = await _orderDetailRepository.GetByIdAsync(id);
             return _mapper.Map<GetOrderDetailDTO>(orderDetail);
         }
 
-        public async Task<bool> CreateOrderDetailAsync(AddOrderDetailDTO addOrderDetailDto)
+        public async Task<bool> AddOrderDetailAsync(AddOrderDetailDTO addOrderDetailDto)
         {
-            try
-            {
                 var order = await _orderRepository.GetByIdAsync(addOrderDetailDto.OrderId);
                 if (order == null)
                 {
@@ -97,30 +95,8 @@ namespace bookify_service.Services
                 }
 
                 order.Total = total;
-                await _orderRepository.UpdateAsync(order);
-                var orderDetailToAddNoId = new OrderDetail
-                {
-                    BookId = addOrderDetailDto.BookId,
-                    Quantity = addOrderDetailDto.Quantity,
-                    Price = addOrderDetailDto.Price,
-                    CreatedDate = DateTime.UtcNow,
-                    LastEdited = DateTime.UtcNow,
-                    Status = 1
-                };
-                return await _orderDetailRepository.InsertAsync(orderDetailToAddNoId);
-            }
-            catch (ArgumentException ex)
-            {
-                // Log the exception and return a bad request response
-                // Log.Error(ex, "Invalid input: {Message}", ex.Message);
-                throw new Exception($"Invalid input: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                // Log the exception and return a server error response
-                // Log.Error(ex, "An error occurred while creating order detail: {Message}", ex.Message);
-                throw new Exception($"An error occurred while creating order detail: {ex.Message}");
-            }
+               return await _orderRepository.UpdateAsync(order);
+               
         }
 
 
@@ -170,5 +146,11 @@ namespace bookify_service.Services
             return await _orderDetailRepository.UpdateAsync(orderDetail);
         }
 
+        private async Task<int> CalculateOrderTotal(int orderId)
+        {
+            var order = await _orderRepo.GetByIdAsync(orderId);
+            if (order == null) return 0;
+            return order.OrderDetails.Sum(x => x.Quantity * x.Price);
+        }
     }
 }

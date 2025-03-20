@@ -9,9 +9,9 @@ namespace bookify_service.Interfaces
 {
     public interface IOrderDetailService
     {
-        Task<IEnumerable<GetOrderDetailDTO>> GetAllAsync();
-        Task<GetOrderDetailDTO?> GetByIdAsync(int id);
-        Task<bool> CreateOrderDetailAsync(AddOrderDetailDTO addOrderDetailDto);
+        Task<IEnumerable<GetOrderDetailDTO>> GetAllOrderDetailAsync();
+        Task<GetOrderDetailDTO?> GetByOrderDetailByIdAsync(int id);
+        Task<bool> AddOrderDetailAsync(AddOrderDetailDTO addOrderDetailDto);
         Task<bool> UpdateOrderDetailAsync(int id, UpdateOrderDetailDTO updateOrderDetailDto);
         Task<bool> UpdateOrderDetailStatusAsync(int id, int newStatus);
         Task<bool> DeleteOrderDetailAsync(int id);
