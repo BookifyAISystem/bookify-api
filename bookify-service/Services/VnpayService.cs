@@ -83,7 +83,6 @@ namespace bookify_service.Services
             helper.AddRequestData("vnp_OrderType", _orderType);
             helper.AddRequestData("vnp_ReturnUrl", _callbackUrl);
             helper.AddRequestData("vnp_TxnRef", request.PaymentId.ToString());
-            helper.AddRequestData("vnp_ExtraData", request.Order?.OrderId.ToString() ?? string.Empty);
 
             return helper.GetPaymentUrl(_baseUrl, _hashSecret);
         }
@@ -135,14 +134,9 @@ namespace bookify_service.Services
             var transactionStatusCode = (TransactionStatusCode)sbyte.Parse(vnp_TransactionStatus);
 
 
-            int orderId = 0;
-            if (!string.IsNullOrEmpty(vnp_ExtraData))
-            {
-                int.TryParse(vnp_ExtraData, out orderId);
-            }
+            
             return new VnpayPaymentResult
             {
-                OrderId = orderId,
                 PaymentId = long.Parse(vnp_TxnRef),
                 VnpayTransactionId = long.Parse(vnp_TransactionNo),
                 IsSuccess = transactionStatusCode == TransactionStatusCode.Code_00 && responseCode == ResponseCode.Code_00 && helper.IsSignatureCorrect(vnp_SecureHash, _hashSecret),

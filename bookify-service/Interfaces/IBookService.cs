@@ -16,6 +16,7 @@ namespace bookify_service.Interfaces
         Task UpdateStatusAsync(int bookId, int status);
         Task<IEnumerable<GetBookDTO>> GetLatestBooksAsync(int count);
         Task<IEnumerable<GetBookDTO>> GetBestSellingBooksAsync(int count); // Thêm hàm lấy sách bán chạy nhất
+        Task UpdateBookQuantityAsync(int bookId, int quantity);
 
     }
 }

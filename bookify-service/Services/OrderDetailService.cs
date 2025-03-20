@@ -6,21 +6,28 @@ using bookify_data.Repository;
 using bookify_service.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static Slapper.AutoMapper;
 
 namespace bookify_service.Services
 {
     public class OrderDetailService : IOrderDetailService
     {
+        private readonly IVoucherRepository _voucherRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
+        private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
 
-        public OrderDetailService(IOrderDetailRepository orderDetailRepository, IMapper mapper)
+        public OrderDetailService(IOrderDetailRepository orderDetailRepository, IMapper mapper, IOrderRepository orderRepository, IVoucherRepository voucherRepository)
         {
             _orderDetailRepository = orderDetailRepository;
             _mapper = mapper;
+            _orderRepository = orderRepository;
+            _voucherRepository = voucherRepository;
         }
 
         public async Task<IEnumerable<GetOrderDetailDTO>> GetAllAsync()
@@ -37,12 +44,86 @@ namespace bookify_service.Services
 
         public async Task<bool> CreateOrderDetailAsync(AddOrderDetailDTO addOrderDetailDto)
         {
-            var orderDetailToAdd = _mapper.Map<OrderDetail>(addOrderDetailDto);
-            orderDetailToAdd.CreatedDate = DateTime.UtcNow;
-            orderDetailToAdd.LastEdited = DateTime.UtcNow;
-            orderDetailToAdd.Status = 1;
-            return await _orderDetailRepository.InsertAsync(orderDetailToAdd);
+            try
+            {
+                var order = await _orderRepository.GetByIdAsync(addOrderDetailDto.OrderId);
+                if (order == null)
+                {
+                    throw new Exception($"Order not found with ID = {addOrderDetailDto.OrderId}");
+                }
+
+                if (addOrderDetailDto.Quantity < 1)
+                {
+                    throw new ArgumentException("Quantity must be greater than or equal to 1");
+                }
+
+                if (addOrderDetailDto.Price <= 0)
+                {
+                    throw new ArgumentException("Price must be greater than 0");
+                }
+
+                var orderDetailToAdd = new OrderDetail
+                {
+                    BookId = addOrderDetailDto.BookId,
+                    Quantity = addOrderDetailDto.Quantity,
+                    Price = addOrderDetailDto.Price,
+                    CreatedDate = DateTime.UtcNow,
+                    LastEdited = DateTime.UtcNow,
+                    Status = 1
+                };
+
+                order.OrderDetails.Add(orderDetailToAdd);
+
+                int total = order.OrderDetails.Sum(x => x.Quantity * x.Price);
+
+                if (order.VoucherId.HasValue)
+                {
+                    var voucher = await _voucherRepository.GetByIdAsync(order.VoucherId.Value);
+                    if (voucher != null)
+                    {
+                        if (total >= voucher.MinAmount && voucher.Quantity > 0)
+                        {
+                            int discountValue = (int)(total * (voucher.Discount / 100.0));
+                            if (discountValue > voucher.MaxDiscount)
+                            {
+                                discountValue = voucher.MaxDiscount;
+                            }
+                            total -= discountValue;
+                            voucher.Quantity--;
+                            voucher.LastEdited = DateTime.UtcNow;
+                            await _voucherRepository.UpdateAsync(voucher);
+                        }
+                    }
+                }
+
+                order.Total = total;
+                await _orderRepository.UpdateAsync(order);
+                var orderDetailToAddNoId = new OrderDetail
+                {
+                    BookId = addOrderDetailDto.BookId,
+                    Quantity = addOrderDetailDto.Quantity,
+                    Price = addOrderDetailDto.Price,
+                    CreatedDate = DateTime.UtcNow,
+                    LastEdited = DateTime.UtcNow,
+                    Status = 1
+                };
+                return await _orderDetailRepository.InsertAsync(orderDetailToAddNoId);
+            }
+            catch (ArgumentException ex)
+            {
+                // Log the exception and return a bad request response
+                // Log.Error(ex, "Invalid input: {Message}", ex.Message);
+                throw new Exception($"Invalid input: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Log the exception and return a server error response
+                // Log.Error(ex, "An error occurred while creating order detail: {Message}", ex.Message);
+                throw new Exception($"An error occurred while creating order detail: {ex.Message}");
+            }
         }
+
+
 
         public async Task<bool> UpdateOrderDetailAsync(int id, UpdateOrderDetailDTO updateOrderDetailDto)
         {

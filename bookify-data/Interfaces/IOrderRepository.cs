@@ -10,6 +10,7 @@ namespace bookify_data.Interfaces
     public interface IOrderRepository
     {
         Task<IEnumerable<Order>> GetAllAsync();
+        Task<IEnumerable<Order>> GetOrdersByAccountIdAsync(int accountId);
         Task<Order?> GetByIdAsync(int id);
         Task<IEnumerable<Order>> GetByAccountIdAsync(int accountId);
         Task<bool> InsertAsync(Order order);

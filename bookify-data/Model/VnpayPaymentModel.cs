@@ -55,7 +55,6 @@ namespace bookify_data.Model
         /// </summary>
         public DisplayLanguage Language { get; set; } = DisplayLanguage.Vietnamese;
 
-        public Order? Order { get; set; }
     }
 
     /// <summary>
@@ -125,7 +124,6 @@ namespace bookify_data.Model
         /// </summary>
         public VnpayBankingInfor BankingInfor { get; set; }
 
-        public int OrderId { get; set; }
     }
 
     /// <summary>

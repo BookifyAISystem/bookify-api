@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace bookify_api.Controllers
 {
-    [Route("api/role")]
+    [Route("api/v1/roles")]
     [ApiController]
     public class RoleController : ControllerBase
     {

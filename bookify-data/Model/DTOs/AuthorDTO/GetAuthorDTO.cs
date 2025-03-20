@@ -1,4 +1,6 @@
-﻿namespace bookify_data.DTOs.AuthorDTO
+﻿using Microsoft.AspNetCore.Http;
+
+namespace bookify_data.DTOs.AuthorDTO
 {
     public class GetAuthorDTO
     {
@@ -8,5 +10,6 @@
         public DateTime CreatedDate { get; set; }
         public DateTime LastEdited { get; set; }
         public int Status { get; set; }
+        public string? AuthorImage { get; set; }
     }
 }
