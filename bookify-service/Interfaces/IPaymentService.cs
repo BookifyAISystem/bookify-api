@@ -14,7 +14,7 @@ namespace bookify_service.Interfaces
         Task<IEnumerable<GetPaymentDTO>> GetPaymentsByStatusAsync(int status);
         Task<IEnumerable<GetPaymentDTO>> GetPaymentsByAccountIdAsync(int accountId);
         Task<GetPaymentDTO?> GetPaymentByIdAsync(int id);
-        Task<bool> CreateVnpayPaymentAsync(int orderId);
+        Task<bool> CreateVnpayPaymentAsync(int orderId); // Tao than
         Task<bool> CreateCODPaymentAsync(int orderId);
     }
 }
