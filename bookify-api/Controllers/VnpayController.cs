@@ -46,9 +46,9 @@ namespace bookify_api.Controllers
                 {
                     return NotFound("Không tìm thấy đơn hàng.");
                 }
-                if (order.Status != 1)
+                if (order.Status != 2)
                 {
-                    return BadRequest("Đơn hàng không ở trạng thái chưa thanh toán.");
+                    return BadRequest("Đơn hàng không ở trạng thái thanh toán.");
                 }
                 var ipAddress = NetworkHelper.GetIpAddress(HttpContext); // Lấy địa chỉ IP của thiết bị thực hiện giao dịch
                 //string description = "Thanh toán cho đơn hàng ${order.OrderId}";
@@ -163,7 +163,7 @@ namespace bookify_api.Controllers
                             return BadRequest("Không xác định được OrderId từ dữ liệu thanh toán.");
                         }
 
-                        await _orderService.UpdateOrderStatusAsync(orderId, 2);
+                        await _orderService.UpdateOrderStatusAsync(orderId, 3);
                         return Ok(paymentResult);
                     }
 

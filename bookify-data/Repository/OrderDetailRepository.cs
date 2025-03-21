@@ -45,12 +45,13 @@ namespace bookify_data.Repository
 
         public async Task<bool> DeleteAsync(int orderDetailId)
         {
-            var order = await _context.OrderDetails.FindAsync(orderDetailId);
-            if (order != null)
+            var orderDetail = await _context.OrderDetails.FindAsync(orderDetailId);
+            if (orderDetail == null)
             {
-                _context.OrderDetails.Remove(order);
-                await _context.SaveChangesAsync();
+                return false;
             }
+            _context.OrderDetails.Remove(orderDetail);
+            return await _context.SaveChangesAsync() > 0;
         }
 
     }

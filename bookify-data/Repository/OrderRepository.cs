@@ -36,6 +36,15 @@ namespace bookify_data.Repository
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Order>> GetOrdersByStatus(int status)
+        {
+            return await _context.Orders
+                .Where(o => o.Status == status)
+                .Include(o => o.OrderDetails)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         public async Task<Order?> GetByIdAsync(int id)
         {
             return await _context.Orders.Include(o => o.OrderDetails)
@@ -50,6 +59,8 @@ namespace bookify_data.Repository
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+
 
         public async Task<bool> InsertAsync(Order order)
         {
