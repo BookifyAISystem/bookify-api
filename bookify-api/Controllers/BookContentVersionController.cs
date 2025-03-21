@@ -35,7 +35,7 @@ namespace bookify_api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{bookId}")]
+        [HttpGet("by-book/{bookId}")]
         public async Task<IActionResult> GetAllByBookId(int bookId)
         {
             var results = await _service.GetAllVersionsByBookIdAsync(bookId);
