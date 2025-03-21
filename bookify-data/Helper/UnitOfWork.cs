@@ -1,5 +1,6 @@
 ﻿using bookify_data.Data;
 using bookify_data.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
@@ -13,18 +14,28 @@ namespace bookify_data.Helper
 	{
 		private readonly BookifyDbContext _dbContext;
 		private IDbContextTransaction? _transaction = null;
+        public IOrderRepository Orders { get; }
+        public IPaymentRepository Payments { get; }
+        public IOrderDetailRepository OrderDetails { get; }
 
-		public UnitOfWork(BookifyDbContext dbContext)
-		{
-			_dbContext = dbContext;
-		}
+        public UnitOfWork(BookifyDbContext dbContext, IOrderRepository orders, IOrderDetailRepository orderDetails, IPaymentRepository payments)
+        {
+            _dbContext = dbContext;
+            Orders = orders;
+            OrderDetails = orderDetails;
+            Payments = payments;
+        }
 
-		public int SaveChanges()
+        public int SaveChanges()
 		{
 			return _dbContext.SaveChanges();
 		}
 
-		public void Dispose()
+        public async Task<bool> CompleteAsync()
+        {
+            return await _dbContext.SaveChangesAsync() > 0;
+        }
+        public void Dispose()
 		{
 			_dbContext.Dispose();
 			GC.SuppressFinalize(this);

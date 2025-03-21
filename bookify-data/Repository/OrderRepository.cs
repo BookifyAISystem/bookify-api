@@ -48,7 +48,6 @@ namespace bookify_data.Repository
         public async Task<Order?> GetByIdAsync(int id)
         {
             return await _context.Orders.Include(o => o.OrderDetails)
-                .AsNoTracking()
                 .FirstOrDefaultAsync(o => o.OrderId == id);
         }
 
@@ -56,21 +55,18 @@ namespace bookify_data.Repository
         {
             return await _context.Orders
                 .Where(n => n.AccountId == accountId && n.Status != 0)
-                .AsNoTracking()
                 .ToListAsync();
         }
 
 
 
-        public async Task<bool> InsertAsync(Order order)
+        public void Insert(Order order)
         {
-            await _context.Orders.AddAsync(order);
-            return await _context.SaveChangesAsync() > 0;
+            _context.Orders.AddAsync(order);
         }
-        public async Task<bool> UpdateAsync(Order order)
+        public void Update(Order order)
         {
             _context.Orders.Update(order);
-            return await _context.SaveChangesAsync() > 0; 
         }
 
         public async Task<bool> HasCompletedOrderForBookAsync(int accountId, int bookId)
@@ -80,5 +76,6 @@ namespace bookify_data.Repository
                 .AnyAsync(o => o.OrderDetails.Any(od => od.BookId == bookId));
         }
 
+        
     }
 }

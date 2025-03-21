@@ -8,9 +8,14 @@ namespace bookify_data.Interfaces
 {
 	public interface IUnitOfWork : IDisposable
 	{
-		void CommitTransaction();
+        IPaymentRepository Payments { get; }
+        IOrderRepository Orders { get; }
+        IOrderDetailRepository OrderDetails { get; }
+        void CommitTransaction();
 		void RollbackTransaction();
 		int SaveChanges();
 		void BeginTransaction();
-	}
+        Task<bool> CompleteAsync();
+
+    }
 }

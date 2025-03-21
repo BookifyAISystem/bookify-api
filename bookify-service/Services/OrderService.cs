@@ -20,15 +20,17 @@ namespace bookify_service.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IVoucherRepository _voucherRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public OrderService(IOrderRepository orderRepository, IMapper mapper, IVoucherRepository voucherRepository, IBookRepository bookRepository, IOrderDetailRepository orderDetailRepository)
+        public OrderService(IOrderRepository orderRepository, IMapper mapper, IVoucherRepository voucherRepository, IBookRepository bookRepository, IOrderDetailRepository orderDetailRepository, IUnitOfWork unitOfWork)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
             _voucherRepository = voucherRepository;
             _bookRepository = bookRepository;
             _orderDetailRepository = orderDetailRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<GetOrderDTO>> GetAllOrderAsync()
@@ -72,7 +74,7 @@ namespace bookify_service.Services
             }
 
             // Nếu cần, bạn có thể kiểm tra giá trị newStatus hợp lệ (ví dụ chỉ cho phép 0, 1, 2)
-            if (newStatus != 0 && newStatus != 1 && newStatus != 2)
+            if (newStatus != 0 && newStatus != 1 && newStatus != 2 && newStatus != 3 && newStatus != 4 )
             {
                 throw new ArgumentException("Trạng thái đơn hàng không hợp lệ");
             }
@@ -80,8 +82,9 @@ namespace bookify_service.Services
             // Cập nhật trạng thái thanh toán và thời gian chỉnh sửa
             order.Status = newStatus;
             order.LastEdited = DateTime.UtcNow;
+            _unitOfWork.Orders.Update(order);
             // Cập nhật đơn hàng qua repository và trả về kết quả
-            return await _orderRepository.UpdateAsync(order);
+            return await _unitOfWork.CompleteAsync();
         }
         public async Task<IEnumerable<GetOrderDetailDTO>> GetAllOrderDetailAsync()
         {
@@ -107,7 +110,8 @@ namespace bookify_service.Services
             }
             orderDetail.Status = newStatus;
             orderDetail.LastEdited = DateTime.UtcNow;
-            return await _orderDetailRepository.UpdateAsync(orderDetail);
+            _unitOfWork.OrderDetails.Update(orderDetail);
+            return await _unitOfWork.CompleteAsync();
         }
         // Flow User
         public async Task<bool> CreateOrderAsync(int accountId)
@@ -120,7 +124,8 @@ namespace bookify_service.Services
                 Total = 0,
                 Status = 1 // active
             };
-            return await _orderRepository.InsertAsync(order);
+            _unitOfWork.Orders.Insert(order);
+            return await _unitOfWork.CompleteAsync();
         }
 
         public async Task<bool> AddOrderDetailAsync(int orderId, AddOrderDetailDTO addOrderDetailDto)
@@ -152,7 +157,8 @@ namespace bookify_service.Services
             };
             order.OrderDetails.Add(orderDetailToAdd);
             order.Total =  CalculateOrderTotal(order);
-            return await _orderRepository.UpdateAsync(order);
+            _unitOfWork.Orders.Update(order);
+            return await _unitOfWork.CompleteAsync();
         }
         public async Task<bool> UpdateOrderDetailQuantityAsync(int orderDetailId, int newQuantity)
         {
@@ -165,42 +171,60 @@ namespace bookify_service.Services
             {
                 throw new ArgumentException("Quantity must be greater than or equal to 1");
             }
-
             var order = await _orderRepository.GetByIdAsync(orderDetail.OrderId);
+            if (order == null)
+            {
+                throw new Exception($"Order not found with ID = {orderDetail.OrderId}");
+            }
             if (orderDetail.Status != 1) throw new Exception("Order is not in 'Cart' status");
 
+            var book = await _bookRepository.GetBookByIdAsync(orderDetail.BookId);
+            if (book == null)
+            {
+                throw new Exception($"Book not found with ID = {orderDetail.BookId}");
+            }
+            order.Total = order.Total - orderDetail.Price;
             // Update
             orderDetail.Quantity = newQuantity;
-            orderDetail.Price = orderDetail.Book.Price * newQuantity;
+            orderDetail.Price = book.Price * newQuantity;
             orderDetail.LastEdited = DateTime.UtcNow;
-            var updatedDetail = await _orderDetailRepository.UpdateAsync(orderDetail);
 
-            // Recalculate total
-            order.Total = CalculateOrderTotal(order);
-            var updatedOrder = await _orderRepository.UpdateAsync(order);
+            order.Total = order.Total + orderDetail.Price;
+            order.LastEdited = DateTime.UtcNow;
 
-            return updatedDetail && updatedOrder;
+            _unitOfWork.Orders.Update(order);
+            _unitOfWork.OrderDetails.Update(orderDetail);
+             
+
+            return await _unitOfWork.CompleteAsync();
         }
         public async Task<bool> RemoveOrderDetailAsync(int orderDetailId)
         {
+            // 1. Lấy OrderDetail
             var orderDetail = await _orderDetailRepository.GetByIdAsync(orderDetailId);
             if (orderDetail == null)
-            {
-                throw new Exception($"Order not found with ID = {orderDetailId}");
-            }
+                throw new Exception($"OrderDetail not found with ID = {orderDetailId}");
 
+            // 2. Lấy Order
             var order = await _orderRepository.GetByIdAsync(orderDetail.OrderId);
-            if (orderDetail.Status != 1) throw new Exception("Order is not in 'Cart' status");
+            if (order == null)
+                throw new Exception($"Order not found with ID = {orderDetail.OrderId}");
 
-            // Delete
-            var deleted = await _orderDetailRepository.DeleteAsync(orderDetailId);
-            if (!deleted)
-            {
-                throw new Exception("Delete Failed");
-            }
-            // Recalculate total
-            order.Total =  CalculateOrderTotal(order);
-            return await _orderRepository.UpdateAsync(order);
+            // 3. Kiểm tra status ở Order thay vì OrderDetail
+            if (order.Status != 1)
+                throw new Exception("Order is not in 'Cart' status");
+
+
+            // 5. Tính lại total
+            order.Total = order.Total - orderDetail.Price;
+            order.LastEdited = DateTime.UtcNow;
+            // 6. Cập nhật Order
+            _unitOfWork.Orders.Update(order);
+            _unitOfWork.OrderDetails.Remove(orderDetail);
+
+
+            return await _unitOfWork.CompleteAsync();
+            
 
         }
 
@@ -246,7 +270,8 @@ namespace bookify_service.Services
            
             order.Status = 2;
             order.LastEdited = DateTime.UtcNow;
-            return await _orderRepository.UpdateAsync(order);
+            _unitOfWork.Orders.Update(order);
+            return await _unitOfWork.CompleteAsync();
         }
 
         public async Task<bool> CancelOrderAsync(int orderId, string cancelReason)
@@ -262,7 +287,8 @@ namespace bookify_service.Services
             order.Status = 4;
             order.CancelReason = cancelReason;
             order.LastEdited = DateTime.UtcNow;
-            return await _orderRepository.UpdateAsync(order);
+            _unitOfWork.Orders.Update(order);
+            return await _unitOfWork.CompleteAsync();
         }
 
         private  int CalculateOrderTotal(Order order)
