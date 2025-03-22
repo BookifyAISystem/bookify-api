@@ -12,7 +12,10 @@ namespace bookify_data.Interfaces
         Task<IEnumerable<OrderDetail>> GetAllAsync();
         Task<OrderDetail?> GetByIdAsync(int id);
         Task<IEnumerable<OrderDetail>> GetByOrderIdAsync(int orderId);
-        Task<bool> InsertAsync(OrderDetail orderDetail);
-        Task<bool> UpdateAsync(OrderDetail orderDetail);
+        void Insert(OrderDetail orderDetail);
+        void Update(OrderDetail orderDetail);
+        void Remove(OrderDetail orderDetail);
+        void Detach(OrderDetail orderDetail);
+        void Attach(OrderDetail orderDetail);
     }
 }

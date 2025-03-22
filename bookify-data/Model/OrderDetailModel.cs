@@ -23,18 +23,10 @@ namespace bookify_data.Model
 
     public class AddOrderDetailDTO
     {
-        public int OrderId { get; set; }
         public int BookId { get; set; }
         public int Quantity { get; set; }
-        public int Price { get; set; }
     }
 
-    public class AddOrderDetailWithNoOrderIdDTO
-    {
-        public int BookId { get; set; }
-        public int Quantity { get; set; }
-        public int Price { get; set; }
-    }
     public class UpdateOrderDetailDTO  // may be no need
     {
         public int Quantity { get; set; }
