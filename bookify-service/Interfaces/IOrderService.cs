@@ -11,13 +11,24 @@ namespace bookify_service.Interfaces
 {
     public interface IOrderService
     {
-        Task<IEnumerable<GetOrderDTO>> GetAllAsync();
+        //Flow Admin
+        Task<IEnumerable<GetOrderDTO>> GetAllOrderAsync();
+        Task<IEnumerable<GetOrderDTO>> GetOrdersByStatusAsync(int status);
         Task<IEnumerable<GetOrderDTO>> GetOrdersByAccountIdAsync(int accountId);
-        Task<GetOrderDTO?> GetByIdAsync(int id);
+        Task<GetOrderDTO?> GetOrderByIdAsync(int id);
         Task<Order?> GetEntitesByIdAsync(int id);
-        Task<bool> CreateOrderAsync(AddOrderDTO addOrderDto);
-        Task<bool> UpdateOrderAsync(int id, UpdateOrderDTO updateOrderDto);
         Task<bool> UpdateOrderStatusAsync(int orderId, int newStatus);
-        Task<bool> DeleteOrderAsync(int id, DeleteOrderDTO deleteOrderDTO);
+        Task<IEnumerable<GetOrderDetailDTO>> GetAllOrderDetailAsync();
+        Task<GetOrderDetailDTO?> GetOrderDetailByIdAsync(int id);
+        Task<bool> UpdateOrderDetailStatusAsync(int id, int newStatus);
+
+        // Flow User
+        Task<bool> CreateOrderAsync(int accountId); // Tao gio hang trong 
+        Task<bool> AddOrderDetailAsync(int orderId, AddOrderDetailDTO addOrderDetailDto); // Them san pham vao gio hang, cap nhat thanh tien cua san pham va tong cong cua don hang
+        Task<bool> UpdateOrderDetailQuantityAsync(int orderDetailId, int quantity); // Cap nhat so luong san pham trong gio hang, cap nhat thanh tien cua san pham va tong cong cua don hang
+        Task<bool> RemoveOrderDetailAsync(int orderDetailId); // Xoa san pham khoi gio hang, cap nhat tong cong cua don hang
+        Task<bool> ConfirmOrderAsync(int orderId, int voucher); // Xac nhan don hang, cap nhat trang thai don hang, cap nhat trang thai san pham trong don hang
+        Task<bool> CancelOrderAsync(int orderId, string cancelReason); // Huy don hang, cap nhat trang thai don hang, cap nhat trang thai san pham trong don hang
+
     }
 }
