@@ -11,6 +11,9 @@ namespace bookify_data.Interfaces
         IPaymentRepository Payments { get; }
         IOrderRepository Orders { get; }
         IOrderDetailRepository OrderDetails { get; }
+        IBookRepository Books { get; }
+        IBookCategoryRepository BookCategories { get; }
+        ICategoryRepository Categories { get; }
         void CommitTransaction();
 		void RollbackTransaction();
 		int SaveChanges();

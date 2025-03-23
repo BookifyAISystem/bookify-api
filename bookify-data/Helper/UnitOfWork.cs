@@ -17,13 +17,19 @@ namespace bookify_data.Helper
         public IOrderRepository Orders { get; }
         public IPaymentRepository Payments { get; }
         public IOrderDetailRepository OrderDetails { get; }
+		public IBookRepository Books { get; }
+		public IBookCategoryRepository BookCategories { get; }
+		public ICategoryRepository Categories { get; }
 
-        public UnitOfWork(BookifyDbContext dbContext, IOrderRepository orders, IOrderDetailRepository orderDetails, IPaymentRepository payments)
+        public UnitOfWork(BookifyDbContext dbContext, IOrderRepository orders, IOrderDetailRepository orderDetails, IPaymentRepository payments, IBookRepository books, IBookCategoryRepository bookCategories, ICategoryRepository categories)
         {
             _dbContext = dbContext;
             Orders = orders;
             OrderDetails = orderDetails;
             Payments = payments;
+            Books = books;
+            BookCategories = bookCategories;
+            Categories = categories;
         }
 
         public int SaveChanges()

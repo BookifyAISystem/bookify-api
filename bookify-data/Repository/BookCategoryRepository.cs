@@ -25,17 +25,14 @@ namespace bookify_data.Repository
         {
             return await _context.BookCategories.FirstOrDefaultAsync(o => o.CategoryId == id);
         }
-        public async Task<bool> InsertAsync(BookCategory bookCategory)
+        public void InsertAsync(BookCategory bookCategory)
         {
-
-            await _context.BookCategories.AddAsync(bookCategory);
-            return await _context.SaveChangesAsync() > 0;
+            _context.BookCategories.AddAsync(bookCategory);
 
         }
-        public async Task<bool> UpdateAsync(BookCategory bookCategory)
+        public void UpdateAsync(BookCategory bookCategory)
         {
             _context.BookCategories.Update(bookCategory);
-            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<List<BookCategory>> GetByBookIdAsync(int bookId)

@@ -11,6 +11,7 @@ namespace bookify_data.Interfaces
         Task<Book?> GetBookByIdAsync(int bookId);
         Task AddBookAsync(Book book);
         Task UpdateBookAsync(Book book);
+        void UpdateBook(Book book);
         Task DeleteBookAsync(int bookId);
         Task SaveChangesAsync();
         Task<(IEnumerable<GetBookDTO>, int)> SearchBooksAsync(string query, int pageNumber, int pageSize);
