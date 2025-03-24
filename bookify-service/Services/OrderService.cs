@@ -297,8 +297,26 @@ namespace bookify_service.Services
             return order.OrderDetails.Sum(x => x.Price);
         }
 
-        
-    
+
+        public async Task<bool> UpdateOrderDetailsStatusAsync(int orderId, int newStatus)
+        {
+            var order = await _orderRepository.GetByIdAsync(orderId);
+            if (order == null)
+            {
+                throw new Exception($"Order not found with ID = {orderId}");
+            }
+
+            foreach (var orderDetail in order.OrderDetails)
+            {
+                orderDetail.Status = newStatus;
+                orderDetail.LastEdited = DateTime.UtcNow;
+                _unitOfWork.OrderDetails.Update(orderDetail);
+            }
+            _unitOfWork.Orders.Update(order);
+            return await _unitOfWork.CompleteAsync();
+        }
+
+
 
     }
 }

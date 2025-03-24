@@ -29,6 +29,8 @@ namespace bookify_service.Interfaces
         Task<bool> RemoveOrderDetailAsync(int orderDetailId); // Xoa san pham khoi gio hang, cap nhat tong cong cua don hang
         Task<bool> ConfirmOrderAsync(int orderId, int voucher); // Xac nhan don hang, cap nhat trang thai don hang, cap nhat trang thai san pham trong don hang
         Task<bool> CancelOrderAsync(int orderId, string cancelReason); // Huy don hang, cap nhat trang thai don hang, cap nhat trang thai san pham trong don hang
-
+         
+        // Feedback check order Detail
+        Task<bool> UpdateOrderDetailsStatusAsync(int id, int newStatus);
     }
 }

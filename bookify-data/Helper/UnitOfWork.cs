@@ -20,8 +20,9 @@ namespace bookify_data.Helper
 		public IBookRepository Books { get; }
 		public IBookCategoryRepository BookCategories { get; }
 		public ICategoryRepository Categories { get; }
+		public IAccountRepository Accounts { get; }
 
-        public UnitOfWork(BookifyDbContext dbContext, IOrderRepository orders, IOrderDetailRepository orderDetails, IPaymentRepository payments, IBookRepository books, IBookCategoryRepository bookCategories, ICategoryRepository categories)
+        public UnitOfWork(BookifyDbContext dbContext, IOrderRepository orders, IOrderDetailRepository orderDetails, IPaymentRepository payments, IBookRepository books, IBookCategoryRepository bookCategories, ICategoryRepository categories, IAccountRepository accounts)
         {
             _dbContext = dbContext;
             Orders = orders;
@@ -30,6 +31,7 @@ namespace bookify_data.Helper
             Books = books;
             BookCategories = bookCategories;
             Categories = categories;
+            Accounts = accounts;
         }
 
         public int SaveChanges()

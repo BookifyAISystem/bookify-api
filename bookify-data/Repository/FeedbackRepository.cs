@@ -21,6 +21,10 @@ namespace bookify_data.Repository
         {
             return await _context.Feedbacks.AsNoTracking().ToListAsync();
         }
+        public async Task<IEnumerable<Feedback>> GetByAccountIdAndStatusAsync(int accountId, int status)
+        {
+            return await _context.Feedbacks.Where(o => o.AccountId == accountId && o.Status == status).ToListAsync();
+        }
         public async Task<Feedback?> GetByIdAsync(int id)
         {
             return await _context.Feedbacks.FirstOrDefaultAsync(o => o.FeedbackId == id);

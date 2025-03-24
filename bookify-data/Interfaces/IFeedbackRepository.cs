@@ -10,8 +10,10 @@ namespace bookify_data.Interfaces
     public interface IFeedbackRepository
     {
         Task<IEnumerable<Feedback>> GetAllAsync();
+        Task<IEnumerable<Feedback>> GetByAccountIdAndStatusAsync(int accountId, int status);
         Task<Feedback?> GetByIdAsync(int id);
         Task<bool> InsertAsync(Feedback feedback);
         Task<bool> UpdateAsync(Feedback feedback);
+
     }
 }

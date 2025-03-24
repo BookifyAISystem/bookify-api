@@ -17,13 +17,17 @@ namespace bookify_service.Services
     {
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly IOrderRepository _orderRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        
 
-        public FeedbackService(IFeedbackRepository feedbackRepository, IOrderRepository orderRepository, IMapper mapper)
+        public FeedbackService(IFeedbackRepository feedbackRepository, IOrderRepository orderRepository, IMapper mapper, IUnitOfWork unitOfWork)
         {
+            
             _feedbackRepository = feedbackRepository;
             _orderRepository = orderRepository;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<GetFeedbackDTO>> GetAllAsync()
@@ -36,6 +40,12 @@ namespace bookify_service.Services
             var feedback = await _feedbackRepository.GetByIdAsync(id);
             return _mapper.Map<GetFeedbackDTO>(feedback);
         }
+
+        public async Task<IEnumerable<GetFeedbackDTO>> GetByAccountIdAndStatusAsync(int accountId, int status)
+        {
+            var feedbackList = await _feedbackRepository.GetByAccountIdAndStatusAsync(accountId, status);
+            return _mapper.Map<IEnumerable<GetFeedbackDTO>>(feedbackList);
+        }
         public async Task<bool> CreateFeedbackAsync(AddFeedbackDTO addFeedbackDTO)
         {
             var feedbackToAdd = _mapper.Map<Feedback>(addFeedbackDTO);
@@ -44,24 +54,47 @@ namespace bookify_service.Services
             feedbackToAdd.Status = 1;
             return await _feedbackRepository.InsertAsync(feedbackToAdd);
         }
-        public async Task<bool> CreateFeedbackIfOrderedAsync(AddFeedbackDTO addFeedbackDTO)
-        {
-            // Sử dụng method của OrderRepository để kiểm tra
-            bool hasCompletedOrderForBook = await _orderRepository.HasCompletedOrderForBookAsync(
-                addFeedbackDTO.AccountId, addFeedbackDTO.BookId);
 
-            if (!hasCompletedOrderForBook)
+        public async Task<bool> CreateFeedbacksByOrderDetailByOrderAsync(int orderId)
+        {
+            var order = await _unitOfWork.Orders.GetByIdAsync(orderId);
+            if (order == null)
             {
-                throw new InvalidOperationException("You must have a completed order for this book before submitting feedback.");
+                throw new InvalidOperationException("Order not found");
+            }
+            foreach (var orderDetail in order.OrderDetails)
+            {
+                var feedback = new Feedback
+                {
+                    Star = 0,
+                    FeedbackContent = null,
+                    AccountId = order.AccountId,
+                    BookId = orderDetail.BookId,
+                    CreatedDate = DateTime.UtcNow,
+                    LastEdited = DateTime.UtcNow,
+                    Status = 1,
+                };
+                await _feedbackRepository.InsertAsync(feedback);
             }
 
-            // Tạo feedback sau khi xác nhận điều kiện
-            var feedbackToAdd = _mapper.Map<Feedback>(addFeedbackDTO);
-            feedbackToAdd.CreatedDate = DateTime.UtcNow;
-            feedbackToAdd.LastEdited = DateTime.UtcNow;
-            feedbackToAdd.Status = 1;
-            return await _feedbackRepository.InsertAsync(feedbackToAdd);
+            
+            return await _unitOfWork.CompleteAsync();
         }
+
+        public async Task<bool> ConfirmFeedBack(int feedbackId , int star, string feedbackContent)
+        {
+            var feedback = await _feedbackRepository.GetByIdAsync(feedbackId);
+            if (feedback == null)
+            {
+                throw new InvalidOperationException("Feedback not found");
+            }
+            feedback.Star = star;
+            feedback.FeedbackContent = feedbackContent;
+            feedback.LastEdited = DateTime.UtcNow;
+            feedback.Status = 2;
+            return await _feedbackRepository.UpdateAsync(feedback);
+        }
+        
         public async Task<bool> UpdateFeedbackAsync(int id, UpdateFeedbackDTO updateFeedbackDTO)
         {
             var feedback = await _feedbackRepository.GetByIdAsync(id);

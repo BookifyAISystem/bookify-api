@@ -25,6 +25,14 @@ namespace bookify_data.Repository
         {
             return await _context.OrderDetails.FirstOrDefaultAsync(o => o.OrderDetailId == id);
         }
+
+        public async Task<IEnumerable<OrderDetail>> GetOrderDetailsByBookIdAndAccountId(int bookId, int accountId)
+        {
+            return await _context.OrderDetails
+                .Include(od => od.Order)
+                .Where(od => od.BookId == bookId && od.Order.AccountId == accountId )
+                .ToListAsync();
+        }
         public async Task<IEnumerable<OrderDetail>> GetByOrderIdAsync(int orderId)
         {
             return await _context.OrderDetails
