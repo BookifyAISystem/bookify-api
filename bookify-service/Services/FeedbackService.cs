@@ -35,6 +35,12 @@ namespace bookify_service.Services
             var feedbackList = await _feedbackRepository.GetAllAsync();
             return _mapper.Map<IEnumerable<GetFeedbackDTO>>(feedbackList);
         }
+
+        public async Task<IEnumerable<GetFeedbackDTO>> GetFeedbacksByBookIdAsync(int bookId)
+        {
+            var feedbackList = await _feedbackRepository.GetByBookId(bookId);
+            return _mapper.Map<IEnumerable<GetFeedbackDTO>>(feedbackList);
+        }
         public async Task<GetFeedbackDTO?> GetByIdAsync(int id)
         {
             var feedback = await _feedbackRepository.GetByIdAsync(id);

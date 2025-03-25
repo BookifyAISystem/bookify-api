@@ -10,7 +10,10 @@ namespace bookify_service.Interfaces
     public interface IFeedbackService
     {
         Task<IEnumerable<GetFeedbackDTO>> GetAllAsync();
+
+        Task<IEnumerable<GetFeedbackDTO>> GetFeedbacksByBookIdAsync();
         Task<GetFeedbackDTO?> GetByIdAsync(int id);
+
         Task<bool> CreateFeedbackAsync(AddFeedbackDTO addFeedbackDto);
         Task<bool> CreateFeedbacksByOrderDetailByOrderAsync(int orderId);
         Task<bool> UpdateFeedbackAsync(int id, UpdateFeedbackDTO updateFeedbackDto);
