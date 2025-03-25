@@ -6,6 +6,7 @@ using bookify_data.Model;
 using bookify_data.Repository;
 using bookify_service.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -114,7 +115,7 @@ namespace bookify_service.Services
             return await _unitOfWork.CompleteAsync();
         }
         // Flow User
-        public async Task<bool> CreateOrderAsync(int accountId)
+        public async Task<bool> CreateEmptyOrderByAccountIdAsync(int accountId)
         {
             var order = new Order
             {
@@ -122,10 +123,43 @@ namespace bookify_service.Services
                 CreatedDate = DateTime.UtcNow,
                 LastEdited = DateTime.UtcNow,
                 Total = 0,
-                Status = 1 // active
+                Status = 1 // cart status
             };
             _unitOfWork.Orders.Insert(order);
             return await _unitOfWork.CompleteAsync();
+        }
+
+        public async Task<bool> CreateOrderAsync(AddOrderDTO addOrderDto)
+        {
+            var order = new Order
+            {
+                AccountId = addOrderDto.AccountId,
+                CreatedDate = DateTime.UtcNow,
+                LastEdited = DateTime.UtcNow,
+                Status = 1 // cart status
+            };
+            foreach (var odDto in addOrderDto.OrderDetails)
+            {
+                var book = await _bookRepository.GetBookByIdAsync(odDto.BookId);
+                if (book == null)
+                {
+                    throw new Exception($"Book not found with ID = {odDto.BookId}");
+                }
+                var orderDetail = new OrderDetail
+                {
+                    BookId = odDto.BookId,
+                    Quantity = odDto.Quantity,
+                    Price = book.Price * odDto.Quantity,
+                    CreatedDate = DateTime.UtcNow,
+                    LastEdited = DateTime.UtcNow,
+                    Status = 1
+                };
+                order.OrderDetails.Add(orderDetail);
+            }
+            order.Total = CalculateOrderTotal(order);
+            _unitOfWork.Orders.Insert(order);
+            return await _unitOfWork.CompleteAsync();
+
         }
 
         public async Task<bool> AddOrderDetailAsync(int orderId, AddOrderDetailDTO addOrderDetailDto)
@@ -197,6 +231,25 @@ namespace bookify_service.Services
              
 
             return await _unitOfWork.CompleteAsync();
+        }
+
+        public async Task<bool> UpdateOrderAsync(int id, UpdateOrderDTO updateOrderDto)
+        {
+            var order = await _orderRepository.GetByIdAsync(id);
+            if (order == null) return false;
+            if (updateOrderDto.Status != 1 && updateOrderDto.Status != 0 && updateOrderDto.Status != 2)
+            {
+                throw new ArgumentException("Invalid Order");
+            }
+            order.Status = updateOrderDto.Status;
+            if (updateOrderDto.Status == 0) // giả sử 0 = hủy
+            {
+                order.CancelReason = updateOrderDto.CancelReason;
+            }
+            order.LastEdited = DateTime.UtcNow;
+            _unitOfWork.Orders.Update(order);
+            return await _unitOfWork.CompleteAsync();
+            // Truong hop bang 2 - thanh cong . Co the tao 1 DB danh cho luu tru hoa don thanh cong
         }
         public async Task<bool> RemoveOrderDetailAsync(int orderDetailId)
         {

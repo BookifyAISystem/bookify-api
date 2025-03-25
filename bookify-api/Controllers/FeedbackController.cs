@@ -26,7 +26,6 @@ namespace bookify_api.Controllers
         public async Task<ActionResult<GetFeedbackDTO>> GetFeedbackByBookId(int bookId)
         {
             var feedbacks = await _feedbackService.GetFeedbacksByBookIdAsync(bookId);
-
             return Ok(feedbacks);
         }
 
