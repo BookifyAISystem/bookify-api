@@ -31,6 +31,7 @@ namespace bookify_data.Model
     public class AddOrderDTO
     {
         public int AccountId { get; set; }
+        public int VoucherId { get; set; }
         public List<AddOrderDetailDTO> OrderDetails { get; set; }
     }
     public class UpdateOrderDTO

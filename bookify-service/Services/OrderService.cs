@@ -131,35 +131,55 @@ namespace bookify_service.Services
 
         public async Task<bool> CreateOrderAsync(AddOrderDTO addOrderDto)
         {
-            var order = new Order
             {
-                AccountId = addOrderDto.AccountId,
-                CreatedDate = DateTime.UtcNow,
-                LastEdited = DateTime.UtcNow,
-                Status = 1 // cart status
-            };
-            foreach (var odDto in addOrderDto.OrderDetails)
-            {
-                var book = await _bookRepository.GetBookByIdAsync(odDto.BookId);
-                if (book == null)
+                var order = new Order
                 {
-                    throw new Exception($"Book not found with ID = {odDto.BookId}");
-                }
-                var orderDetail = new OrderDetail
-                {
-                    BookId = odDto.BookId,
-                    Quantity = odDto.Quantity,
-                    Price = book.Price * odDto.Quantity,
+                    AccountId = addOrderDto.AccountId,
+                    VoucherId = addOrderDto.VoucherId,
                     CreatedDate = DateTime.UtcNow,
                     LastEdited = DateTime.UtcNow,
-                    Status = 1
+                    Status = 1 // active
                 };
-                order.OrderDetails.Add(orderDetail);
-            }
-            order.Total = CalculateOrderTotal(order);
-            _unitOfWork.Orders.Insert(order);
-            return await _unitOfWork.CompleteAsync();
+                foreach (var odDto in addOrderDto.OrderDetails)
+                {
+                    var orderDetail = new OrderDetail
+                    {
+                        BookId = odDto.BookId,
+                        Quantity = odDto.Quantity,
+                        Price = odDto.Price,
+                        CreatedDate = DateTime.UtcNow,
+                        LastEdited = DateTime.UtcNow,
+                        Status = 1
+                    };
+                    order.OrderDetails.Add(orderDetail);
+                }
+                int total = order.OrderDetails.Sum(x => x.Quantity * x.Price);
 
+                if (order.VoucherId.HasValue)
+                {
+                    var voucher = await _voucherRepository.GetByIdAsync(order.VoucherId.Value);
+                    if (voucher != null)
+                    {
+                        if (total >= voucher.MinAmount && voucher.Quantity > 0)
+                        {
+                            int discountValue = (int)(total * (voucher.Discount / 100.0));
+                            if (discountValue > voucher.MaxDiscount)
+                            {
+                                discountValue = voucher.MaxDiscount;
+                            }
+                            total -= discountValue;
+                            voucher.Quantity--;
+                            voucher.LastEdited = DateTime.UtcNow;
+                            await _voucherRepository.UpdateAsync(voucher);
+
+                        }
+                    }
+                }
+                order.Total = total;
+                _unitOfWork.Orders.Insert(order);
+                return await _unitOfWork.CompleteAsync();
+
+            }
         }
 
         public async Task<bool> AddOrderDetailAsync(int orderId, AddOrderDetailDTO addOrderDetailDto)

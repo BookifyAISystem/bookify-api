@@ -23,7 +23,7 @@ namespace bookify_api.Controllers
             return Ok(orders);
         }
 
-        [HttpGet("{status}")]
+        [HttpGet("status/{status}")]
         public async Task<ActionResult<IEnumerable<GetOrderDTO>>> GetAllOrdersByStatus(int status)
         {
             var orders = await _orderService.GetOrdersByStatusAsync(status);
@@ -31,7 +31,7 @@ namespace bookify_api.Controllers
         }
 
 
-        [HttpGet("{accountId}")]
+        [HttpGet("account/{accountId}")]
         public async Task<ActionResult<IEnumerable<GetOrderDTO>>> GetOrdersByAccountId( int accountId)
         {
             var orders = await _orderService.GetOrdersByAccountIdAsync(accountId);
