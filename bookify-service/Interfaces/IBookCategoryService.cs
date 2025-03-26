@@ -14,6 +14,7 @@ namespace bookify_service.Interfaces
         Task<GetBookCategoryDTO?> GetByIdAsync(int id);
         Task<bool> CreateBookCategoryAsync(AddBookCategoryDTO addBookCategoryDto);
         Task<bool> UpdateBookCategoryAsync(int id, UpdateBookCategoryDTO updateBookCategoryDto);
+        Task<bool> AssignCategoriyToBookAsync(int bookId, int categoryId);
         Task<bool> AssignCategoriesToBookAsync(int bookId, List<int> categoryIds);
         Task<List<Category?>> GetCategoriesByBookIdAsync(int bookId);
         Task<bool> RemoveCategoryFromBookAsync(int bookId, int categoryId);

@@ -18,13 +18,15 @@ namespace bookify_service.Services
         private readonly IBookRepository _bookRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public BookCategoryService(IBookCategoryRepository bookCategoryRepository, IBookRepository bookRepository, ICategoryRepository categoryRepository, IMapper mapper)
+        public BookCategoryService(IBookCategoryRepository bookCategoryRepository, IBookRepository bookRepository, ICategoryRepository categoryRepository, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _bookCategoryRepository = bookCategoryRepository;
             _bookRepository = bookRepository;
             _categoryRepository = categoryRepository;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<GetBookCategoryDTO>> GetAllAsync()
@@ -43,7 +45,8 @@ namespace bookify_service.Services
             categoryToAdd.CreatedDate = DateTime.UtcNow;
             categoryToAdd.LastEdited = DateTime.UtcNow;
             categoryToAdd.Status = 1;
-            return await _bookCategoryRepository.InsertAsync(categoryToAdd);
+            _bookCategoryRepository.InsertAsync(categoryToAdd);
+            return await _unitOfWork.CompleteAsync();
         }
         public async Task<bool> UpdateBookCategoryAsync(int id, UpdateBookCategoryDTO updateBookCategoryDto)
         {
@@ -56,27 +59,68 @@ namespace bookify_service.Services
             }
             _mapper.Map(updateBookCategoryDto, bookCategory);
             bookCategory.CreatedDate = DateTime.UtcNow;
-            return await _bookCategoryRepository.UpdateAsync(bookCategory);
+            _bookCategoryRepository.UpdateAsync(bookCategory);
+            return await _unitOfWork.CompleteAsync();
 
+        }
+
+        public async Task<bool> AssignCategoriyToBookAsync(int bookId, int categoryId)
+        {
+            var book = await _unitOfWork.Books.GetBookByIdAsync(bookId);
+            if (book == null)
+            {
+                throw new Exception($"Book not found with ID = {bookId}");
+            }
+            var category = await _unitOfWork.Categories.GetByIdAsync(categoryId);
+            if (category == null)
+            {
+                throw new Exception($"Category not found with ID = {categoryId}");
+            }
+            var existingBookCategory = book.BookCategories.FirstOrDefault(bc => bc.CategoryId == categoryId);
+            if (existingBookCategory != null)
+            {
+                throw new Exception($"Failed to assign. Book with ID = {bookId} already has this category !");
+            }
+            var bookCategory = new BookCategory
+            {
+                BookId = bookId,
+                CategoryId = categoryId,
+                CreatedDate = DateTime.UtcNow,
+                Status = 1
+            };
+            book.BookCategories.Add(bookCategory);
+            _unitOfWork.Books.UpdateBook(book);
+            return await _unitOfWork.CompleteAsync();
         }
 
         public async Task<bool> AssignCategoriesToBookAsync(int bookId, List<int> categoryIds)
         {
             var book = await _bookRepository.GetBookByIdAsync(bookId);
-            if (book == null) return false;
+            if (book == null)
+            {
+                throw new Exception($"Book not found with ID = {bookId}");
+            }
 
             var currentCategories = await _bookCategoryRepository.GetByBookIdAsync(bookId);
             var currentCategoryIds = currentCategories.Select(bc => bc.CategoryId).ToList();
 
-            // Xóa những danh mục cũ không còn trong danh sách mới
+            // Remove old categories that are not in the new list
             var toRemove = currentCategories.Where(bc => !categoryIds.Contains(bc.CategoryId)).ToList();
             foreach (var item in toRemove)
-                await _bookCategoryRepository.RemoveAsync(item);
-
-            // Thêm danh mục mới
+            {
+                book.BookCategories.Remove(item);
+            }
+            await _bookRepository.UpdateBookAsync(book);
+            // Add new categories that are not already assigned
             var toAdd = categoryIds.Except(currentCategoryIds).ToList();
             foreach (var categoryId in toAdd)
             {
+                var category = await _categoryRepository.GetByIdAsync(categoryId);
+                if (category == null)
+                {
+                    throw new Exception($"Category not found with ID = {categoryId}");
+                }
+
                 var newBookCategory = new BookCategory
                 {
                     BookId = bookId,
@@ -84,27 +128,42 @@ namespace bookify_service.Services
                     CreatedDate = DateTime.UtcNow,
                     Status = 1
                 };
-                await _bookCategoryRepository.InsertAsync(newBookCategory);
+                book.BookCategories.Add(newBookCategory);
             }
-
-            return true;
+            _bookRepository.UpdateBook(book);
+            return await _unitOfWork.CompleteAsync();
         }
-
         public async Task<List<Category?>> GetCategoriesByBookIdAsync(int bookId)
         {
-            return await _bookCategoryRepository.GetByBookIdAsync(bookId)
-                                          .ContinueWith(task => task.Result.Select(bc => bc.Category).ToList());
-        }
+            var book = await _bookRepository.GetBookByIdAsync(bookId);
+            if (book == null)
+            {
+                throw new Exception($"Book not found with ID = {bookId}");
+            }
 
+            var bookCategories = await _bookCategoryRepository.GetByBookIdAsync(bookId);
+            return bookCategories.Select(bc => bc.Category).ToList();
+        }
         public async Task<bool> RemoveCategoryFromBookAsync(int bookId, int categoryId)
         {
-            var bookCategory = (await _bookCategoryRepository.GetByBookIdAsync(bookId))
-                              .FirstOrDefault(bc => bc.CategoryId == categoryId);
-            if (bookCategory == null) return false;
+            var book = await _bookRepository.GetBookByIdAsync(bookId);
+            if (book == null)
+            {
+                throw new Exception($"Book not found with ID = {bookId}");
+            }
+
+            var bookCategory = book.BookCategories.FirstOrDefault(bc => bc.CategoryId == categoryId);
+            if (bookCategory == null)
+            {
+                throw new Exception($"Category not found with ID = {categoryId} for the specified book.");
+            }
 
             await _bookCategoryRepository.RemoveAsync(bookCategory);
-            return true;
+            _bookRepository.UpdateBook(book);
+            return await _unitOfWork.CompleteAsync();
         }
+
+
 
         public async Task<bool> UpdateBookCategoryStatusAsync(int id, int newStatus)
         {
@@ -120,7 +179,8 @@ namespace bookify_service.Services
             }
             bookCategory.Status = newStatus;
             bookCategory.LastEdited = DateTime.UtcNow;
-            return await _bookCategoryRepository.UpdateAsync(bookCategory);
+            _bookCategoryRepository.UpdateAsync(bookCategory);
+            return await _unitOfWork.CompleteAsync();
         }
 
         public async Task<bool> DeleteBookCategoryAsync(int id)
@@ -133,7 +193,8 @@ namespace bookify_service.Services
 
             bookCategory.Status = 0;
             bookCategory.LastEdited = DateTime.UtcNow;
-            return await _bookCategoryRepository.UpdateAsync(bookCategory);
+            _bookCategoryRepository.UpdateAsync(bookCategory);
+            return await _unitOfWork.CompleteAsync();
         }
   }
 }

@@ -21,6 +21,7 @@ namespace bookify_data.Repository
         public async Task<IEnumerable<Book>> GetAllBooksAsync()
         {
             return await _context.Books
+                .Include(b => b.BookCategories)
                 .Where(b => b.Status == 1) // Chỉ lấy sách chưa bị xóa
                 .ToListAsync();
         }
@@ -28,7 +29,7 @@ namespace bookify_data.Repository
 
         public async Task<Book?> GetBookByIdAsync(int bookId)
         {
-            return await _context.Books.FirstOrDefaultAsync(b => b.BookId == bookId);
+            return await _context.Books.Include(b => b.BookCategories).FirstOrDefaultAsync(b => b.BookId == bookId);
         }
 
         public async Task AddBookAsync(Book book)
@@ -43,6 +44,10 @@ namespace bookify_data.Repository
             await _context.SaveChangesAsync();
         }
 
+        public void UpdateBook(Book book)
+        {
+            _context.Books.Update(book);
+        }
         public async Task DeleteBookAsync(int bookId)
         {
             var book = await _context.Books.FindAsync(bookId);

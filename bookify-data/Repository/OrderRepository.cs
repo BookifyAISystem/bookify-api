@@ -72,7 +72,7 @@ namespace bookify_data.Repository
         public async Task<bool> HasCompletedOrderForBookAsync(int accountId, int bookId)
         {
             return await _context.Orders
-                .Where(o => o.AccountId == accountId && o.Status == 2)
+                .Where(o => o.AccountId == accountId && o.Status == 3)
                 .AnyAsync(o => o.OrderDetails.Any(od => od.BookId == bookId));
         }
 

@@ -23,7 +23,7 @@ namespace bookify_api.Controllers
             return Ok(orders);
         }
 
-        [HttpGet("status/{status}")]
+        [HttpGet("{status}")]
         public async Task<ActionResult<IEnumerable<GetOrderDTO>>> GetAllOrdersByStatus(int status)
         {
             var orders = await _orderService.GetOrdersByStatusAsync(status);
@@ -31,7 +31,7 @@ namespace bookify_api.Controllers
         }
 
 
-        [HttpGet("account/{accountId}")]
+        [HttpGet("{accountId}")]
         public async Task<ActionResult<IEnumerable<GetOrderDTO>>> GetOrdersByAccountId( int accountId)
         {
             var orders = await _orderService.GetOrdersByAccountIdAsync(accountId);
@@ -48,10 +48,20 @@ namespace bookify_api.Controllers
             return Ok(order);
         }
 
-        [HttpPost("{accountId}")]
-        public async Task<ActionResult> CreateOrder(int accountId)
+        [HttpPost]
+        public async Task<ActionResult> CreateOrder([FromBody] AddOrderDTO addOrderDto)
         {
-            bool isCreated = await _orderService.CreateOrderAsync(accountId);
+            bool isCreated = await _orderService.CreateOrderAsync(addOrderDto);
+            if (!isCreated)
+                return BadRequest(new { message = "Failed to create order" });
+            return StatusCode(201, new { message = "Order created successfully" });
+        }
+
+        
+        [HttpPost("{accountId}")]
+        public async Task<ActionResult> CreateEmptyOrder(int accountId)
+        {
+            bool isCreated = await _orderService.CreateEmptyOrderByAccountIdAsync(accountId);
             if (!isCreated)
                 return BadRequest(new { message = "Failed to create order" });
 
@@ -74,6 +84,17 @@ namespace bookify_api.Controllers
             bool isUpdated = await _orderService.UpdateOrderDetailQuantityAsync(orderDetailId, newQuantity);
             if (!isUpdated)
                 return NotFound(new { message = "Order detail not found or update failed" });
+
+            return NoContent(); // HTTP 204
+        }
+
+
+        [HttpPut("{orderId}")]
+        public async Task<ActionResult> UpdateOrder(int orderId, [FromBody] UpdateOrderDTO updateOrderDto)
+        {
+            bool isUpdated = await _orderService.UpdateOrderAsync(orderId, updateOrderDto);
+            if (!isUpdated)
+                return NotFound(new { message = "Order not found or update failed" });
 
             return NoContent(); // HTTP 204
         }
@@ -131,7 +152,7 @@ namespace bookify_api.Controllers
         //    }
         //}
 
-        [HttpPatch("change-status/{id}")]
+        [HttpPatch("{orderId}/change-status")]
         public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] int status)
         {
             try

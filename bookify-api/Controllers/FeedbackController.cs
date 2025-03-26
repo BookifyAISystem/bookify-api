@@ -10,6 +10,7 @@ namespace bookify_api.Controllers
     public class FeedbackController : Controller
     {
         private readonly IFeedbackService _feedbackService;
+
         public FeedbackController(IFeedbackService feedbackService)
         {
             _feedbackService = feedbackService;
@@ -19,6 +20,12 @@ namespace bookify_api.Controllers
         public async Task<ActionResult<IEnumerable<GetFeedbackDTO>>> GetAllFeedbacks()
         {
             var feedbacks = await _feedbackService.GetAllAsync();
+            return Ok(feedbacks);
+        }
+        [HttpGet("{bookId}")]
+        public async Task<ActionResult<GetFeedbackDTO>> GetFeedbackByBookId(int bookId)
+        {
+            var feedbacks = await _feedbackService.GetFeedbacksByBookIdAsync(bookId);
             return Ok(feedbacks);
         }
 
@@ -32,7 +39,7 @@ namespace bookify_api.Controllers
             return Ok(feedback);
         }
 
-        
+
 
         [HttpPost]
         public async Task<IActionResult> CreateFeedbackIfOrdered([FromBody] AddFeedbackDTO addFeedbackDto)
@@ -47,6 +54,26 @@ namespace bookify_api.Controllers
             catch (InvalidOperationException ex)
             {
                 return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPatch("{feedbackId}")]
+        public async Task<IActionResult> ConfirmFeedBack(int feedbackId, [FromBody] ConfirmFeedbackDTO confirmFeedbackDto)
+        {
+            try
+            {
+                bool isConfirmed = await _feedbackService.ConfirmFeedBack(feedbackId, confirmFeedbackDto.Star, confirmFeedbackDto.FeedbackContent);
+                if (!isConfirmed)
+                    return NotFound(new { message = "Feedback not found or update failed" });
+                return Ok("Feedback confirmed successfully");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
