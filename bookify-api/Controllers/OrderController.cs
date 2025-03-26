@@ -78,10 +78,20 @@ namespace bookify_api.Controllers
             return StatusCode(201, new { message = "Order detail created successfully" });
         }
 
+        //[HttpPut("order-details/{orderDetailId}")]
+        //public async Task<ActionResult> UpdateOrderDetailQuantity(int orderDetailId, [FromBody] int newQuantity)
+        //{
+        //    bool isUpdated = await _orderService.UpdateOrderDetailQuantityAsync(orderDetailId, newQuantity);
+        //    if (!isUpdated)
+        //        return NotFound(new { message = "Order detail not found or update failed" });
+
+        //    return NoContent(); // HTTP 204
+        //}
+
         [HttpPut("order-details/{orderDetailId}")]
-        public async Task<ActionResult> UpdateOrderDetailQuantity(int orderDetailId, [FromBody] int newQuantity)
+        public async Task<ActionResult> UpdateOrderDetailQuantity(int orderDetailId, [FromBody] UpdateOrderDetailDTO updateOrderDetailDTO)
         {
-            bool isUpdated = await _orderService.UpdateOrderDetailQuantityAsync(orderDetailId, newQuantity);
+            bool isUpdated = await _orderService.UpdateOrderDetailAsync(orderDetailId, updateOrderDetailDTO);
             if (!isUpdated)
                 return NotFound(new { message = "Order detail not found or update failed" });
 
