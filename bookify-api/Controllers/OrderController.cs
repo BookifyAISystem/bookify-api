@@ -153,11 +153,11 @@ namespace bookify_api.Controllers
         //}
 
         [HttpPatch("{orderId}/change-status")]
-        public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] int status)
+        public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] int status)
         {
             try
             {
-                bool isUpdate = await _orderService.UpdateOrderStatusAsync(id, status);
+                bool isUpdate = await _orderService.UpdateOrderStatusAsync(orderId, status);
 
                 if (!isUpdate)
                 {
