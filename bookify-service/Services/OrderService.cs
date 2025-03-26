@@ -252,6 +252,38 @@ namespace bookify_service.Services
 
             return await _unitOfWork.CompleteAsync();
         }
+        public async Task<bool> UpdateOrderDetailAsync(int orderDetailId, UpdateOrderDetailDTO updateOrderDetailDTO)
+        {
+            var orderDetail = await _orderDetailRepository.GetByIdAsync(orderDetailId);
+            if (orderDetail == null)
+            {
+                throw new Exception($"Order not found with ID = {orderDetailId}");
+            }
+            if (updateOrderDetailDTO.Quantity < 1)
+            {
+                throw new ArgumentException("Quantity must be greater than or equal to 1");
+            }
+            var order = await _orderRepository.GetByIdAsync(orderDetail.OrderId);
+            if (order == null)
+            {
+                throw new Exception($"Order not found with ID = {orderDetail.OrderId}");
+            }
+            var book = await _bookRepository.GetBookByIdAsync(orderDetail.BookId);
+            if (book == null)
+            {
+                throw new Exception($"Book not found with ID = {orderDetail.BookId}");
+            }
+            order.Total = order.Total - (orderDetail.Price *orderDetail.Quantity);
+            // Update
+            orderDetail.Quantity = updateOrderDetailDTO.Quantity;
+            orderDetail.Price = updateOrderDetailDTO.Price;
+            orderDetail.LastEdited = DateTime.UtcNow;
+            order.Total = order.Total + (orderDetail.Price * orderDetail.Quantity);
+            order.LastEdited = DateTime.UtcNow;
+            _unitOfWork.Orders.Update(order);
+            _unitOfWork.OrderDetails.Update(orderDetail);
+            return await _unitOfWork.CompleteAsync();
+        }
 
         public async Task<bool> UpdateOrderAsync(int id, UpdateOrderDTO updateOrderDto)
         {
