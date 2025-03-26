@@ -311,6 +311,34 @@ namespace bookify_data.Repository
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        public async Task<string> ChangePassword(ChangePasswordModel model)
+        {
+            // Tìm user dựa vào Email
+            var user = await _dbcontext.Accounts
+                                       .SingleOrDefaultAsync(u => u.Email == model.Email);
+
+            if (user == null)
+            {
+                return "User not found";
+            }
+
+            // Kiểm tra mật khẩu cũ
+            bool isOldPasswordValid = BCrypt.Net.BCrypt.Verify(model.OldPassword, user.Password);
+            if (!isOldPasswordValid)
+            {
+                return "Old password is incorrect";
+            }
+
+            // Nếu hợp lệ, cập nhật mật khẩu mới (đã băm)
+            user.Password = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            user.LastEdited = DateTime.UtcNow; // Nếu bạn muốn ghi nhận thời gian chỉnh sửa
+
+            // Lưu thay đổi
+            _dbcontext.Accounts.Update(user);
+            await _dbcontext.SaveChangesAsync();
+
+            return "Password changed successfully";
+        }
 
     }
 }

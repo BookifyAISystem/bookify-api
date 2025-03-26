@@ -25,17 +25,25 @@ public class AccountRepository : IAccountRepository
 		_context.Accounts.Update(account);
 		await _context.SaveChangesAsync();
 	}
-	public async Task<Account?> GetAccountByIdWithReferencesAsync(int accountId)
-	{
-		return await _context.Accounts
-			.Include(a => a.NewsList)
-			.Include(a => a.Notes)
-			// .Include(a => a.Staff)   // Nếu bạn có Staff
-			.FirstOrDefaultAsync(a => a.AccountId == accountId);
-	}
+    public async Task<Account?> GetAccountByIdWithReferencesAsync(int accountId)
+    {
+        var account = await _context.Accounts
+            .Include(a => a.NewsList)
+          
+            .FirstOrDefaultAsync(a => a.AccountId == accountId);
 
-	// Soft Delete: chỉ set Status = 0
-	public async Task DeleteAccountAsync(Account account)
+        if (account != null)
+        {
+            account.Notes = await _context.Notes
+                .Where(n => n.AccountId == accountId)
+                .ToListAsync();
+        }
+
+        return account;
+    }
+
+    // Soft Delete: chỉ set Status = 0
+    public async Task DeleteAccountAsync(Account account)
 	{
 		account.Status = 0;         // 0 = đã bị xóa (theo yêu cầu)
 		account.LastEdited = DateTime.Now;
