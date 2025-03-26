@@ -27,6 +27,7 @@ namespace bookify_data
             service.AddTransient<IBookRepository, BookRepository>();
             service.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
             service.AddScoped<IFeedbackRepository, FeedbackRepository>();
+            service.AddScoped<IPaymentRepository, PaymentRepository>();
 
             return service;
 		}

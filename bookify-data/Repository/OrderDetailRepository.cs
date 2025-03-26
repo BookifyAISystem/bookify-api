@@ -25,6 +25,14 @@ namespace bookify_data.Repository
         {
             return await _context.OrderDetails.FirstOrDefaultAsync(o => o.OrderDetailId == id);
         }
+
+        public async Task<IEnumerable<OrderDetail>> GetOrderDetailsByBookIdAndAccountId(int bookId, int accountId)
+        {
+            return await _context.OrderDetails
+                .Include(od => od.Order)
+                .Where(od => od.BookId == bookId && od.Order.AccountId == accountId )
+                .ToListAsync();
+        }
         public async Task<IEnumerable<OrderDetail>> GetByOrderIdAsync(int orderId)
         {
             return await _context.OrderDetails
@@ -32,16 +40,37 @@ namespace bookify_data.Repository
                 .AsNoTracking()
                 .ToListAsync();
         }
-        public async Task<bool> InsertAsync(OrderDetail orderDetail)
+        public void Insert(OrderDetail orderDetail)
         {
-            await _context.OrderDetails.AddAsync(orderDetail);
-            return await _context.SaveChangesAsync() > 0;
+            _context.OrderDetails.Add(orderDetail);
         }
-        public async Task<bool> UpdateAsync(OrderDetail orderDetail)
+
+        public void Update(OrderDetail orderDetail)
         {
             _context.OrderDetails.Update(orderDetail);
-            return await _context.SaveChangesAsync() > 0;
         }
-        
+
+        public void Remove(OrderDetail orderDetail)
+        {
+            _context.OrderDetails.Remove(orderDetail);
+        }
+        public void Detach(OrderDetail orderDetail)
+        {
+            var entry = _context.Entry(orderDetail);
+            if (entry != null)
+            {
+                entry.State = EntityState.Detached;
+            }
+        }
+
+        public void Attach(OrderDetail orderDetail)
+        {
+            var entry = _context.Entry(orderDetail);
+            if (entry != null)
+            {
+                entry.State = EntityState.Modified;
+            }
+        }
+
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace bookify_data.Model
 {
-    public class PaymentModel
+    public class GetPaymentDTO
     {
         public int PaymentId { get; set; }
         public int Method { get; set; }

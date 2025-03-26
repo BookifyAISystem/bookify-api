@@ -19,15 +19,19 @@ namespace bookify_api.Controllers
         private readonly IVnpayService _vnpayService;
         private readonly IConfiguration _configuration;
         private readonly IOrderService _orderService;
+        private readonly IPaymentService _paymentService;
+        private readonly IFeedbackService _feedbackService;
         private readonly IMapper _mapper;
 
-        public VnpayController(IVnpayService vnpayService, IConfiguration configuration, IOrderService orderService, IMapper mapper)
+        public VnpayController(IVnpayService vnpayService, IConfiguration configuration, IOrderService orderService, IMapper mapper, IPaymentService paymentService, IFeedbackService feedbackService)
         {
             _vnpayService = vnpayService;
             _configuration = configuration;
             _vnpayService.Initialize(_configuration["Vnpay:TmnCode"], _configuration["Vnpay:HashSecret"], _configuration["Vnpay:BaseUrl"], _configuration["Vnpay:ReturnUrl"]);
             _orderService = orderService;
             _mapper = mapper;
+            _paymentService = paymentService;
+            _feedbackService = feedbackService;
         }
         /// <summary>
         /// Tạo url thanh toán
@@ -46,9 +50,9 @@ namespace bookify_api.Controllers
                 {
                     return NotFound("Không tìm thấy đơn hàng.");
                 }
-                if (order.Status != 1)
+                if (order.Status != 2)
                 {
-                    return BadRequest("Đơn hàng không ở trạng thái chưa thanh toán.");
+                    return BadRequest("Đơn hàng không ở trạng thái thanh toán.");
                 }
                 var ipAddress = NetworkHelper.GetIpAddress(HttpContext); // Lấy địa chỉ IP của thiết bị thực hiện giao dịch
                 //string description = "Thanh toán cho đơn hàng ${order.OrderId}";
@@ -118,13 +122,7 @@ namespace bookify_api.Controllers
                     var paymentResult = _vnpayService.GetPaymentResult(Request.Query);
                     if (paymentResult.IsSuccess)
                     {
-                        int orderId = int.Parse(paymentResult.Description);
-                        if (orderId <= 0)
-                        {
-                            return BadRequest("Không xác định được OrderId từ dữ liệu thanh toán.");
-                        }
-
-                        await _orderService.UpdateOrderStatusAsync(orderId, 2);
+                        
                         // Thực hiện hành động nếu thanh toán thành công tại đây. Ví dụ: Cập nhật trạng thái đơn hàng trong cơ sở dữ liệu.
                         return Ok();
                     }
@@ -163,7 +161,9 @@ namespace bookify_api.Controllers
                             return BadRequest("Không xác định được OrderId từ dữ liệu thanh toán.");
                         }
 
-                        await _orderService.UpdateOrderStatusAsync(orderId, 2);
+                        await _orderService.UpdateOrderStatusAsync(orderId, 3);
+                        await _feedbackService.CreateFeedbacksByOrderDetailByOrderAsync (orderId);
+                        await _paymentService.CreateVnpayPaymentAsync(orderId);
                         return Ok(paymentResult);
                     }
 

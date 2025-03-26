@@ -20,7 +20,11 @@ namespace bookify_data.Model
 
     }
 
-
+    public class ConfirmFeedbackDTO
+    {
+        public int Star { get; set; }
+        public string? FeedbackContent { get; set; }
+    }
 
     public class AddFeedbackDTO
     {

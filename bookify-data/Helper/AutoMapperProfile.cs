@@ -23,7 +23,7 @@ namespace bookify_data.Helper
 			//Order
 			CreateMap<Order, GetOrderDTO>();
             CreateMap<GetOrderDTO,Order>();
-            CreateMap<AddOrderDTO, Order>();
+            CreateMap<AddEmptyOrderDTO, Order>();
             CreateMap<UpdateOrderDTO, Order>();
             //Order Detail
             CreateMap<OrderDetail, GetOrderDetailDTO>();
