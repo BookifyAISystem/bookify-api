@@ -1,6 +1,7 @@
 ﻿using bookify_data.DTOs;
 using bookify_data.DTOs.BookAuthorDTO;
 using bookify_service.Interfaces;
+using bookify_service.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,13 @@ namespace bookify_api.Controllers
     {
         private readonly IBookService _bookService;
         private readonly IBookAuthorService _bookAuthorService;
+        private readonly IBookCategoryService _bookCategoryService;
 
-        public BookController(IBookService bookService, IBookAuthorService bookAuthorService)
+        public BookController(IBookService bookService, IBookAuthorService bookAuthorService, IBookCategoryService bookCategoryService)
         {
             _bookService = bookService;
             _bookAuthorService = bookAuthorService;
+            _bookCategoryService = bookCategoryService;
         }
 
         // --- API liên quan đến Book ---
@@ -150,6 +153,37 @@ namespace bookify_api.Controllers
         {
             await _bookAuthorService.UpdateStatusAsync(id, status);
             return Ok(new { message = "BookAuthor status updated successfully!" });
+        }
+
+        [HttpPost("{bookId}/categories/{categoryId}")]
+        public async Task<IActionResult> AssignCategoryToBook(int bookId, int categoryId)
+        { 
+            var result = await _bookCategoryService.AssignCategoriyToBookAsync(bookId, categoryId);
+            if (!result) return NotFound("Book not found or assigh failed");
+            return NoContent();
+        }
+
+        [HttpPost("{bookId}/categories")]
+        public async Task<IActionResult> AssignCategoriesToBook(int bookId, [FromBody] List<int> categoryIds)
+        {
+            var result = await _bookCategoryService.AssignCategoriesToBookAsync(bookId, categoryIds);
+            if (!result) return NotFound("Book not found or assigh failed");
+            return NoContent();
+        }
+
+        [HttpGet("{bookId}/categories")]
+        public async Task<IActionResult> GetCategoriesByBook(int bookId)
+        {
+            var categories = await _bookCategoryService.GetCategoriesByBookIdAsync(bookId);
+            return Ok(categories);
+        }
+
+        [HttpDelete("{bookId}/categories/{categoryId}")]
+        public async Task<IActionResult> RemoveCategoryFromBook(int bookId, int categoryId)
+        {
+            var result = await _bookCategoryService.RemoveCategoryFromBookAsync(bookId, categoryId);
+            if (!result) return NotFound();
+            return NoContent();
         }
     }
 }

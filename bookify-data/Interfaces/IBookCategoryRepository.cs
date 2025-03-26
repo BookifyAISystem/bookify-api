@@ -11,8 +11,8 @@ namespace bookify_data.Interfaces
     {
         Task<IEnumerable<BookCategory>> GetAllAsync();
         Task<BookCategory?> GetByIdAsync(int id);
-        Task<bool> InsertAsync(BookCategory bookCategory);
-        Task<bool> UpdateAsync(BookCategory bookCategory);
+        void InsertAsync(BookCategory bookCategory);
+        void UpdateAsync(BookCategory bookCategory);
         Task<List<BookCategory>> GetByBookIdAsync(int bookId);
         Task RemoveAsync(BookCategory bookCategory);
     }

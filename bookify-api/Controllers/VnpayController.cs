@@ -20,9 +20,10 @@ namespace bookify_api.Controllers
         private readonly IConfiguration _configuration;
         private readonly IOrderService _orderService;
         private readonly IPaymentService _paymentService;
+        private readonly IFeedbackService _feedbackService;
         private readonly IMapper _mapper;
 
-        public VnpayController(IVnpayService vnpayService, IConfiguration configuration, IOrderService orderService, IMapper mapper, IPaymentService paymentService)
+        public VnpayController(IVnpayService vnpayService, IConfiguration configuration, IOrderService orderService, IMapper mapper, IPaymentService paymentService, IFeedbackService feedbackService)
         {
             _vnpayService = vnpayService;
             _configuration = configuration;
@@ -30,6 +31,7 @@ namespace bookify_api.Controllers
             _orderService = orderService;
             _mapper = mapper;
             _paymentService = paymentService;
+            _feedbackService = feedbackService;
         }
         /// <summary>
         /// Tạo url thanh toán
@@ -160,6 +162,7 @@ namespace bookify_api.Controllers
                         }
 
                         await _orderService.UpdateOrderStatusAsync(orderId, 3);
+                        await _feedbackService.CreateFeedbacksByOrderDetailByOrderAsync (orderId);
                         await _paymentService.CreateVnpayPaymentAsync(orderId);
                         return Ok(paymentResult);
                     }

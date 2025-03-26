@@ -12,6 +12,7 @@ namespace bookify_data.Interfaces
         Task<IEnumerable<OrderDetail>> GetAllAsync();
         Task<OrderDetail?> GetByIdAsync(int id);
         Task<IEnumerable<OrderDetail>> GetByOrderIdAsync(int orderId);
+        Task<IEnumerable<OrderDetail>> GetOrderDetailsByBookIdAndAccountId(int bookId, int accountId);
         void Insert(OrderDetail orderDetail);
         void Update(OrderDetail orderDetail);
         void Remove(OrderDetail orderDetail);
