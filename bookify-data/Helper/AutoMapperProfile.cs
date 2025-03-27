@@ -33,6 +33,10 @@ namespace bookify_data.Helper
             CreateMap<Category, GetCategoryDTO>();
             CreateMap<AddCategoryDTO, Category>();
             CreateMap<UpdateCategoryDTO, Category>();
+            //Feedback
+            CreateMap<Feedback, GetBookCategoryDTO>();
+            CreateMap<AddFeedbackDTO, Feedback>();
+            CreateMap<UpdateFeedbackDTO, Feedback>();
 
 
         }
